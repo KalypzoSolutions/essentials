@@ -2,6 +2,7 @@ package it.einjojo.essentials.user.home;
 
 import it.einjojo.central.CentralPlugin;
 import it.einjojo.central.positon.NetworkPosition;
+import it.einjojo.essentials.EssentialsPlugin;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -21,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 public class HomeManager {
     private static final int MAX_HOME_COUNT = 20;
     private final DataSource dataSource;
-    private final Logger log = CentralPlugin.instance().getSLF4JLogger();
+    private final Logger log = EssentialsPlugin.instance().getSLF4JLogger();
 
     private HomeManager(@NonNull DataSource dataSource) {
         this.dataSource = dataSource;
@@ -29,7 +30,7 @@ public class HomeManager {
     }
 
     private static class OnDemand {
-        private final static HomeManager INSTANCE = new HomeManager(CentralPlugin.instance().getHikariDataSource());
+        private final static HomeManager INSTANCE = new HomeManager(EssentialsPlugin.instance().getDataSource());
     }
 
     private void prepareTables() {

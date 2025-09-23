@@ -27,10 +27,17 @@ dependencies {
     compileOnly("it.einjojo.playerapi:api:1.2.0")
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     paperLibrary("io.lettuce:lettuce-core:6.8.1.RELEASE")
+    paperLibrary("com.zaxxer:HikariCP:7.0.2")
+    paperLibrary("org.flywaydb:flyway-core:11.13.1")
+    paperLibrary("org.flywaydb:flyway-database-postgresql:11.13.1")
+    paperLibrary("org.postgresql:postgresql:42.7.5")
     compileOnly("org.projectlombok:lombok:1.18.42")
-    compileOnly("com.zaxxer:HikariCP:7.0.2")
     compileOnly("me.clip:placeholderapi:2.11.6")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
+    implementation(platform("eu.cloudnetservice.cloudnet:bom:4.0.0-RC14"))
+    compileOnly("eu.cloudnetservice.cloudnet:driver-api")
+    compileOnly("eu.cloudnetservice.cloudnet:wrapper-jvm-api")
+    compileOnly("eu.cloudnetservice.cloudnet:bridge-api")
 
 
 }
@@ -49,7 +56,10 @@ paper {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
             required = false
         }
-
+        register("CloudNet-Bridge") {
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+            required = true
+        }
         register("PlayerApi") {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
             required = true

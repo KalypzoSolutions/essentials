@@ -4,6 +4,7 @@ import io.lettuce.core.RedisClient;
 import it.einjojo.essentials.chat.ChatSystem;
 import it.einjojo.essentials.environment.DefaultPluginEnvironment;
 import it.einjojo.essentials.environment.PluginEnvironment;
+import it.einjojo.essentials.environment.name.CloudNetServerNameProvider;
 import it.einjojo.essentials.world.PositionAccessor;
 import it.einjojo.essentials.world.TeleportExecutor;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import net.kyori.adventure.util.UTF8ResourceBundleControl;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -32,8 +34,9 @@ public class EssentialsPlugin extends JavaPlugin {
     private PluginEnvironment environment;
     @Getter
     private ChatSystem chatSystem;
-
     private RedisClient redis;
+    @Getter
+    private DataSource dataSource;
 
     @Override
     public void onEnable() {
@@ -55,13 +58,14 @@ public class EssentialsPlugin extends JavaPlugin {
         TeleportExecutor.getInstance().init(pubSub);
         PositionAccessor.getInstance().init(pubSub);
 
-
+        // database stuff
+        Flyway
         loadLocales();
     }
 
     private PluginEnvironment createEnvironment() {
         getSLF4JLogger().info("Determining server environment...");
-        return new DefaultPluginEnvironment();
+        return new DefaultPluginEnvironment(this, new CloudNetServerNameProvider());
     }
 
     @Override

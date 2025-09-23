@@ -1,6 +1,7 @@
 package it.einjojo.essentials.environment;
 
 import it.einjojo.essentials.EssentialsPlugin;
+import it.einjojo.essentials.environment.name.ServerNameProvider;
 import it.einjojo.essentials.user.EssentialsUser;
 import it.einjojo.essentials.user.NetworkEssentialsUser;
 import it.einjojo.playerapi.PlayerApi;
@@ -13,19 +14,24 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Expects the Player-API to be available.
+ */
 public class DefaultPluginEnvironment implements PluginEnvironment {
     @Getter
     private final PlayerApi playerApi;
     private final EssentialsPlugin plugin;
+    private final ServerNameProvider serverNameProvider;
 
-    public DefaultPluginEnvironment() {
+    public DefaultPluginEnvironment(EssentialsPlugin plugin, ServerNameProvider serverNameProvider) {
         this.playerApi = PlayerApiProvider.getInstance();
-        this.plugin = EssentialsPlugin.instance();
+        this.plugin = plugin;
+        this.serverNameProvider = serverNameProvider;
     }
 
     @Override
     public String getServerName() {
-        return "";
+        return serverNameProvider.getServerName();
     }
 
     @Override

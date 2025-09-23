@@ -1,5 +1,6 @@
 package it.einjojo.essentials.environment;
 
+import it.einjojo.essentials.environment.name.ServerNameProvider;
 import it.einjojo.essentials.user.EssentialsUser;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
  * <p>
  * z.B CloudNet, Test Server, mit PlayerApi Zugriff, ...
  */
-public interface PluginEnvironment {
+public interface PluginEnvironment extends ServerNameProvider {
 
     String getServerName();
 
