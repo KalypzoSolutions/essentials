@@ -1,0 +1,10 @@
+#
+# Essentials plugin configuration.
+# The database connection details are stored according to the shared-connections configuration specification inside the "connections.json"
+#
+_version: 1
+chat:
+  format: "%luckperms_prefix% %player_name% <dark_gray>➥ <gray><message>" # <message> interne Variable. % % gehören zur Placeholder API
+  private:
+    sender: "<white>Du <dark_gray>➥ <gray><receiver> <gray><message>"
+    receiver: "<gray><sender> <dark_gray>➥ <white>Dich <gray><message>"

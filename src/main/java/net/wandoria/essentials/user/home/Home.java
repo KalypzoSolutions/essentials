@@ -1,13 +1,13 @@
 package net.wandoria.essentials.user.home;
 
 
-import lombok.NonNull;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.event.AsyncPlayerHomeTeleportEvent;
 import net.wandoria.essentials.world.NetworkPosition;
 import net.wandoria.essentials.world.TeleportExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -17,7 +17,8 @@ import java.util.regex.Pattern;
  * @param name     the name of the home
  * @param location network location
  */
-public record Home(@NonNull UUID owner, @NonNull String name, @NonNull NetworkPosition location) {
+@NullMarked
+public record Home(UUID owner, String name, NetworkPosition location) {
     public static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]{1,64}$");
 
     public Home {

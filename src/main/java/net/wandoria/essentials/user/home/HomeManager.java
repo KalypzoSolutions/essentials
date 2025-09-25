@@ -1,11 +1,11 @@
 package net.wandoria.essentials.user.home;
 
 
-import lombok.NonNull;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.world.NetworkPosition;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
 import javax.sql.DataSource;
@@ -18,12 +18,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+@NullMarked
 public class HomeManager {
     private static final int MAX_HOME_COUNT = 20;
     private final DataSource dataSource;
     private final Logger log = EssentialsPlugin.instance().getSLF4JLogger();
 
-    private HomeManager(@NonNull DataSource dataSource) {
+    private HomeManager(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -36,7 +37,7 @@ public class HomeManager {
     }
 
 
-    public CompletableFuture<Optional<Home>> getHome(@NonNull UUID owner, @NonNull String name) {
+    public CompletableFuture<Optional<Home>> getHome(UUID owner, String name) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT location FROM public.essentails WHERE home_name = ? AND owner = ?")) {
                 statement.setString(1, name);
@@ -55,7 +56,7 @@ public class HomeManager {
         });
     }
 
-    public CompletableFuture<List<Home>> getHomes(@NonNull UUID playerUuid) {
+    public CompletableFuture<List<Home>> getHomes(UUID playerUuid) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = dataSource.getConnection();
                  PreparedStatement statement = connection.prepareStatement("SELECT home_name, location FROM public.central_home WHERE owner = ?")) {

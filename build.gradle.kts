@@ -43,13 +43,13 @@ dependencies {
 }
 
 paper {
-    main = "it.einjojo.essentials.EssentialsPlugin"
+    main = "net.wandoria.essentials.EssentialsPlugin"
     foliaSupported = false
     authors = listOf("EinJOJO")
     description = "Provides the economy- and basic commands, scoreboard, position management, playtime, etc."
     website = "https://einjojo.it"
     apiVersion = "1.20"
-    loader = "it.einjojo.essentials.PluginLibrariesLoader"
+    loader = "net.wandoria.essentials.PluginLibrariesLoader"
     generateLibrariesJson = true
     serverDependencies {
         register("PlaceholderAPI") {
@@ -70,6 +70,12 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 
     withSourcesJar()
+}
+
+tasks {
+    runServer {
+        minecraftVersion("1.21.4")
+    }
 }
 tasks.test {
     useJUnitPlatform()

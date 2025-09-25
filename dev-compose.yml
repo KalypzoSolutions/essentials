@@ -1,0 +1,42 @@
+name: essentials_dev
+services:
+  player-service:
+    image: ghcr.io/wandoriamc/player-service:latest
+    pull_policy: always
+    ports:
+      - "127.0.0.1:9090:9090"
+    environment:
+      - REDIS_HOST=dragonfly
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=27IwIQMBBCauFxdrcaXmDjj94CPz
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=development
+      - DB_USER=developer
+      - DB_PASSWORD=27IwIQMBBCauFxdrcaXmDjj94CPz
+  dragonfly:
+    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
+    ulimits:
+      memlock: -1
+    ports:
+      - "127.0.0.1:6379:6379"
+    command: [ "--requirepass", "27IwIQMBBCauFxdrcaXmDjj94CPz" ]
+    volumes:
+      - dragonflydata:/data
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=developer
+      - POSTGRES_PASSWORD=27IwIQMBBCauFxdrcaXmDjj94CPz
+      - POSTGRES_DB=development
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+  dragonflydata:
+networks:
+  default:

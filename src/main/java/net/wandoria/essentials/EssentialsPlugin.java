@@ -13,10 +13,14 @@ import net.wandoria.essentials.chat.ChatSystem;
 import net.wandoria.essentials.environment.DefaultPluginEnvironment;
 import net.wandoria.essentials.environment.PluginEnvironment;
 import net.wandoria.essentials.environment.name.CloudNetServerNameProvider;
+import net.wandoria.essentials.user.home.HomeManager;
+import net.wandoria.essentials.util.ConfigWrapper;
 import net.wandoria.essentials.world.PositionAccessor;
 import net.wandoria.essentials.world.TeleportExecutor;
+import net.wandoria.essentials.world.warps.WarpManager;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.flywaydb.core.Flyway;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -49,6 +53,11 @@ public class EssentialsPlugin extends JavaPlugin {
     private DataSource dataSource;
 
     @Override
+    public void onLoad() {
+        saveDefaultConfig();
+    }
+
+    @Override
     public void onEnable() {
         instance = this;
         environment = createEnvironment();
@@ -57,11 +66,33 @@ public class EssentialsPlugin extends JavaPlugin {
         getSLF4JLogger().info("Connecting to Redis...");
         redis = RedisClient.create(connectionConfiguration.getRedis().createUri("Essentials"));
         var pubSub = redis.connectPubSub();
-        chatSystem = new ChatSystem(pubSub, this, null, environment.getServerName());
+        try {
+            getSLF4JLogger().info("Pinged redis: {}.", pubSub.sync().ping());
+        } catch (Exception ex) {
+            getSLF4JLogger().error("Ping to redis failed. Disabling plugin", ex);
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        chatSystem = new ChatSystem(pubSub, this, new ConfigWrapper(getConfig()), environment.getServerName());
         TeleportExecutor.getInstance().init(pubSub);
         PositionAccessor.getInstance().init(pubSub);
 
+        getSLF4JLogger().info("All pub sub components initialized. Client subscribed to: {}", pubSub.sync().pubsubChannels());
+
         // database stuff
+        Flyway flyway = Flyway.configure()
+                .loggers("slf4j")
+                .createSchemas(true)
+                .dataSource(dataSource)
+                .load();
+        try {
+            flyway.baseline();
+            flyway.migrate();
+        } catch (Exception ex) {
+            getSLF4JLogger().error("Could not migrate Flyway", ex);
+
+        }
+
 
         loadLocales();
     }
@@ -100,5 +131,22 @@ public class EssentialsPlugin extends JavaPlugin {
     public static EssentialsPlugin instance() {
         return instance;
     }
+
+    public WarpManager getWarpManager() {
+        return WarpManager.getInstance();
+    }
+
+    public HomeManager getHomeManager() {
+        return HomeManager.getInstance();
+    }
+
+    public PositionAccessor getPositionAccessor() {
+        return PositionAccessor.getInstance();
+    }
+
+    public TeleportExecutor getTeleportExecutor() {
+        return TeleportExecutor.getInstance();
+    }
+
 
 }
