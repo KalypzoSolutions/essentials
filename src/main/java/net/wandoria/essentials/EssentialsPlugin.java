@@ -1,5 +1,7 @@
 package net.wandoria.essentials;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import io.lettuce.core.RedisClient;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -13,6 +15,8 @@ import net.wandoria.essentials.chat.ChatSystem;
 import net.wandoria.essentials.environment.DefaultPluginEnvironment;
 import net.wandoria.essentials.environment.PluginEnvironment;
 import net.wandoria.essentials.environment.name.CloudNetServerNameProvider;
+import net.wandoria.essentials.environment.name.DefaultServerNameProvider;
+import net.wandoria.essentials.environment.name.ServerNameProvider;
 import net.wandoria.essentials.user.home.HomeManager;
 import net.wandoria.essentials.util.ConfigWrapper;
 import net.wandoria.essentials.world.PositionAccessor;
@@ -21,6 +25,7 @@ import net.wandoria.essentials.world.warps.WarpManager;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.flywaydb.core.Flyway;
+import org.jetbrains.annotations.Nullable;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -49,7 +54,6 @@ public class EssentialsPlugin extends JavaPlugin {
     @Getter
     private ChatSystem chatSystem;
     private RedisClient redis;
-    @Getter
     private DataSource dataSource;
 
     @Override
@@ -61,6 +65,10 @@ public class EssentialsPlugin extends JavaPlugin {
     public void onEnable() {
         instance = this;
         environment = createEnvironment();
+        if (environment == null) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         SharedConnectionConfiguration connectionConfiguration = SharedConnectionConfiguration.load();
         //REDIS STUFF
         getSLF4JLogger().info("Connecting to Redis...");
@@ -80,30 +88,54 @@ public class EssentialsPlugin extends JavaPlugin {
         getSLF4JLogger().info("All pub sub components initialized. Client subscribed to: {}", pubSub.sync().pubsubChannels());
 
         // database stuff
-        Flyway flyway = Flyway.configure()
+        HikariConfig config = connectionConfiguration.getPostgres().createHikariConfig();
+        config.setSchema("public");
+        config.setPoolName("Essentials");
+        dataSource = new HikariDataSource(config);
+        Flyway flyway = Flyway.configure(getClassLoader())
+                .locations("classpath:db/")
+                .table("essentials_flyway_schema_history")
                 .loggers("slf4j")
                 .createSchemas(true)
+                .baselineOnMigrate(true)
                 .dataSource(dataSource)
                 .load();
         try {
-            flyway.baseline();
+
             flyway.migrate();
         } catch (Exception ex) {
             getSLF4JLogger().error("Could not migrate Flyway", ex);
-
         }
-
-
         loadLocales();
     }
 
-    private PluginEnvironment createEnvironment() {
+    private @Nullable PluginEnvironment createEnvironment() {
         getSLF4JLogger().info("Determining server environment...");
-        return new DefaultPluginEnvironment(this, new CloudNetServerNameProvider());
+        ServerNameProvider serverNameProvider;
+        if (CloudNetServerNameProvider.isAvailable()) {
+            getSLF4JLogger().info("CloudNet detected, using CloudNetServerNameProvider");
+            serverNameProvider = new CloudNetServerNameProvider();
+        } else {
+            getSLF4JLogger().warn("CloudNet not detected, falling back to default server name provider");
+            serverNameProvider = new DefaultServerNameProvider();
+        }
+        try {
+            return new DefaultPluginEnvironment(this, serverNameProvider);
+        } catch (NoClassDefFoundError noClass) {
+            getSLF4JLogger().error("The Environment could not be created because a class could not be found. Probably the player api has failed to load!");
+        } catch (Exception ex) {
+            getSLF4JLogger().error("The Environment could not be created.", ex);
+        }
+        return null;
     }
 
     @Override
     public void onDisable() {
+        if (dataSource != null) {
+            getSLF4JLogger().info("Closing database connection...");
+            ((HikariDataSource) dataSource).close();
+            getSLF4JLogger().info("Database connection closed.");
+        }
         if (redis != null) {
             getSLF4JLogger().info("Closing Redis connection...");
             redis.shutdown();
@@ -148,5 +180,10 @@ public class EssentialsPlugin extends JavaPlugin {
         return TeleportExecutor.getInstance();
     }
 
-
+    public DataSource getDataSource() {
+        if (dataSource == null) {
+            throw new IllegalStateException("DataSource is not initialized yet");
+        }
+        return dataSource;
+    }
 }

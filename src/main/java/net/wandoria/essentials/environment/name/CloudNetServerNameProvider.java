@@ -22,4 +22,13 @@ public class CloudNetServerNameProvider implements ServerNameProvider {
     }
 
 
+    public static boolean isAvailable() {
+         try {
+             Class.forName("eu.cloudnetservice.wrapper.holder.ServiceInfoHolder");
+         } catch (NoClassDefFoundError | ClassNotFoundException e) {
+             return false;
+         }
+         return  true;
+    }
+
 }

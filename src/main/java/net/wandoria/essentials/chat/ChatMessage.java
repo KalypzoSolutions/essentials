@@ -2,6 +2,7 @@ package net.wandoria.essentials.chat;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.wandoria.essentials.EssentialsPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,5 +54,12 @@ public record ChatMessage(@Nullable List<UUID> recipients, @NotNull String seria
      */
     public void deliver(ChatSystem system) {
         system.publishNetworkChatMessage(this);
+    }
+
+    /**
+     * Delivers the message using the default ChatSystem instance.
+     */
+    public void deliver() {
+        deliver(EssentialsPlugin.instance().getChatSystem());
     }
 }

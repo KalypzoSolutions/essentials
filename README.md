@@ -9,3 +9,6 @@ Therefore, the access of these classes is made through the static methods.
 - HomeManager
 - EssentialsPlugin (also exposes the classes above for better outside-dev experience using getters)
 
+#
+
+TODO: Commands

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.UUID;
 
 @Slf4j
 @Getter
@@ -13,7 +12,7 @@ public class DefaultServerNameProvider implements ServerNameProvider {
     private final String serverName;
 
     public DefaultServerNameProvider() {
-        String name = "unknown-" + UUID.randomUUID();
+        String name = "unknown-server";
         try {
             var method = Bukkit.getServer().getClass().getDeclaredMethod("getServerName");
             name = (String) method.invoke(Bukkit.getServer());

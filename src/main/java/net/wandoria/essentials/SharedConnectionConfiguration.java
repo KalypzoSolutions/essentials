@@ -102,6 +102,7 @@ public class SharedConnectionConfiguration {
             config.setPassword(password);
             config.setDriverClassName("org.postgresql.Driver");
             config.setDataSourceProperties(dataSourceProperties());
+            config.setSchema("public");
             return config;
         }
 

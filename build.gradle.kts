@@ -4,6 +4,7 @@ plugins {
     id("java")
     id("xyz.jpenilla.run-paper") version "2.3.1"
     id("de.eldoria.plugin-yml.paper") version "0.7.1"
+    id("com.gradleup.shadow") version "9.2.2"
 
 }
 
@@ -26,18 +27,26 @@ repositories {
 dependencies {
     compileOnly("it.einjojo.playerapi:api:1.2.0")
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-    paperLibrary("io.lettuce:lettuce-core:6.8.1.RELEASE")
-    paperLibrary("com.zaxxer:HikariCP:7.0.2")
-    paperLibrary("org.flywaydb:flyway-core:11.13.1")
-    paperLibrary("org.flywaydb:flyway-database-postgresql:11.13.1")
-    paperLibrary("org.postgresql:postgresql:42.7.5")
-    compileOnly("org.projectlombok:lombok:1.18.42")
     compileOnly("me.clip:placeholderapi:2.11.6")
+
+    paperLibrary("com.zaxxer:HikariCP:7.0.2")
+    paperLibrary("org.postgresql:postgresql:42.7.8")
+    paperLibrary("org.flywaydb:flyway-database-postgresql:11.13.2")
+
+    compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
+
+    //cloudnet
     implementation(platform("eu.cloudnetservice.cloudnet:bom:4.0.0-RC14"))
     compileOnly("eu.cloudnetservice.cloudnet:driver-api")
     compileOnly("eu.cloudnetservice.cloudnet:wrapper-jvm-api")
     compileOnly("eu.cloudnetservice.cloudnet:bridge-api")
+
+    // sucks when provided
+    implementation("io.lettuce:lettuce-core:6.8.1.RELEASE")
+    implementation("org.incendo:cloud-core:2.0.0")
+    implementation("org.incendo:cloud-annotations:2.0.0")
+    implementation("org.incendo:cloud-paper:2.0.0-beta.10")
 
 
 }
@@ -58,7 +67,7 @@ paper {
         }
         register("CloudNet-Bridge") {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
-            required = true
+            required = false
         }
         register("PlayerApi") {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
@@ -75,6 +84,15 @@ java {
 tasks {
     runServer {
         minecraftVersion("1.21.4")
+        downloadPlugins {
+            hangar("PlaceholderAPI", "2.11.6")
+        }
+    }
+    shadowJar {
+        relocate("io.lettuce", "net.wandoria.essentials.libs.lettuce")
+        relocate("org.incendo.cloud", "net.wandoria.essentials.libs.cloud")
+        relocate("io.netty", "net.wandoria.essentials.libs.netty")
+        //relocate("org.flywaydb", "net.wandoria.essentials.libs.flywaydb")
     }
 }
 tasks.test {
