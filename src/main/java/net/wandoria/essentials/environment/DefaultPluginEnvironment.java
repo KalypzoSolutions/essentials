@@ -1,12 +1,15 @@
 package net.wandoria.essentials.environment;
 
-import net.wandoria.essentials.EssentialsPlugin;
-import net.wandoria.essentials.environment.name.ServerNameProvider;
-import net.wandoria.essentials.user.EssentialsUser;
-import net.wandoria.essentials.user.NetworkEssentialsUser;
 import it.einjojo.playerapi.PlayerApi;
 import it.einjojo.playerapi.PlayerApiProvider;
 import lombok.Getter;
+import net.wandoria.essentials.EssentialsPlugin;
+import net.wandoria.essentials.environment.name.ServerNameProvider;
+import net.wandoria.essentials.user.EssentialsOfflineUser;
+import net.wandoria.essentials.user.EssentialsUser;
+import net.wandoria.essentials.user.NetworkEssentialsOfflineUser;
+import net.wandoria.essentials.user.NetworkEssentialsUser;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +77,18 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
     @Override
     public void connectPlayerToGroup(UUID player, String groupName) {
         playerApi.connectPlayerToServer(player, groupName);
+    }
+
+    @Override
+    public CompletableFuture<Optional<EssentialsOfflineUser>> getOfflineUser(UUID uuid) {
+        return playerApi.getOfflinePlayer(uuid).thenApply((player) ->
+                Optional.ofNullable(player).map(NetworkEssentialsOfflineUser::new));
+    }
+
+    @Override
+    public CompletableFuture<Optional<EssentialsOfflineUser>> getOfflineUserByName(@NonNull String playerName) {
+        return playerApi.getOfflinePlayer(playerName).thenApply((player) ->
+                Optional.ofNullable(player).map(NetworkEssentialsOfflineUser::new));
     }
 
 }

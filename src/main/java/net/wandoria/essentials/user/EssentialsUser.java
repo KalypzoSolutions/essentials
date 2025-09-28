@@ -1,13 +1,13 @@
 package net.wandoria.essentials.user;
 
 
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.chat.ChatMessage;
 import net.wandoria.essentials.world.NetworkPosition;
 import net.wandoria.essentials.world.PositionAccessor;
 import net.wandoria.essentials.world.TeleportExecutor;
-import lombok.Getter;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -18,10 +18,10 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * EssentialsUser
+ * EssentialsUser represents a player which may be online or offline.
  */
 @Getter
-public abstract class EssentialsUser {
+public abstract class EssentialsUser implements EssentialsOfflineUser {
 
     private final EssentialsPlugin plugin = EssentialsPlugin.instance();
     private final UUID uuid;

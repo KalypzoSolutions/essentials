@@ -84,9 +84,7 @@ public class EssentialsPlugin extends JavaPlugin {
         chatSystem = new ChatSystem(pubSub, this, new ConfigWrapper(getConfig()), environment.getServerName());
         TeleportExecutor.getInstance().init(pubSub);
         PositionAccessor.getInstance().init(pubSub);
-
         getSLF4JLogger().info("All pub sub components initialized. Client subscribed to: {}", pubSub.sync().pubsubChannels());
-
         // database stuff
         HikariConfig config = connectionConfiguration.getPostgres().createHikariConfig();
         config.setSchema("public");

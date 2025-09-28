@@ -26,6 +26,7 @@ repositories {
 
 dependencies {
     compileOnly("it.einjojo.playerapi:api:1.2.0")
+    compileOnly("it.einjojo:economy:2.0.1")
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
 
@@ -55,7 +56,7 @@ paper {
     main = "net.wandoria.essentials.EssentialsPlugin"
     foliaSupported = false
     authors = listOf("EinJOJO")
-    description = "Provides the economy- and basic commands, scoreboard, position management, playtime, etc."
+    description = "Provides the economy- and basic commands, scoreboard, position management, etc."
     website = "https://einjojo.it"
     apiVersion = "1.20"
     loader = "net.wandoria.essentials.PluginLibrariesLoader"
@@ -73,6 +74,10 @@ paper {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
             required = true
         }
+        register("EconomyProvider") {
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+            required = true
+        }
     }
 }
 java {
@@ -86,6 +91,7 @@ tasks {
         minecraftVersion("1.21.4")
         downloadPlugins {
             hangar("PlaceholderAPI", "2.11.6")
+            url("https://cloud.einjojo.it/s/YK8WMIJgrPIycnH/download")  // economy provider 3.0.1
         }
     }
     shadowJar {

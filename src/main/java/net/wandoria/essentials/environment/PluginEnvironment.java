@@ -1,7 +1,9 @@
 package net.wandoria.essentials.environment;
 
 import net.wandoria.essentials.environment.name.ServerNameProvider;
+import net.wandoria.essentials.user.EssentialsOfflineUser;
 import net.wandoria.essentials.user.EssentialsUser;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,4 +30,7 @@ public interface PluginEnvironment extends ServerNameProvider {
 
     void connectPlayerToGroup(UUID player, String groupName);
 
+    CompletableFuture<Optional<EssentialsOfflineUser>> getOfflineUser(UUID uuid);
+
+    CompletableFuture<Optional<EssentialsOfflineUser>> getOfflineUserByName(@NonNull String playerName);
 }
