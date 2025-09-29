@@ -2,9 +2,10 @@ package net.wandoria.essentials.command;
 
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.wandoria.essentials.EssentialsPlugin;
-import net.wandoria.essentials.command.parser.HomeParser;
 import net.wandoria.essentials.command.parser.EssentialsUserParser;
+import net.wandoria.essentials.command.parser.HomeParser;
 import net.wandoria.essentials.command.parser.WarpParser;
 import net.wandoria.essentials.exception.ComponentException;
 import org.bukkit.command.CommandSender;
@@ -42,7 +43,7 @@ public class CommandManager {
 
     }
 
-    public void registerExceptionControllers(PaperCommandManager<Source> commandManager) {
+    private void registerExceptionControllers(PaperCommandManager<Source> commandManager) {
         commandManager.exceptionController()
                 .registerHandler(CommandExecutionException.class, ExceptionHandler.unwrappingHandler()) // Unwrap the exception and pass it to the next handler
                 .registerHandler(ArgumentParseException.class,
@@ -67,13 +68,18 @@ public class CommandManager {
                 });
     }
 
-    public void registerCommands(AnnotationParser<Source> parser) {
-        parser.parse(
-
-        );
+    private void registerCommands(AnnotationParser<Source> parser) {
+        try {
+            var registeredCommanadsCollection = parser.parseContainers(plugin.getClass().getClassLoader());
+            for (var command : registeredCommanadsCollection) {
+                plugin.getComponentLogger().info(Component.text("Registered Command: " + command.rootComponent().name(), NamedTextColor.GREEN));
+            }
+        } catch (Exception e) {
+            plugin.getSLF4JLogger().error("Could not register commands", e);
+        }
     }
 
-    public CommandSender extractSender(CommandContext<Source> source) {
+    private CommandSender extractSender(CommandContext<Source> source) {
         return source.get(BukkitCommandContextKeys.BUKKIT_COMMAND_SENDER);
     }
 

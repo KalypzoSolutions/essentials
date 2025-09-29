@@ -57,6 +57,8 @@ public record Warp(@NotNull String name,
 
     @Override
     public @NotNull Component asComponent() {
-        return displayName.clickEvent(ClickEvent.runCommand("/warp " + name)).hoverEvent(Component.translatable("essentials.warp.click_to_teleport", displayName));
+        return displayName
+                .clickEvent(ClickEvent.runCommand("/warp " + name))
+                .hoverEvent(Component.translatable("essentials.warp.click_to_teleport", displayName));
     }
 }

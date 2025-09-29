@@ -11,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
  * This is pretty useful in combination with the incendo command framework during argument parsing.
  */
 @Getter
-public class ComponentException extends Exception implements ComponentLike {
+public class ComponentException extends RuntimeException implements ComponentLike {
     private final Component component;
 
-    private ComponentException(Component component) {
+    public ComponentException(Component component) {
         this.component = component;
     }
 

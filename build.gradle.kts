@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "it.einjojo"
-version = "1.0.0"
+version = "1.0.0-DEV"
 
 repositories {
     mavenCentral()
@@ -45,14 +45,16 @@ dependencies {
 
     // sucks when provided
     implementation("io.lettuce:lettuce-core:6.8.1.RELEASE")
-    implementation("org.incendo:cloud-core:2.0.0")
-    implementation("org.incendo:cloud-annotations:2.0.0")
-    implementation("org.incendo:cloud-paper:2.0.0-beta.10")
+    paperLibrary("org.incendo:cloud-core:2.0.0")
+    paperLibrary("org.incendo:cloud-annotations:2.0.0")
+    annotationProcessor("org.incendo:cloud-annotations:2.0.0")
+    paperLibrary("org.incendo:cloud-paper:2.0.0-beta.10")
 
 
 }
 
 paper {
+    name = "Essentials"
     main = "net.wandoria.essentials.EssentialsPlugin"
     foliaSupported = false
     authors = listOf("EinJOJO")
@@ -74,7 +76,7 @@ paper {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
             required = true
         }
-        register("EconomyProvider") {
+        register("EconomyProviderPlugin") {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
             required = true
         }
@@ -87,20 +89,33 @@ java {
 }
 
 tasks {
+    compileJava {
+        options.encoding = Charsets.UTF_8.name()
+        options.compilerArgs.add("-parameters")
+    }
     runServer {
         minecraftVersion("1.21.4")
         downloadPlugins {
             hangar("PlaceholderAPI", "2.11.6")
             url("https://cloud.einjojo.it/s/YK8WMIJgrPIycnH/download")  // economy provider 3.0.1
+            url("https://cloud.einjojo.it/s/cXeZeZXUEgsUPoP/download") // players api 1.4.1
         }
     }
     shadowJar {
         relocate("io.lettuce", "net.wandoria.essentials.libs.lettuce")
-        relocate("org.incendo.cloud", "net.wandoria.essentials.libs.cloud")
+        //relocate("org.incendo.cloud", "net.wandoria.essentials.libs.cloud")
         relocate("io.netty", "net.wandoria.essentials.libs.netty")
         //relocate("org.flywaydb", "net.wandoria.essentials.libs.flywaydb")
     }
 }
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
+    javaLauncher = javaToolchains.launcherFor {
+        vendor = JvmVendorSpec.JETBRAINS
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    jvmArgs("-XX:+AllowEnhancedClassRedefinition")
 }

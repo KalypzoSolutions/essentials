@@ -3,6 +3,7 @@ package net.wandoria.essentials.user;
 
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.chat.ChatMessage;
 import net.wandoria.essentials.world.NetworkPosition;
@@ -10,6 +11,7 @@ import net.wandoria.essentials.world.PositionAccessor;
 import net.wandoria.essentials.world.TeleportExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -21,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
  * EssentialsUser represents a player which may be online or offline.
  */
 @Getter
-public abstract class EssentialsUser implements EssentialsOfflineUser {
+public abstract class EssentialsUser implements EssentialsOfflineUser, ComponentLike {
 
     private final EssentialsPlugin plugin = EssentialsPlugin.instance();
     private final UUID uuid;
@@ -78,4 +80,8 @@ public abstract class EssentialsUser implements EssentialsOfflineUser {
         return TeleportExecutor.getInstance();
     }
 
+    @Override
+    public @NotNull Component asComponent() {
+        return Component.text(name).hoverEvent(Component.text(uuid.toString()));
+    }
 }

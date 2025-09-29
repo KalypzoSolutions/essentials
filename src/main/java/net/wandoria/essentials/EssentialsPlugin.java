@@ -12,6 +12,7 @@ import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslationSt
 import net.kyori.adventure.translation.GlobalTranslator;
 import net.kyori.adventure.util.UTF8ResourceBundleControl;
 import net.wandoria.essentials.chat.ChatSystem;
+import net.wandoria.essentials.command.CommandManager;
 import net.wandoria.essentials.environment.DefaultPluginEnvironment;
 import net.wandoria.essentials.environment.PluginEnvironment;
 import net.wandoria.essentials.environment.name.CloudNetServerNameProvider;
@@ -105,6 +106,7 @@ public class EssentialsPlugin extends JavaPlugin {
             getSLF4JLogger().error("Could not migrate Flyway", ex);
         }
         loadLocales();
+        new CommandManager(this);
     }
 
     private @Nullable PluginEnvironment createEnvironment() {

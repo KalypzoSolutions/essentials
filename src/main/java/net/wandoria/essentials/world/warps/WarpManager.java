@@ -28,6 +28,10 @@ public class WarpManager {
         this.dataSource = dataSource;
     }
 
+    public Collection<Warp> getWarps() {
+        return warps.values();
+    }
+
     private static class OnDemand {
         private final static WarpManager INSTANCE = new WarpManager(EssentialsPlugin.instance().getDataSource());
     }
@@ -48,7 +52,7 @@ public class WarpManager {
         }
         loadFuture = CompletableFuture.runAsync(() -> {
             try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()) {
-                try (ResultSet resultSet = statement.executeQuery("SELECT name, location, display_name, permission FROM public.central_warps;")) {
+                try (ResultSet resultSet = statement.executeQuery("SELECT name, location, display_name, permission FROM essentials_server_warps;")) {
                     while (resultSet.next()) {
                         String warpName = resultSet.getString("name");
                         String displayNameSerialized = resultSet.getString("display_name");
@@ -100,7 +104,7 @@ public class WarpManager {
         registerWarp(warp);
         return CompletableFuture.runAsync(() -> {
             try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO public.central_warps (name, permission, display_name, location) VALUES (?, ?, ?, ?) ON CONFLICT (warp_name) DO UPDATE SET location = EXCLUDED.location, permission = EXCLUDED.permission, display_name = EXCLUDED.display_name")) {
+                    "INSERT INTO essentials_server_warps (name, permission, display_name, location) VALUES (?, ?, ?, ?) ON CONFLICT (name) DO UPDATE SET location = EXCLUDED.location, permission = EXCLUDED.permission, display_name = EXCLUDED.display_name")) {
                 statement.setString(1, warp.name());
                 statement.setString(2, warp.permission());
                 statement.setString(3, MiniMessage.miniMessage().serialize(warp.displayName()));

@@ -13,18 +13,21 @@ import org.incendo.cloud.annotation.specifier.Greedy;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
 import org.incendo.cloud.annotations.Permission;
+import org.incendo.cloud.annotations.processing.CommandContainer;
 import org.incendo.cloud.paper.util.sender.PlayerSource;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * <p>Provides all commands related to private messages / reply </p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link net.wandoria.essentials.command.CommandManager}</p>
+ */
+@CommandContainer
 public class MsgCommand {
-    private final ChatSystem chatSystem;
+    private final ChatSystem chatSystem = EssentialsPlugin.instance().getChatSystem();
     private final JavaPlugin schedulerExecutor = EssentialsPlugin.instance();
 
-    public MsgCommand(ChatSystem chatSystem) {
-        this.chatSystem = chatSystem;
-    }
 
     @Command("msg <receiver> <message>")
     @Permission("mirania.central.bukkit.command.msg")

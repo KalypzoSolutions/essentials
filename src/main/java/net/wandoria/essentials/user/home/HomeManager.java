@@ -39,7 +39,7 @@ public class HomeManager {
 
     public CompletableFuture<Optional<Home>> getHome(UUID owner, String name) {
         return CompletableFuture.supplyAsync(() -> {
-            try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT location FROM public.essentails WHERE home_name = ? AND owner = ?")) {
+            try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT location FROM essentials_player_homes WHERE name = ? AND owner = ?")) {
                 statement.setString(1, name);
                 statement.setObject(2, owner);
                 try (var resultSet = statement.executeQuery();) {
@@ -59,7 +59,7 @@ public class HomeManager {
     public CompletableFuture<List<Home>> getHomes(UUID playerUuid) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = dataSource.getConnection();
-                 PreparedStatement statement = connection.prepareStatement("SELECT home_name, location FROM public.central_home WHERE owner = ?")) {
+                 PreparedStatement statement = connection.prepareStatement("SELECT name, location FROM public.essentials_player_homes WHERE owner = ?")) {
                 statement.setObject(1, playerUuid);
                 var resultSet = statement.executeQuery();
 
@@ -82,8 +82,8 @@ public class HomeManager {
         return CompletableFuture.runAsync(() -> {
             try (Connection connection = dataSource.getConnection();
                  PreparedStatement statement = connection.prepareStatement(
-                         "INSERT INTO public.central_home (owner, home_name, location) VALUES (?, ?, ?) " +
-                                 "ON CONFLICT (owner, home_name) DO UPDATE SET location = EXCLUDED.location")) {
+                         "INSERT INTO essentials_player_homes (owner, name, location) VALUES (?, ?, ?) " +
+                                 "ON CONFLICT (owner, name) DO UPDATE SET location = EXCLUDED.location")) {
 
                 statement.setObject(1, home.owner());
                 statement.setString(2, home.name());
