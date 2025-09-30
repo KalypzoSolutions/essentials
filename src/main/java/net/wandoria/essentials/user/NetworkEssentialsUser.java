@@ -2,24 +2,32 @@ package net.wandoria.essentials.user;
 
 import it.einjojo.playerapi.NetworkPlayer;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.time.Duration;
 
+@NullMarked
 public class NetworkEssentialsUser extends EssentialsUser {
-    private final NetworkPlayer player;
+    public final NetworkPlayer networkPlayer;
 
     public NetworkEssentialsUser(NetworkPlayer player) {
         super(player.getUniqueId(), player.getName());
-        this.player = player;
+        this.networkPlayer = player;
     }
 
+    /**
+     * Gets the server name where the player was connected to at the moment the object has been created.
+     *
+     * @return server Name or null if the player is not connected to a server.
+     */
     @Override
     public @Nullable String getServerName() {
-        return player.getConnectedServerName().orElse(null);
+        return networkPlayer.getConnectedServerName().orElse(null);
     }
+
 
     @Override
     public Duration getPlayTime() {
-        return Duration.ofMillis(player.getSessionTime());
+        return Duration.ofMillis(networkPlayer.getSessionTime());
     }
 }
