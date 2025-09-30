@@ -18,12 +18,15 @@ import net.wandoria.essentials.environment.PluginEnvironment;
 import net.wandoria.essentials.environment.name.CloudNetServerNameProvider;
 import net.wandoria.essentials.environment.name.DefaultServerNameProvider;
 import net.wandoria.essentials.environment.name.ServerNameProvider;
+import net.wandoria.essentials.user.back.BackManager;
+import net.wandoria.essentials.user.back.DeathListener;
 import net.wandoria.essentials.user.home.HomeManager;
 import net.wandoria.essentials.util.ConfigWrapper;
 import net.wandoria.essentials.world.PositionAccessor;
 import net.wandoria.essentials.world.TeleportExecutor;
 import net.wandoria.essentials.world.warps.WarpManager;
 import org.bukkit.NamespacedKey;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.flywaydb.core.Flyway;
 import org.jetbrains.annotations.Nullable;
@@ -54,6 +57,7 @@ public class EssentialsPlugin extends JavaPlugin {
     private PluginEnvironment environment;
     @Getter
     private ChatSystem chatSystem;
+    @Getter
     private RedisClient redis;
     private DataSource dataSource;
 
@@ -107,6 +111,8 @@ public class EssentialsPlugin extends JavaPlugin {
         }
         loadLocales();
         new CommandManager(this);
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new DeathListener(BackManager.getInstance()), this);
     }
 
     private @Nullable PluginEnvironment createEnvironment() {
