@@ -10,10 +10,15 @@ import org.bukkit.command.CommandSender;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
 import org.incendo.cloud.annotations.Permission;
+import org.incendo.cloud.annotations.processing.CommandContainer;
 import org.incendo.cloud.paper.util.sender.Source;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * <p>Because of @CommandContainer it gets instantiated by {@link net.wandoria.essentials.command.CommandManager}</p>
+ */
+@CommandContainer
 public class MoneyAdminCommand {
     private final EconomyService economyService;
 
