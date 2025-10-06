@@ -10,6 +10,9 @@ import org.bukkit.command.CommandSender;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Makes the Bukkit#dispatchCommand method available to be executed remotely using {@link RemoteCommandCall}
+ */
 @Slf4j
 @NullMarked
 public class RemoteCommandExecutor {
@@ -31,7 +34,11 @@ public class RemoteCommandExecutor {
                 if (!channel.equals(CHANNEL)) {
                     return;
                 }
-                executeLocally(gson.fromJson(message, RemoteCommandCall.class));
+                try {
+                    executeLocally(gson.fromJson(message, RemoteCommandCall.class));
+                } catch (Exception ex) {
+                    log.error("Error while handling remote command call", ex);
+                }
             }
         });
     }
@@ -48,11 +55,17 @@ public class RemoteCommandExecutor {
         if (connection == null) {
             throw new IllegalStateException("Connection is not initialized yet");
         }
+        if (command.serverName().equals(serverName)) {
+            executeLocally(command);
+            return;
+        }
         connection.sync().publish(CHANNEL, gson.toJson(command));
     }
 
     /**
-     * returns silently if the command is not for this server
+     * <p>returns silently if the command is not for this server</p>
+     * <p>returns silently if the player, who is provided as executor, is not online.</p>
+     * <p>Runs the command on the main thread.</p>
      *
      * @param command any command
      */
