@@ -30,6 +30,13 @@ public class ComponentException extends RuntimeException implements ComponentLik
         return new ComponentException(Component.translatable(key));
     }
 
+    /**
+     * create a ComponentException with a translatable component
+     *
+     * @param key       the translation key
+     * @param arguments other than in components these string arguments will be converted to components
+     * @return a command exception with a translatable component
+     */
     public static ComponentException translatable(String key, String... arguments) {
         ComponentLike[] componentArgs = new ComponentLike[arguments.length];
         for (int i = 0; i < arguments.length; i++) {

@@ -1,6 +1,7 @@
 package net.wandoria.essentials.user.back;
 
 import lombok.extern.slf4j.Slf4j;
+import net.kyori.adventure.text.Component;
 import net.wandoria.essentials.world.NetworkPosition;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,5 +21,6 @@ public record DeathListener(BackManager backManager) implements Listener {
         NetworkPosition pos = NetworkPosition.createByLocation(event.getPlayer().getLocation());
         backManager.setDeathLocation(player.getUniqueId(), pos);
         log.info("Stored death location for player {}: {}", player.getName(), pos);
+        player.sendMessage(Component.translatable("essentials.back.death-location-set"));
     }
 }

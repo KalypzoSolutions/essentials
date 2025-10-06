@@ -18,6 +18,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 /**
  * EssentialsUser represents a player which may be online or offline.
@@ -55,6 +56,15 @@ public abstract class EssentialsUser implements EssentialsOfflineUser, Component
         getTeleportExecutor().teleportPlayerToPlayer(uuid, target.uuid);
     }
 
+    public void ifOnlineLocallyOrElse(Consumer<Player> onlineConsumer, Runnable otherServerRunner) {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
+            onlineConsumer.accept(player);
+        } else {
+            otherServerRunner.run();
+        }
+
+    }
 
     public boolean hasDisabledPrivateMessages() {
         return plugin.getChatSystem().hasDisabledPrivateMessages(uuid);

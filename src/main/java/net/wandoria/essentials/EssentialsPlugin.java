@@ -18,6 +18,7 @@ import net.wandoria.essentials.environment.PluginEnvironment;
 import net.wandoria.essentials.environment.name.CloudNetServerNameProvider;
 import net.wandoria.essentials.environment.name.DefaultServerNameProvider;
 import net.wandoria.essentials.environment.name.ServerNameProvider;
+import net.wandoria.essentials.rce.RemoteCommandExecutor;
 import net.wandoria.essentials.user.back.BackManager;
 import net.wandoria.essentials.user.back.DeathListener;
 import net.wandoria.essentials.user.home.HomeManager;
@@ -89,6 +90,7 @@ public class EssentialsPlugin extends JavaPlugin {
         chatSystem = new ChatSystem(pubSub, this, new ConfigWrapper(getConfig()), environment.getServerName());
         TeleportExecutor.getInstance().init(pubSub);
         PositionAccessor.getInstance().init(pubSub);
+        RemoteCommandExecutor.getInstance().init(pubSub);
         getSLF4JLogger().info("All pub sub components initialized. Client subscribed to: {}", pubSub.sync().pubsubChannels());
         // database stuff
         HikariConfig config = connectionConfiguration.getPostgres().createHikariConfig();

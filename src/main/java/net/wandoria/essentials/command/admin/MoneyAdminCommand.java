@@ -6,6 +6,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.translation.Argument;
 import net.wandoria.essentials.exception.TransactionException;
 import net.wandoria.essentials.user.EssentialsOfflineUser;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
@@ -13,6 +14,7 @@ import org.incendo.cloud.annotations.Permission;
 import org.incendo.cloud.annotations.processing.CommandContainer;
 import org.incendo.cloud.paper.util.sender.Source;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -22,8 +24,8 @@ import java.util.concurrent.CompletableFuture;
 public class MoneyAdminCommand {
     private final EconomyService economyService;
 
-    public MoneyAdminCommand(EconomyService economyService) {
-        this.economyService = economyService;
+    public MoneyAdminCommand() {
+        this.economyService = Objects.requireNonNull(Bukkit.getServicesManager().load(EconomyService.class));
     }
 
     @Command("money set <player> <amount>")

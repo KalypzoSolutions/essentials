@@ -9,15 +9,16 @@ import org.incendo.cloud.annotations.processing.CommandContainer;
 import org.incendo.cloud.paper.util.sender.PlayerSource;
 
 /**
+ * <p>Workbench, Anvil</p>
  * <p>Because of @CommandContainer it gets instantiated by {@link net.wandoria.essentials.command.CommandManager}</p>
  */
 @CommandContainer
-public class WorkbenchCommand {
+public class UtilityCommand {
 
-    @Command("workbench|wb")
-    @CommandDescription("Öffnet das Handwerkstisch")
-    @Permission("mirania.central.bukkit.command.workbench")
-    public void openWorkBench(PlayerSource source) {
+    @Command("workbench|wb|craft")
+    @CommandDescription("Öffne die Werkbank")
+    @Permission("essentials.workbench")
+    public void workbench(PlayerSource source) {
         InventoryView view = MenuType.CRAFTING.builder().build(source.source());
         view.open();
     }

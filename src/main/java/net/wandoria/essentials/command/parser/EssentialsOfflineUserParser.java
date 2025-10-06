@@ -1,6 +1,7 @@
 package net.wandoria.essentials.command.parser;
 
 
+import net.kyori.adventure.text.Component;
 import net.wandoria.essentials.environment.PluginEnvironment;
 import net.wandoria.essentials.exception.ComponentException;
 import net.wandoria.essentials.user.EssentialsOfflineUser;
@@ -61,12 +62,12 @@ public class EssentialsOfflineUserParser implements ArgumentParser.FutureArgumen
         } else {
             futureNetworkUser = environment.getOfflineUserByName(commandInput.peekString());
         }
+        commandInput.readString();
 
         return futureNetworkUser.thenApply(optionalNetworkUser -> {
             if (optionalNetworkUser.isEmpty()) {
                 return ArgumentParseResult.failure(ComponentException.translatable("wandoria.player.not-found", input));
             }
-            commandInput.readString();
             return ArgumentParseResult.success(optionalNetworkUser.get());
         });
     }
@@ -74,11 +75,14 @@ public class EssentialsOfflineUserParser implements ArgumentParser.FutureArgumen
 
     @Override
     public CompletableFuture<? extends Iterable<? extends Suggestion>> suggestionsFuture(CommandContext<Source> context, CommandInput input) {
-        return environment.getUsers().thenApply(
-                users -> users.stream()
-                        .map(EssentialsUser::getName)
-                        .map(Suggestion::suggestion)
-                        .toList()
-        );
+        String inputText = input.peekString();
+        context.sender().source().sendActionBar(Component.text("Searching: " + inputText));
+        return environment.getUsers()
+                .thenApply(
+                        users -> users.stream()
+                                .map(EssentialsUser::getName)
+                                .map(Suggestion::suggestion)
+                                .toList()
+                );
     }
 }
