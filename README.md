@@ -34,17 +34,20 @@ This plugin requires the following dependencies:
 
 ## For Developers
 
+A good point to start understanding this project is `commands/`
+
 ### Noteworthy
 
 - PluginEnvironment can be implemented easily support different server types (CloudNet, SimpleCloud, etc).
 - By default, it is expected that the _PlayerAPI_ is available
 - Uses the incendo command framework
 - You can start right out of the box with `gradle runServer`
+- Listeners, named `*Listener.java`, are in the related feature package and not inside a `listeners` package.
 
 ### Singletons
 
 Personally, I prefer to make classes singletons where I know that they will only be used once.
-Therefore, the access of these classes is made through the static methods.
+<br/>Therefore to access these classes, use their static getter methods.
 
 - TeleportExecutor
 - WarpManager

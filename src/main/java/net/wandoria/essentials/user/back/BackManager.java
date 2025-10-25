@@ -13,6 +13,7 @@ import java.util.UUID;
 
 /**
  * Singleton class for managing player death locations.
+ * <p>To fully work, the plugin must register {@link DeathListener}</p>
  */
 public class BackManager {
     private static final int BACK_TTL_SECONDS = 60 * 30;
