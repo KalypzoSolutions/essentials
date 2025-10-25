@@ -36,7 +36,7 @@ public class WarpCommand {
     }
 
     @Command("warp reload")
-    @Permission("mirania.central.bukkit.command.warp.reload")
+    @Permission("wandoria.essentials.command.warp.reload")
     public CompletableFuture<Void> reload(Source source) {
         return WarpManager.getInstance().load().thenAccept(_void -> {
             source.source().sendMessage(Component.translatable("essentials.command.warp.reload"));
@@ -44,7 +44,7 @@ public class WarpCommand {
     }
 
     @Command("warp set <name>")
-    @Permission("mirania.central.bukkit.command.warp.reload")
+    @Permission("wandoria.essentials.command.warp.reload")
     public CompletableFuture<Void> save(PlayerSource source, String name, @Flag("permission") String permission, @Flag("displayName") String displayName) {
         Component component;
         if (displayName != null) {

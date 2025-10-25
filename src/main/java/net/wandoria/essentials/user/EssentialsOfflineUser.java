@@ -10,7 +10,7 @@ import java.util.UUID;
 
 /**
  * EssentialsUser represents a player which is online and supports more actions like teleport and messaging.
- * It can be obtained using
+ * <p>Instantiated by {@link net.wandoria.essentials.environment.PluginEnvironment}</p>
  */
 public interface EssentialsOfflineUser extends ComponentLike {
 

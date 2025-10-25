@@ -19,7 +19,7 @@ public class BackCommand {
 
     @Command("back")
     @CommandDescription("Nach dem Tot zurück")
-    @Permission("mirania.central.bukkit.command.back")
+    @Permission("wandoria.essentials.command.back")
     public void teleportBack(PlayerSource source) {
         if (!BackManager.getInstance().hasBackLocation(source.source().getUniqueId())) {
             source.source().sendMessage(Component.translatable("essentials.back.no-location"));

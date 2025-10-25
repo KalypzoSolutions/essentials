@@ -11,18 +11,46 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Essentials might be hosted in different environments. (locally / cloudnet / pterodactyl)
+ * Abstraction layer - Essentials might be hosted in different environments. (locally / cloudnet / pterodactyl)
  */
 public interface PluginEnvironment extends ServerNameProvider {
 
+    /**
+     * Get the name of the server that velocity uses.
+     *
+     * @return string
+     */
     String getServerName();
 
+    /**
+     * Check whether a player is online on the network.
+     *
+     * @param uuid any player uuid
+     * @return true, if the player is online on the network.
+     */
     CompletableFuture<Boolean> isPlayerOnline(UUID uuid);
 
+    /**
+     * Get the user object.
+     *
+     * @param uuid any player uuid
+     * @return an instance of EssentialsUser or empty if the player is not online.
+     */
     CompletableFuture<Optional<EssentialsUser>> getUser(UUID uuid);
 
+    /**
+     * Get the user object.
+     *
+     * @param userName name of the player
+     * @return an instance of EssentialsUser or empty if the player is not online.
+     */
     CompletableFuture<Optional<EssentialsUser>> getUserByName(String userName);
 
+    /**
+     * Get a list of all online users.
+     *
+     * @return a list of all online users.
+     */
     CompletableFuture<List<EssentialsUser>> getUsers();
 
 

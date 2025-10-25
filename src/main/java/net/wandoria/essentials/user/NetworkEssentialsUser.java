@@ -6,6 +6,9 @@ import org.jspecify.annotations.NullMarked;
 
 import java.time.Duration;
 
+/**
+ * Implementation using the PLAYER-API
+ */
 @NullMarked
 public class NetworkEssentialsUser extends EssentialsUser {
     public final NetworkPlayer networkPlayer;

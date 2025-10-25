@@ -30,7 +30,7 @@ public class MoneyAdminCommand {
 
     @Command("money set <player> <amount>")
     @CommandDescription("Setze den Kontostand eines Spielers")
-    @Permission("mirania.central.bukkit.command.money.set")
+    @Permission("wandoria.essentials.command.money.set")
     public CompletableFuture<Void> setMoney(Source source, EssentialsOfflineUser player, int amount) {
         CommandSender sender = source.source();
         return economyService.setBalance(player.getUniqueId(), amount, "ADMIN_CMD SET " + source.source().getName()).thenAccept((result) -> {
@@ -46,7 +46,7 @@ public class MoneyAdminCommand {
 
     @Command("money add <player> <amount>")
     @CommandDescription("Ändere den Kontostand eines Spielers")
-    @Permission("mirania.central.bukkit.command.money.add")
+    @Permission("wandoria.essentials.command.money.add")
     public CompletableFuture<Void> addMoney(Source source, EssentialsOfflineUser player, int amount) {
         CommandSender sender = source.source();
         return economyService.deposit(player.getUniqueId(), amount, "ADMIN_CMD ADD " + source.source().getName()).thenAccept((result) -> {
@@ -63,7 +63,7 @@ public class MoneyAdminCommand {
 
     @Command("money withdraw <player> <amount>")
     @CommandDescription("Ändere den Kontostand eines Spielers")
-    @Permission("mirania.central.bukkit.command.money.add")
+    @Permission("wandoria.essentials.command.money.add")
     public CompletableFuture<Void> removeMoney(Source source, EssentialsOfflineUser player, int amount) {
         CommandSender sender = source.source();
         return economyService.withdraw(player.getUniqueId(), amount, "ADMIN_CMD SUB " + source.source().getName()).thenAccept((result) -> {

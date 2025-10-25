@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 
 /**
  * EssentialsUser represents a player which may be online or offline.
+ * <p>Instantiated by {@link net.wandoria.essentials.environment.PluginEnvironment}</p>
  */
 @Getter
 public abstract class EssentialsUser implements EssentialsOfflineUser, ComponentLike {
