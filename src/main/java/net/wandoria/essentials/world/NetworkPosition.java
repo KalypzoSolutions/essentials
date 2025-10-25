@@ -1,6 +1,9 @@
 package net.wandoria.essentials.world;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.wandoria.essentials.EssentialsPlugin;
@@ -26,7 +29,7 @@ public record NetworkPosition(@NotNull String serverName,
                               double y,
                               double z,
                               float yaw,
-                              float pitch) {
+                              float pitch) implements ComponentLike {
 
 
     /**
@@ -108,4 +111,28 @@ public record NetworkPosition(@NotNull String serverName,
     }
 
 
+    @Override
+    public @NotNull Component asComponent() {
+        return Component.text()
+                .append(Component.text("x: ", NamedTextColor.GRAY))
+                .append(Component.text(Math.round(x), NamedTextColor.AQUA)
+                        .hoverEvent(HoverEvent.showText(Component.text(x))))
+                .append(Component.text(" y: ", NamedTextColor.GRAY))
+                .append(Component.text(Math.round(y), NamedTextColor.AQUA)
+                        .hoverEvent(HoverEvent.showText(Component.text(y))))
+                .append(Component.text(" z: ", NamedTextColor.GRAY))
+                .append(Component.text(Math.round(z), NamedTextColor.AQUA)
+                        .hoverEvent(HoverEvent.showText(Component.text(z))))
+                .append(Component.text(" yaw: ", NamedTextColor.GRAY))
+                .append(Component.text(Math.round(yaw), NamedTextColor.AQUA)
+                        .hoverEvent(HoverEvent.showText(Component.text(yaw))))
+                .append(Component.text(" pitch: ", NamedTextColor.GRAY))
+                .append(Component.text(Math.round(pitch), NamedTextColor.AQUA)
+                        .hoverEvent(HoverEvent.showText(Component.text(pitch))))
+                .append(Component.text(" ○: ", NamedTextColor.GRAY))
+                .append(Component.text(worldName, NamedTextColor.GREEN))
+                .append(Component.text(" ⊽: ", NamedTextColor.GRAY))
+                .append(Component.text(serverName, NamedTextColor.GOLD))
+                .build();
+    }
 }

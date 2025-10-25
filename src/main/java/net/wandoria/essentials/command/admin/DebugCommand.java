@@ -28,7 +28,9 @@ public class DebugCommand {
         long start = System.currentTimeMillis();
         player.getPosition().thenAccept((pos) -> {
             long time = System.currentTimeMillis() - start;
-            source.source().sendRichMessage("<gray>» X:<x> Y:<y> Z:<z> Yaw:<yaw> Pitch:<pitch> World:<world> Server:<server> in <time>", pos.asTagResolver(), Placeholder.unparsed("time", time + "ms"));
+            source.source().sendRichMessage("<gray>» <pos> in <time>",
+                    Placeholder.component("pos", pos),
+                    Placeholder.unparsed("time", time + "ms"));
         }).exceptionally(ex -> {
             source.source().sendRichMessage("<red>» Fehler beim Laden der Position: " + ex.getMessage());
             return null;
