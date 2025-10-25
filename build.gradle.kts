@@ -54,7 +54,7 @@ dependencies {
 }
 
 paper {
-    name = "Essentials"
+    name = "EssentialsW"
     main = "net.wandoria.essentials.EssentialsPlugin"
     foliaSupported = false
     authors = listOf("EinJOJO")
