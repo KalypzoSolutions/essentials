@@ -99,10 +99,11 @@ public class EssentialsPlugin extends JavaPlugin {
         dataSource = new HikariDataSource(config);
         Flyway flyway = Flyway.configure(getClassLoader())
                 .locations("classpath:db/")
+                .baselineOnMigrate(true)
+                .baselineVersion("0.0.1")
                 .table("essentials_flyway_schema_history")
                 .loggers("slf4j")
                 .createSchemas(true)
-                .baselineOnMigrate(true)
                 .dataSource(dataSource)
                 .load();
         try {

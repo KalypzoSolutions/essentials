@@ -13,6 +13,7 @@ import org.incendo.cloud.annotations.Permission;
 import org.incendo.cloud.annotations.processing.CommandContainer;
 import org.incendo.cloud.paper.util.sender.PlayerSource;
 import org.incendo.cloud.paper.util.sender.Source;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -45,7 +46,7 @@ public class WarpCommand {
 
     @Command("warp set <name>")
     @Permission("wandoria.essentials.command.warp.reload")
-    public CompletableFuture<Void> save(PlayerSource source, String name, @Flag("permission") String permission, @Flag("displayName") String displayName) {
+    public CompletableFuture<Void> save(PlayerSource source, String name, @Nullable @Flag("permission") String permission, @Nullable @Flag("displayName") String displayName) {
         Component component;
         if (displayName != null) {
             component = MiniMessage.miniMessage().deserialize(displayName).colorIfAbsent(NamedTextColor.AQUA);

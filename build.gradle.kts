@@ -103,9 +103,7 @@ tasks {
     }
     shadowJar {
         relocate("io.lettuce", "net.wandoria.essentials.libs.lettuce")
-        //relocate("org.incendo.cloud", "net.wandoria.essentials.libs.cloud")
         relocate("io.netty", "net.wandoria.essentials.libs.netty")
-        //relocate("org.flywaydb", "net.wandoria.essentials.libs.flywaydb")
     }
 }
 tasks.test {

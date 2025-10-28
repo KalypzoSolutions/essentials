@@ -11,6 +11,7 @@ import net.wandoria.essentials.world.TeleportExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.regex.Pattern;
 
@@ -24,7 +25,7 @@ import java.util.regex.Pattern;
  */
 public record Warp(@NotNull String name,
                    @NotNull Component displayName,
-                   @NotNull String permission,
+                   @Nullable String permission,
                    @NotNull NetworkPosition location) implements ComponentLike {
     public static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]{1,64}$");
 
@@ -32,7 +33,7 @@ public record Warp(@NotNull String name,
         if (!NAME_PATTERN.matcher(name).matches()) {
             throw new IllegalArgumentException("Warp name must be alphanumeric and max 64 chars");
         }
-        if (permission.length() >= 128) {
+        if (permission != null && permission.length() >= 128) {
             throw new IllegalArgumentException("Warp permission must be exact or less than 128 chars");
         }
     }
