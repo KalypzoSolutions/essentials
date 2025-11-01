@@ -94,7 +94,7 @@ public class ChatSystem implements Listener {
             return;
         }
         try {
-            String chatFormat = chatConfiguration.chatFormat();
+            String chatFormat = chatConfiguration.getChatFormat();
             chatFormat = PlaceholderAPI.setPlaceholders(event.getPlayer(), chatFormat);
             Component formattedMessage = miniMessage.deserialize(chatFormat,
                     Placeholder.component("message", event.message()),
@@ -137,7 +137,15 @@ public class ChatSystem implements Listener {
             }
         }
         for (Player recipient : recipients) {
-            recipient.sendMessage(chatMessage.getContent());
+            if (chatMessage.serializedMiniMessage().contains("@" + recipient.getName())) { // ping
+                Component pingedMessage = chatMessage.getContent()
+                        .replaceText(builder -> builder.match("@" + recipient.getName())
+                                .replacement(Component.text("@" + recipient.getName()).color(EssentialsPlugin.HIGHLIGHT)));
+                recipient.sendMessage(pingedMessage);
+                recipient.playSound(recipient, chatConfiguration.getPingSound(), 1, 1.4f);
+            } else {
+                recipient.sendMessage(chatMessage.getContent());
+            }
         }
     }
 

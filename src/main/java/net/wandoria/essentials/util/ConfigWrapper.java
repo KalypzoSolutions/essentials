@@ -1,6 +1,7 @@
 package net.wandoria.essentials.util;
 
 import net.wandoria.essentials.chat.ChatConfiguration;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
@@ -10,7 +11,7 @@ public record ConfigWrapper(FileConfiguration config) implements ChatConfigurati
 
 
     @Override
-    public String chatFormat() {
+    public String getChatFormat() {
         return config.getString("chat.format");
     }
 
@@ -22,5 +23,10 @@ public record ConfigWrapper(FileConfiguration config) implements ChatConfigurati
     @Override
     public String getPrivateMessageFormatForReceiver() {
         return config.getString("chat.private.receiver");
+    }
+
+    @Override
+    public Sound getPingSound() {
+        return Sound.BLOCK_AMETHYST_BLOCK_RESONATE;
     }
 }
