@@ -1,3 +1,7 @@
+container/
+!container/paper/config/paper-global.yml
+!container/paper/plugins/PlayerApi
+!container/proxy/plugins/playerapi-velocity/
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar

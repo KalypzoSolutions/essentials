@@ -98,12 +98,13 @@ tasks {
         downloadPlugins {
             hangar("PlaceholderAPI", "2.11.6")
             url("https://cloud.einjojo.it/s/YK8WMIJgrPIycnH/download")  // economy provider 3.0.1
-            url("https://cloud.einjojo.it/s/cXeZeZXUEgsUPoP/download") // players api 1.4.1
+            url("https://github.com/wandoriamc/player-service-api/releases/download/v1.4.3/playerapi-paper-1.4.3.jar")
         }
     }
     shadowJar {
         relocate("io.lettuce", "net.wandoria.essentials.libs.lettuce")
         relocate("io.netty", "net.wandoria.essentials.libs.netty")
+        archiveFileName.set("Essentials.jar")
     }
 }
 tasks.test {
