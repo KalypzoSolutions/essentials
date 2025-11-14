@@ -5,8 +5,10 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.chat.ChatMessage;
+import net.wandoria.essentials.util.TagResolvers;
 import net.wandoria.essentials.world.NetworkPosition;
 import net.wandoria.essentials.world.PositionAccessor;
 import net.wandoria.essentials.world.TeleportExecutor;
@@ -104,6 +106,15 @@ public abstract class EssentialsUser implements EssentialsOfflineUser, Component
 
     public TeleportExecutor getTeleportExecutor() {
         return TeleportExecutor.getInstance();
+    }
+
+    /**
+     * <pre>Creates a tag resolver for player</pre>
+     *
+     * @return <pre>&lt;player&gt; resolver</pre>
+     */
+    public TagResolver playerTagResolver() {
+        return TagResolvers.player(this);
     }
 
     @Override

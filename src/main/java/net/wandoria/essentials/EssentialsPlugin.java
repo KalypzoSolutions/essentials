@@ -23,6 +23,7 @@ import net.wandoria.essentials.user.back.BackManager;
 import net.wandoria.essentials.user.back.DeathListener;
 import net.wandoria.essentials.user.home.HomeManager;
 import net.wandoria.essentials.util.ConfigWrapper;
+import net.wandoria.essentials.util.Text;
 import net.wandoria.essentials.world.PositionAccessor;
 import net.wandoria.essentials.world.TeleportExecutor;
 import net.wandoria.essentials.world.warps.WarpManager;
@@ -41,16 +42,7 @@ import java.util.ResourceBundle;
  * Loads language files from resource bundle, and does plugin setup
  */
 public class EssentialsPlugin extends JavaPlugin {
-    public static final Component PREFIX = MiniMessage.miniMessage().deserialize("<color:#7c86ff>Essentials</color> <color:#52525c>»</color> <color:#cad5e2>");
-    public static final Component CHAT_PREFIX = MiniMessage.miniMessage().deserialize("<color:#7c86ff>ChatSystem</color> <color:#52525c>»</color> <color:#cad5e2>");
-    public static final TextColor HIGHLIGHT = TextColor.color(0x00bcff);
-    public static MiniMessage miniMessage = MiniMessage.builder().editTags(builder -> {
-        builder.tag("prefix", Tag.inserting(PREFIX));
-        builder.tag("chat", Tag.inserting(CHAT_PREFIX));
-        builder.tag("hl", Tag.styling(HIGHLIGHT));
-        builder.tag("ss", Tag.styling(TextColor.color(0x7bf1a8)));
-        builder.tag("ex", Tag.styling(TextColor.color(0xff6467)));
-    }).build();
+
 
     private static EssentialsPlugin instance;
 
@@ -155,7 +147,7 @@ public class EssentialsPlugin extends JavaPlugin {
     }
 
     private void loadLocales() {
-        MiniMessageTranslationStore translationStore = MiniMessageTranslationStore.create(new NamespacedKey(this, "messages"), miniMessage);
+        MiniMessageTranslationStore translationStore = MiniMessageTranslationStore.create(new NamespacedKey(this, "messages"), Text.MINI_MESSAGE);
         for (Locale locale : List.of(Locale.GERMANY)) {
             ResourceBundle bundle = ResourceBundle.getBundle("lang.messages", locale, getClassLoader(), UTF8ResourceBundleControl.get());
             translationStore.registerAll(locale, bundle, false);

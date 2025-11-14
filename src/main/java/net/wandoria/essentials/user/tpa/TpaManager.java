@@ -5,11 +5,11 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import io.lettuce.core.Range;
 import io.lettuce.core.api.StatefulRedisConnection;
 import net.wandoria.essentials.EssentialsPlugin;
-import net.wandoria.essentials.user.EssentialsUser;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 /**
@@ -40,12 +40,12 @@ public class TpaManager {
      * @return future that completes when the request has been delivered. The caller must handle exceptions.
      */
     @CanIgnoreReturnValue
-    public Future<TpaRequest> create(@NotNull EssentialsUser requester, @NotNull EssentialsUser target) {
+    public CompletableFuture<TpaRequest> create(@NotNull UUID requester, @NotNull UUID target) {
         long expirationTime = System.currentTimeMillis() + (TPA_TTL_SECONDS * 1000);
-        String requesterKey = KEYSPACE + requester.getUniqueId();
-        return redisConnection.async().zadd(requesterKey, expirationTime, target.getUniqueId().toString())
+        String requesterKey = KEYSPACE + requester;
+        return redisConnection.async().zadd(requesterKey, expirationTime, target.toString())
                 .thenCompose(((l) -> redisConnection.async().expire(requesterKey, TPA_TTL_SECONDS + 60)))
-                .thenApply(_any -> new TpaRequest(requester.getUniqueId(), target.getUniqueId()))
+                .thenApply(_any -> new TpaRequest(requester, target))
                 .toCompletableFuture();
     }
 

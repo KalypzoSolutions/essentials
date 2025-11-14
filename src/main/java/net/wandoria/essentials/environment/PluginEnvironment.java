@@ -4,6 +4,7 @@ import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.environment.name.ServerNameProvider;
 import net.wandoria.essentials.user.EssentialsOfflineUser;
 import net.wandoria.essentials.user.EssentialsUser;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
@@ -43,6 +44,13 @@ public interface PluginEnvironment extends ServerNameProvider {
      * @return an instance of EssentialsUser or empty if the player is not online.
      */
     CompletableFuture<Optional<EssentialsUser>> getUser(UUID uuid);
+
+    /**
+     *
+     * @param player
+     * @return
+     */
+    EssentialsUser adaptLocalPlayer(Player player);
 
     /**
      * Get the user object.
