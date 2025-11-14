@@ -76,12 +76,18 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
 
     @Override
     public void connectPlayerToServer(UUID player, String serverName) {
-        playerApi.connectPlayerToServer(player, serverName);
+        playerApi.connectPlayer(player, serverName).exceptionally(ex -> {
+            EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player to server", ex);
+            return null;
+        });
     }
 
     @Override
     public void connectPlayerToGroup(UUID player, String groupName) {
-        playerApi.connectPlayerToServer(player, groupName);
+        playerApi.connectPlayer(player, groupName).exceptionally(ex -> {
+            EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player to server", ex);
+            return null;
+        });
     }
 
     @Override

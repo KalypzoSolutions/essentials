@@ -2,7 +2,7 @@
   "gsonAddress": "player-service",
   "gsonPort": 9090,
   "redis": {
-    "host": "postgres",
+    "host": "dragonfly",
     "port": 6379,
     "username": "default",
     "password": "27IwIQMBBCauFxdrcaXmDjj94CPz",
