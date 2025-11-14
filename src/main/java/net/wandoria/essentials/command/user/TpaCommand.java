@@ -5,6 +5,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.wandoria.essentials.user.EssentialsUser;
 import net.wandoria.essentials.user.tpa.TpaManager;
+import net.wandoria.essentials.util.TagResolvers;
 import net.wandoria.essentials.util.Text;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.processing.CommandContainer;
@@ -25,9 +26,10 @@ public class TpaCommand {
         return TpaManager.getInstance().create(sender.source().getUniqueId(), player.getUniqueId())
                 .thenAccept(request -> {
                     sender.source().sendMessage(Text.deserialize("<prefix> <p>TPA an <hl><player></hl> gesendet.", player.playerTagResolver()));
-                    Component tpaccept = Component.text("/tpaaccept " + player.getName()).clickEvent(ClickEvent.runCommand("/tpaaccept " + player.getName()));
+                    Component tpaccept = Component.text("/tpaccept " + sender.source().getName()).clickEvent(ClickEvent.runCommand("/tpaccept " + sender.source().getName()));
                     player.sendMessage(Text.deserialize("<prefix> <p><hl><player></hl> möchte sich zu dir teleportieren.<newline>" +
-                                    "<prefix> <p>Nutze: <tpacmd>",
+                                    "<prefix> <p>Nutze: <hl><u><tpacmd>",
+                            TagResolvers.player(sender.source()),
                             Placeholder.component("tpacmd", tpaccept)));
                 });
     }
@@ -37,7 +39,7 @@ public class TpaCommand {
         var requestOpt = TpaManager.getInstance().getRequest(player.getUniqueId(), source.source().getUniqueId());
         if (requestOpt.isEmpty()) {
             source.source().sendMessage(Text.deserialize("<prefix> <p>Keine Teleportanfrage von <player> gefunden", player.playerTagResolver()));
-            return null;
+            return CompletableFuture.completedFuture(null);
         }
         return requestOpt.get().fulfill()
                 .thenAccept((_void) -> {

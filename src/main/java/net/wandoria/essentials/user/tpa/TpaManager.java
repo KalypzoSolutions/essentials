@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 /**
  * Accessor class to the redis database
@@ -57,7 +56,7 @@ public class TpaManager {
      * @return an optional containing the TpaRequest if it exists and is still valid
      */
     public Optional<TpaRequest> getRequest(@NotNull UUID requester, @NotNull UUID target) {
-        String key = KEYSPACE + "outgoing:" + requester;
+        String key = KEYSPACE + requester;
         long now = System.currentTimeMillis();
         redisConnection.sync().zremrangebyscore(key, Range.create(0, now));
         Double score = redisConnection.sync().zscore(key, target.toString());
