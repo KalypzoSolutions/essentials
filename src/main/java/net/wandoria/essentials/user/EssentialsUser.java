@@ -1,6 +1,7 @@
 package net.wandoria.essentials.user;
 
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -9,6 +10,7 @@ import net.wandoria.essentials.chat.ChatMessage;
 import net.wandoria.essentials.world.NetworkPosition;
 import net.wandoria.essentials.world.PositionAccessor;
 import net.wandoria.essentials.world.TeleportExecutor;
+import net.wandoria.essentials.world.TeleportResult;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -52,12 +54,16 @@ public abstract class EssentialsUser implements EssentialsOfflineUser, Component
         plugin.getEnvironment().connectPlayerToServer(uuid, serverName);
     }
 
-    public void teleport(NetworkPosition position) {
+    @CanIgnoreReturnValue
+    public CompletableFuture<TeleportResult> teleport(NetworkPosition position) {
         getTeleportExecutor().teleportPlayerToPosition(uuid, position);
+        return CompletableFuture.completedFuture(TeleportResult.SUCCESS); //TODO
     }
 
-    public void teleport(EssentialsUser target) {
+    @CanIgnoreReturnValue
+    public CompletableFuture<TeleportResult> teleport(EssentialsUser target) {
         getTeleportExecutor().teleportPlayerToPlayer(uuid, target.uuid);
+        return CompletableFuture.completedFuture(TeleportResult.SUCCESS); //TODO
     }
 
     /**
