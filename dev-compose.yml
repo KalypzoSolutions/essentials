@@ -44,7 +44,7 @@ services:
     environment:
       TYPE: VELOCITY
       VELOCITY_FORWARDING_SECRET: secret
-      PLUGINS: https://github.com/wandoriamc/player-service-api/releases/download/v1.4.3/playerapi-velocity-1.4.3.jar
+      PLUGINS: https://github.com/wandoriamc/player-service-api/releases/download/v1.5.0/playerapi-velocity-1.5.0.jar
   paper:
     image: itzg/minecraft-server
     tty: true
@@ -72,7 +72,7 @@ services:
       SPIGET_RESOURCES: |-
         6245
       PLUGINS: |-
-        https://github.com/wandoriamc/player-service-api/releases/download/v1.4.3/playerapi-paper-1.4.3.jar
+        https://github.com/wandoriamc/player-service-api/releases/download/v1.5.0/playerapi-paper-1.5.0.jar
         https://cloud.einjojo.it/s/YK8WMIJgrPIycnH/download
 
 volumes:

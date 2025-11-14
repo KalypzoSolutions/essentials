@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("it.einjojo.playerapi:api:1.2.0")
+    compileOnly("it.einjojo.playerapi:api:1.5-DEV")
     compileOnly("it.einjojo:economy:2.0.1")
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
@@ -99,7 +99,7 @@ tasks {
         downloadPlugins {
             hangar("PlaceholderAPI", "2.11.6")
             url("https://cloud.einjojo.it/s/YK8WMIJgrPIycnH/download")  // economy provider 3.0.1
-            url("https://github.com/wandoriamc/player-service-api/releases/download/v1.4.3/playerapi-paper-1.4.3.jar")
+            url("https://github.com/wandoriamc/player-service-api/releases/download/v1.5.0/playerapi-paper-1.5.0.jar")
         }
     }
     shadowJar {
