@@ -15,6 +15,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.user.EssentialsUser;
+import net.wandoria.essentials.util.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -140,7 +141,7 @@ public class ChatSystem implements Listener {
             if (chatMessage.serializedMiniMessage().contains("@" + recipient.getName())) { // ping
                 Component pingedMessage = chatMessage.getContent()
                         .replaceText(builder -> builder.match("@" + recipient.getName())
-                                .replacement(Component.text("@" + recipient.getName()).color(EssentialsPlugin.HIGHLIGHT)));
+                                .replacement(Component.text("@" + recipient.getName()).color(Text.HIGHLIGHT_COLOR)));
                 recipient.sendMessage(pingedMessage);
                 recipient.playSound(recipient, chatConfiguration.getPingSound(), 1, 1.4f);
             } else {
