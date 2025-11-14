@@ -9,8 +9,10 @@ import java.time.Duration;
 import java.util.UUID;
 
 /**
- * EssentialsUser represents a player which is online and supports more actions like teleport and messaging.
+ * EssentialsOfflineUser represents a player which may be online or offline.
  * <p>Instantiated by {@link net.wandoria.essentials.environment.PluginEnvironment}</p>
+ *
+ * <p>It's an abstract class to adapt different underlying player apis which provide information about the user</p>
  */
 public interface EssentialsOfflineUser extends ComponentLike {
 

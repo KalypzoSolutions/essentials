@@ -1,5 +1,6 @@
 package net.wandoria.essentials.environment;
 
+import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.environment.name.ServerNameProvider;
 import net.wandoria.essentials.user.EssentialsOfflineUser;
 import net.wandoria.essentials.user.EssentialsUser;
@@ -12,8 +13,13 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Abstraction layer - Essentials might be hosted in different environments. (locally / cloudnet / pterodactyl)
+ * Managed by {@link net.wandoria.essentials.EssentialsPlugin}
  */
 public interface PluginEnvironment extends ServerNameProvider {
+
+    static PluginEnvironment getInstance() {
+        return EssentialsPlugin.instance().getEnvironment();
+    }
 
     /**
      * Get the name of the server that velocity uses.

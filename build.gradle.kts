@@ -94,6 +94,7 @@ tasks {
         options.compilerArgs.add("-parameters")
     }
     runServer {
+        environment("INTERNAL_SERVER_NAME", "run")
         minecraftVersion("1.21.4")
         downloadPlugins {
             hangar("PlaceholderAPI", "2.11.6")

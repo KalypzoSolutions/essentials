@@ -20,9 +20,12 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+
 /**
- * EssentialsUser represents a player which may be online or offline.
+ * EssentialsUser represents a player which is online and supports more actions like teleport and messaging.
  * <p>Instantiated by {@link net.wandoria.essentials.environment.PluginEnvironment}</p>
+ *
+ * <p>It's an abstract class to adapt different underlying player apis which provide information about the user</p>
  */
 @Getter
 public abstract class EssentialsUser implements EssentialsOfflineUser, ComponentLike {
@@ -57,6 +60,12 @@ public abstract class EssentialsUser implements EssentialsOfflineUser, Component
         getTeleportExecutor().teleportPlayerToPlayer(uuid, target.uuid);
     }
 
+    /**
+     * Execute actions depending on whether the player is online on the server
+     *
+     * @param onlineConsumer    action to execute if the player is online locally (bukkit player)
+     * @param otherServerRunner action to execute if the player is on another server
+     */
     public void ifOnlineLocallyOrElse(Consumer<Player> onlineConsumer, Runnable otherServerRunner) {
         Player player = Bukkit.getPlayer(uuid);
         if (player != null) {

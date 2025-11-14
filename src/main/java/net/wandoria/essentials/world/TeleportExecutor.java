@@ -7,6 +7,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.environment.PluginEnvironment;
+import net.wandoria.essentials.util.InternalServerName;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,11 +38,9 @@ public class TeleportExecutor implements Listener {
     private final LinkedList<TeleportAnnounce> pendingTeleports = new LinkedList<>();
     private final PluginEnvironment environment;
     private StatefulRedisPubSubConnection<String, String> connection;
-    private final String currentServerName;
 
     protected TeleportExecutor(EssentialsPlugin plugin) {
         this.environment = plugin.getEnvironment();
-        this.currentServerName = environment.getServerName();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -72,9 +71,9 @@ public class TeleportExecutor implements Listener {
                 try {
                     TeleportAnnounce announce = gson.fromJson(message, TeleportAnnounce.class);
                     if (announce == null) return;
-                    if (!announce.destinationServer().equals(currentServerName)) return;
+                    if (!announce.destinationServer().equals(InternalServerName.get())) return;
                     pendingTeleports.add(announce);
-                    log.info("Received teleport announce for {}", announce.target);
+                    log.info("Received teleport announcement for {}", announce.player);
                 } catch (Exception ex) {
                     log.error("Error while handling teleport announce", ex);
                 }
@@ -126,7 +125,7 @@ public class TeleportExecutor implements Listener {
 
     public void teleportPlayerToPosition(UUID player, NetworkPosition position) {
         Player sender = Bukkit.getPlayer(player);
-        if (sender != null && currentServerName.equals(position.serverName())) {
+        if (sender != null && InternalServerName.get().equals(position.serverName())) {
             tpPlayerToPositionLocally(sender, position);
             return;
         }

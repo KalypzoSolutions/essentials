@@ -62,6 +62,7 @@ public class EssentialsPlugin extends JavaPlugin {
     private RedisClient redis;
     private DataSource dataSource;
 
+
     @Override
     public void onLoad() {
         saveDefaultConfig();
@@ -107,7 +108,6 @@ public class EssentialsPlugin extends JavaPlugin {
                 .dataSource(dataSource)
                 .load();
         try {
-
             flyway.migrate();
         } catch (Exception ex) {
             getSLF4JLogger().error("Could not migrate Flyway", ex);
@@ -125,7 +125,7 @@ public class EssentialsPlugin extends JavaPlugin {
             getSLF4JLogger().info("CloudNet detected, using CloudNetServerNameProvider");
             serverNameProvider = new CloudNetServerNameProvider();
         } else {
-            getSLF4JLogger().warn("CloudNet not detected, falling back to default server name provider");
+            getSLF4JLogger().info("CloudNet not detected, falling back to default server name provider");
             serverNameProvider = new DefaultServerNameProvider();
         }
         try {

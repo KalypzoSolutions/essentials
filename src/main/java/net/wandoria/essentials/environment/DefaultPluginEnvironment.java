@@ -19,6 +19,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Expects the Player-API to be available.
+ *
  */
 public class DefaultPluginEnvironment implements PluginEnvironment {
     @Getter
