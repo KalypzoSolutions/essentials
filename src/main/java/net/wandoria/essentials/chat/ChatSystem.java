@@ -12,6 +12,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.user.EssentialsUser;
@@ -47,6 +48,12 @@ public class ChatSystem implements Listener {
     private final StatefulRedisPubSubConnection<String, String> pubSubConnection;
     private final ChatConfiguration chatConfiguration;
     private final String serverName;
+    private final MiniMessage COLOR_ONLY = MiniMessage.builder().tags(
+                    TagResolver.builder()
+                            .resolver(StandardTags.color())
+                            .resolver(StandardTags.decorations())
+                            .build())
+            .build();
 
 
     /**
@@ -89,14 +96,18 @@ public class ChatSystem implements Listener {
      *
      * @param event the event which is being canceled.
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncChatEvent event) {
         if (event.isCancelled()) {
             return;
         }
         try {
+
             String chatFormat = chatConfiguration.getChatFormat();
             chatFormat = PlaceholderAPI.setPlaceholders(event.getPlayer(), chatFormat);
+            if (event.getPlayer().hasPermission("essentials.chat.colored")) {
+                event.message(COLOR_ONLY.deserialize(plain.serialize(event.message())));
+            }
             Component formattedMessage = miniMessage.deserialize(chatFormat,
                     Placeholder.component("message", event.message()),
                     Placeholder.unparsed("server", serverName),

@@ -4,8 +4,10 @@ package net.wandoria.essentials.world.warps;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.event.AsyncPlayerWarpTeleportEvent;
+import net.wandoria.essentials.util.Text;
 import net.wandoria.essentials.world.NetworkPosition;
 import net.wandoria.essentials.world.TeleportExecutor;
 import org.bukkit.Bukkit;
@@ -52,7 +54,7 @@ public record Warp(@NotNull String name,
         if (!new AsyncPlayerWarpTeleportEvent(player, this).callEvent()) {
             return;
         }
-        player.sendMessage(Component.translatable("essentials.warp.teleporting", Component.text(name)));
+        player.sendMessage(Text.deserialize("<prefix> <p>Du wirst zum Warp teleportiert..."));
         TeleportExecutor.getInstance().teleportPlayerToPosition(player.getUniqueId(), location);
     }
 
@@ -60,6 +62,6 @@ public record Warp(@NotNull String name,
     public @NotNull Component asComponent() {
         return displayName
                 .clickEvent(ClickEvent.runCommand("/warp " + name))
-                .hoverEvent(Component.translatable("essentials.warp.click_to_teleport", displayName));
+                .hoverEvent(Text.deserialize("<hl>Klicke hier</hl>, <p>um zu <warp> zu gehen.", Placeholder.component("warp", displayName)));
     }
 }
