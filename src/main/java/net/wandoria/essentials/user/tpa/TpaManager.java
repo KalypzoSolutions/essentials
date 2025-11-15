@@ -76,7 +76,7 @@ public class TpaManager {
      *
      */
     protected void removeRequest(@NotNull UUID requester, @NotNull UUID target) {
-        String key = KEYSPACE + "outgoing:" + requester;
+        String key = KEYSPACE + requester;
         redisConnection.sync().zrem(key, target.toString());
     }
 

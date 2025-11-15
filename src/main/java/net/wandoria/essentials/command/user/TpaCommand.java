@@ -36,6 +36,10 @@ public class TpaCommand {
 
     @Command("tpaccept <player>")
     public CompletableFuture<Void> accept(PlayerSource source, EssentialsUser player) {
+        if (player.getUniqueId().equals(source.source().getUniqueId())) {
+            source.source().sendMessage(Text.deserialize("<prefix> <p>Wähle einen anderen Spieler."));
+            return CompletableFuture.completedFuture(null);
+        }
         var requestOpt = TpaManager.getInstance().getRequest(player.getUniqueId(), source.source().getUniqueId());
         if (requestOpt.isEmpty()) {
             source.source().sendMessage(Text.deserialize("<prefix> <p>Keine Teleportanfrage von <player> gefunden", player.playerTagResolver()));
