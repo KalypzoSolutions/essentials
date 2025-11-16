@@ -19,6 +19,4 @@ public enum TeleportResult {
      * The player that should be teleported is not online.
      */
     TELEPORTING_PLAYER_OFFLINE, SUCCESS,
-
-
 }
