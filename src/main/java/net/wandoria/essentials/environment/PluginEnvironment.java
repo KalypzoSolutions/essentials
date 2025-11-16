@@ -46,9 +46,10 @@ public interface PluginEnvironment extends ServerNameProvider {
     CompletableFuture<Optional<EssentialsUser>> getUser(UUID uuid);
 
     /**
+     * Adapts a local Bukkit {@link Player} instance to an {@link EssentialsUser}.
      *
-     * @param player
-     * @return
+     * @param player the Bukkit player to adapt
+     * @return the corresponding {@link EssentialsUser} instance for the given player
      */
     EssentialsUser adaptLocalPlayer(Player player);
 
