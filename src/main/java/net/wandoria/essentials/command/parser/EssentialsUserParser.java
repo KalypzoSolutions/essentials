@@ -1,6 +1,7 @@
 package net.wandoria.essentials.command.parser;
 
 
+import it.einjojo.playerapi.PlayerApiProvider;
 import net.wandoria.essentials.environment.PluginEnvironment;
 import net.wandoria.essentials.exception.ComponentException;
 import net.wandoria.essentials.user.EssentialsUser;
@@ -68,11 +69,6 @@ public class EssentialsUserParser implements ArgumentParser.FutureArgumentParser
 
     @Override
     public CompletableFuture<? extends Iterable<? extends Suggestion>> suggestionsFuture(CommandContext<Source> context, CommandInput input) {
-        return environment.getUsers().thenApply(
-                users -> users.stream()
-                        .map(EssentialsUser::getName)
-                        .map(Suggestion::suggestion)
-                        .toList()
-        );
+        return PlayerApiProvider.getInstance().getOnlinePlayerNames().thenApply(strings -> strings.stream().map(Suggestion::suggestion).toList()); //
     }
 }

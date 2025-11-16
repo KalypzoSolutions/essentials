@@ -1,0 +1,19 @@
+{
+  "redis": {
+    "host": "dragonfly",
+    "port": 6379,
+    "username": "default",
+    "password": "27IwIQMBBCauFxdrcaXmDjj94CPz",
+    "ssl": false
+  },
+  "postgres": {
+    "jdbcUrl": "jdbc:postgresql://postgres:5432/development",
+    "username": "developer",
+    "password": "27IwIQMBBCauFxdrcaXmDjj94CPz",
+    "poolSettings": {
+      "maximum-pool-size": "16",
+      "minimum-idle": "0",
+      "max-idle": "8"
+    }
+  }
+}

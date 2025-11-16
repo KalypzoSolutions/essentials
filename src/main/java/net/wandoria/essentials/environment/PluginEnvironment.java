@@ -1,8 +1,10 @@
 package net.wandoria.essentials.environment;
 
+import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.environment.name.ServerNameProvider;
 import net.wandoria.essentials.user.EssentialsOfflineUser;
 import net.wandoria.essentials.user.EssentialsUser;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
@@ -12,8 +14,13 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Abstraction layer - Essentials might be hosted in different environments. (locally / cloudnet / pterodactyl)
+ * Managed by {@link net.wandoria.essentials.EssentialsPlugin}
  */
 public interface PluginEnvironment extends ServerNameProvider {
+
+    static PluginEnvironment getInstance() {
+        return EssentialsPlugin.instance().getEnvironment();
+    }
 
     /**
      * Get the name of the server that velocity uses.
@@ -37,6 +44,14 @@ public interface PluginEnvironment extends ServerNameProvider {
      * @return an instance of EssentialsUser or empty if the player is not online.
      */
     CompletableFuture<Optional<EssentialsUser>> getUser(UUID uuid);
+
+    /**
+     * Adapts a local Bukkit {@link Player} instance to an {@link EssentialsUser}.
+     *
+     * @param player the Bukkit player to adapt
+     * @return the corresponding {@link EssentialsUser} instance for the given player
+     */
+    EssentialsUser adaptLocalPlayer(Player player);
 
     /**
      * Get the user object.

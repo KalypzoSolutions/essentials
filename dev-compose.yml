@@ -34,6 +34,46 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+  velocity:
+    image: itzg/mc-proxy
+
+    ports:
+      - "25565:25577"
+    volumes:
+      - ./container/proxy/:/server
+    environment:
+      TYPE: VELOCITY
+      VELOCITY_FORWARDING_SECRET: secret
+      PLUGINS: https://github.com/wandoriamc/player-service-api/releases/download/v1.5.0/playerapi-velocity-1.5.0.jar
+  paper:
+    image: itzg/minecraft-server
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./container/paper/:/data
+      - ./build/libs/Essentials.jar:/data/plugins/Essentials.jar
+    environment:
+      EULA: "TRUE"
+      TYPE: "PURPUR"
+      VERSION: "1.21.4"
+      ONLINE_MODE: "false"
+      USE_MEOWICE_FLAGS: "true"
+      DIFFICULTY: "0"
+      ALLOW_NETHER: "false"
+      SPAWN_ANIMALS: "false"
+      SPAWN_MONSTERS: "false"
+      SPAWN_NPCS: "false"
+      LEVEL_TYPE: "flat"
+      MEMORY: "3072M"
+      GENERATE_STRUCTURES: "false"
+      INTERNAL_SERVER_NAME: "paper"
+      OPS: |-
+        Ein_Jojo
+      SPIGET_RESOURCES: |-
+        6245
+      PLUGINS: |-
+        https://github.com/wandoriamc/player-service-api/releases/download/v1.5.0/playerapi-paper-1.5.0.jar
+        https://cloud.einjojo.it/s/YK8WMIJgrPIycnH/download
 
 volumes:
   postgres_data:

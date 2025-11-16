@@ -9,6 +9,7 @@ import net.wandoria.essentials.user.EssentialsOfflineUser;
 import net.wandoria.essentials.user.EssentialsUser;
 import net.wandoria.essentials.user.NetworkEssentialsOfflineUser;
 import net.wandoria.essentials.user.NetworkEssentialsUser;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -19,16 +20,15 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Expects the Player-API to be available.
+ *
  */
 public class DefaultPluginEnvironment implements PluginEnvironment {
     @Getter
     private final PlayerApi playerApi;
-    private final EssentialsPlugin plugin;
     private final ServerNameProvider serverNameProvider;
 
     public DefaultPluginEnvironment(EssentialsPlugin plugin, ServerNameProvider serverNameProvider) {
         this.playerApi = PlayerApiProvider.getInstance();
-        this.plugin = plugin;
         this.serverNameProvider = serverNameProvider;
     }
 
@@ -48,6 +48,11 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
             if (networkPlayer == null) return Optional.empty();
             return Optional.of(new NetworkEssentialsUser(networkPlayer));
         }));
+    }
+
+    @Override
+    public EssentialsUser adaptLocalPlayer(Player player) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -71,12 +76,18 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
 
     @Override
     public void connectPlayerToServer(UUID player, String serverName) {
-        playerApi.connectPlayerToServer(player, serverName);
+        playerApi.connectPlayer(player, serverName).exceptionally(ex -> {
+            EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player to server", ex);
+            return null;
+        });
     }
 
     @Override
     public void connectPlayerToGroup(UUID player, String groupName) {
-        playerApi.connectPlayerToServer(player, groupName);
+        playerApi.connectPlayer(player, groupName).exceptionally(ex -> {
+            EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player to server", ex);
+            return null;
+        });
     }
 
     @Override
