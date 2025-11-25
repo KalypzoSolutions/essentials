@@ -4,10 +4,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.lettuce.core.RedisClient;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslationStore;
 import net.kyori.adventure.translation.GlobalTranslator;
 import net.kyori.adventure.util.UTF8ResourceBundleControl;
@@ -37,13 +33,16 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Loads language files from resource bundle, and does plugin setup
  */
 public class EssentialsPlugin extends JavaPlugin {
-
-
+    @Getter
+    private static ExecutorService executorService = Executors.newCachedThreadPool();
     private static EssentialsPlugin instance;
 
     @Getter
@@ -80,11 +79,6 @@ public class EssentialsPlugin extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        chatSystem = new ChatSystem(pubSub, this, new ConfigWrapper(getConfig()), environment.getServerName());
-        TeleportExecutor.getInstance().init(pubSub);
-        PositionAccessor.getInstance().init(pubSub);
-        RemoteCommandExecutor.getInstance().init(pubSub);
-        getSLF4JLogger().info("All pub sub components initialized. Client subscribed to: {}", pubSub.sync().pubsubChannels());
         // database stuff
         HikariConfig config = connectionConfiguration.getPostgres().createHikariConfig();
         config.setSchema("public");
@@ -104,10 +98,24 @@ public class EssentialsPlugin extends JavaPlugin {
         } catch (Exception ex) {
             getSLF4JLogger().error("Could not migrate Flyway", ex);
         }
+
+        // Init section
+        chatSystem = new ChatSystem(pubSub, this, new ConfigWrapper(getConfig()), environment.getServerName());
+        TeleportExecutor.getInstance().init(pubSub);
+        PositionAccessor.getInstance().init(pubSub);
+        RemoteCommandExecutor.getInstance().init(pubSub);
+        getSLF4JLogger().info("All pub sub components initialized. Client subscribed to: {}", pubSub.sync().pubsubChannels());
         loadLocales();
         new CommandManager(this);
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new DeathListener(BackManager.getInstance()), this);
+        WarpManager.getInstance().load().whenComplete(((unused, throwable) -> {
+            if (throwable != null) {
+                getSLF4JLogger().error("Could not load warps", throwable);
+            } else {
+                getSLF4JLogger().info("Warps loaded");
+            }
+        }));
     }
 
     private @Nullable PluginEnvironment createEnvironment() {
@@ -141,8 +149,18 @@ public class EssentialsPlugin extends JavaPlugin {
             getSLF4JLogger().info("Closing Redis connection...");
             redis.shutdown();
             getSLF4JLogger().info("Redis connection closed.");
-
-
+        }
+        executorService.shutdown();
+        boolean terminated;
+        try {
+            terminated = executorService.awaitTermination(3, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            getSLF4JLogger().error("Interrupted while waiting for executor service to shutdown", e);
+            terminated = false;
+        }
+        if (!terminated) {
+            getSLF4JLogger().warn("Executor service did not terminate in time, forcefully shutting down.");
+            executorService.shutdownNow();
         }
     }
 

@@ -9,8 +9,8 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.jetbrains.annotations.NotNull;
 
 public class Text {
-    public static final Component PREFIX = MiniMessage.miniMessage().deserialize("<color:#7c86ff>Essentials</color> <color:#52525c>»</color> <color:#cad5e2>");
-    public static final Component CHAT_PREFIX = MiniMessage.miniMessage().deserialize("<color:#7c86ff>ChatSystem</color> <color:#52525c>»</color> <color:#cad5e2>");
+    public static final Component PREFIX = MiniMessage.miniMessage().deserialize("<color:#7c86ff>Essentials</color> <color:#52525c>»</color><color:#cad5e2>");
+    public static final Component CHAT_PREFIX = MiniMessage.miniMessage().deserialize("<color:#7c86ff>ChatSystem</color> <color:#52525c>»</color><color:#cad5e2>");
     public static final TextColor H1 = TextColor.color(0xffedd5); // orange-100
     public static final TextColor H2 = TextColor.color(0xfdba74); // orange-300
     public static final TextColor HIGHLIGHT_COLOR = TextColor.color(0xfb923c); // orange-400

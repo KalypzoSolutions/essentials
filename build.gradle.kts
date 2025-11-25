@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "it.einjojo"
-version = "1.1.0-DEV"
+version = "1.1.1-DEV"
 
 repositories {
     mavenCentral()
@@ -29,6 +29,8 @@ dependencies {
     compileOnly("it.einjojo:economy:2.0.1")
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("net.luckperms:api:5.5")
+
 
     paperLibrary("com.zaxxer:HikariCP:7.0.2")
     paperLibrary("org.postgresql:postgresql:42.7.8")
@@ -71,6 +73,9 @@ paper {
         register("CloudNet-Bridge") {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
             required = false
+        }
+        register("LuckPerms") {
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
         }
         register("PlayerApi") {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
