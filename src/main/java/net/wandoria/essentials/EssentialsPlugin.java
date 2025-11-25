@@ -80,7 +80,7 @@ public class EssentialsPlugin extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        chatSystem = new ChatSystem(pubSub, this, new ConfigWrapper(getConfig()), environment.getServerName());
+        chatSystem = new ChatSystem(pubSub, this, new ConfigWrapper(this), environment.getServerName());
         TeleportExecutor.getInstance().init(pubSub);
         PositionAccessor.getInstance().init(pubSub);
         RemoteCommandExecutor.getInstance().init(pubSub);
