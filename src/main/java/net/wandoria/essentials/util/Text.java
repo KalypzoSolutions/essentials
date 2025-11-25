@@ -9,13 +9,14 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.jetbrains.annotations.NotNull;
 
 public class Text {
-    public static final Component PREFIX = MiniMessage.miniMessage().deserialize("<color:#7c86ff>Essentials</color> <color:#52525c>»</color> <color:#cad5e2>");
-    public static final Component CHAT_PREFIX = MiniMessage.miniMessage().deserialize("<color:#7c86ff>ChatSystem</color> <color:#52525c>»</color> <color:#cad5e2>");
+    public static final Component PREFIX = MiniMessage.miniMessage().deserialize("<color:#7c86ff>Essentials</color> <color:#52525c>»</color><color:#cad5e2>");
+    public static final Component CHAT_PREFIX = MiniMessage.miniMessage().deserialize("<color:#7c86ff>ChatSystem</color> <color:#52525c>»</color><color:#cad5e2>");
     public static final TextColor H1 = TextColor.color(0xffedd5); // orange-100
     public static final TextColor H2 = TextColor.color(0xfdba74); // orange-300
     public static final TextColor HIGHLIGHT_COLOR = TextColor.color(0xfb923c); // orange-400
     public static final TextColor TEXT_COLOR = TextColor.color(0xd4d4d4); // neutral-300
     public static final TextColor ERROR_COLOR = TextColor.color(0xf87171); // red-400
+    public static final TextColor SUCCESS_COLOR = TextColor.color(0x05df72); // green-400
     public static final MiniMessage MINI_MESSAGE = MiniMessage.builder()
             .editTags(builder -> {
                 builder.tag("prefix", Tag.inserting(PREFIX));
@@ -27,6 +28,7 @@ public class Text {
                 builder.tag("p", Tag.styling(style -> style.color(TEXT_COLOR).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE)));
                 builder.tag("gray", Tag.styling(style -> style.color(TEXT_COLOR)));
                 builder.tag("ex", Tag.styling(style -> style.color(ERROR_COLOR)));
+                builder.tag("ss", Tag.styling(style -> style.color(SUCCESS_COLOR)));
             })
             .build();
 
