@@ -157,12 +157,16 @@ public class ChatSystem implements Listener {
                                 .replacement(Component.text("@" + recipient.getName()).color(Text.HIGHLIGHT_COLOR)));
                 recipient.sendMessage(pingedMessage);
                 if (!UserSettings.of(recipient.getUniqueId()).disabledPingSound()) {
-                    recipient.playSound(recipient, chatConfiguration.getPingSound(), 1, 1.4f);
+                    playPingSound(recipient);
                 }
             } else {
                 recipient.sendMessage(chatMessage.getContent());
             }
         }
+    }
+
+    public void playPingSound(Player player) {
+        player.playSound(player, chatConfiguration.getPingSound(), 1, 1.4f);
     }
 
     /**
