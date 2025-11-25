@@ -8,6 +8,7 @@ import net.luckperms.api.node.NodeEqualityPredicate;
 import net.luckperms.api.util.Tristate;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 
 /**
@@ -25,12 +26,15 @@ public class UserSettings {
     }
 
     public boolean disabledPingSound() {
-        return getLuckPermsUser().data().contains(Settings.DISABLED_PING_SOUND, NodeEqualityPredicate.IGNORE_EXPIRY_TIME).equals(Tristate.TRUE);
+        return getLuckPermsUser().data().contains(Settings.DISABLED_PING_SOUND, NodeEqualityPredicate.IGNORE_EXPIRY_TIME).equals(Tristate.FALSE);
     }
 
-    public void disabledPingSound(boolean enabled) {
-        if (enabled) getLuckPermsUser().data().remove(Settings.DISABLED_PING_SOUND);
-        else getLuckPermsUser().data().add(Settings.DISABLED_PING_SOUND);
+    public CompletableFuture<Void> disabledPingSound(boolean isDisabled) {
+        return Settings.LUCKPERMS.getUserManager().modifyUser(uuid, (user) -> {
+            if (isDisabled) user.data().add(Settings.DISABLED_PING_SOUND);
+            else user.data().remove(Settings.DISABLED_PING_SOUND);
+        });
+
     }
 
     public User getLuckPermsUser() {
@@ -42,7 +46,7 @@ public class UserSettings {
      */
     private static class Settings {
         private static final LuckPerms LUCKPERMS = LuckPermsProvider.get();
-        private static final Node DISABLED_PING_SOUND = Node.builder("essentials.settings.no-pings").build();
+        private static final Node DISABLED_PING_SOUND = Node.builder("essentials.settings.pings").value(false).build();
     }
 
 }

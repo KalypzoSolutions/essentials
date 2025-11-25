@@ -7,6 +7,8 @@ import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.processing.CommandContainer;
 import org.incendo.cloud.paper.util.sender.PlayerSource;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  *
  * <p>Because of @CommandContainer it gets instantiated by {@link net.wandoria.essentials.command.CommandManager}</p>
@@ -17,17 +19,20 @@ public class SettingsCommand {
     @Command("settings togglePing")
     @Command("einstellungen togglePing")
     @Command("togglePing")
-    public void togglePingSounds(PlayerSource source) {
+    public CompletableFuture<Void> togglePingSounds(PlayerSource source) {
         var settings = getSettings(source);
-        boolean disabled = settings.disabledPingSound();
-        settings.disabledPingSound(!disabled);
+        boolean isDisabled = settings.disabledPingSound();
+        return settings.disabledPingSound(!isDisabled).thenRun(() -> {
+            if (isDisabled) { //
 
-        if (!disabled) {
-            source.source().sendMessage(Component.translatable("essentials.settings.ping-active"));
-            EssentialsPlugin.instance().getChatSystem().playPingSound(source.source());
-        } else {
-            source.source().sendMessage(Component.translatable("essentials.settings.ping-disabled"));
-        }
+                source.source().sendMessage(Component.translatable("essentials.settings.ping-active"));
+                EssentialsPlugin.instance().getChatSystem().playPingSound(source.source());
+            } else {
+                source.source().sendMessage(Component.translatable("essentials.settings.ping-disabled"));
+            }
+        });
+
+
 
     }
 
