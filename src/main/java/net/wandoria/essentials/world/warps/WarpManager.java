@@ -70,7 +70,7 @@ public class WarpManager {
                 log.error("Could not load homes", e);
                 throw new RuntimeException(e);
             }
-        });
+        }, EssentialsPlugin.getExecutorService());
         return loadFuture;
     }
 
@@ -114,7 +114,7 @@ public class WarpManager {
                 log.error("Could not save {}", warp, e);
                 throw new RuntimeException(e);
             }
-        });
+        }, EssentialsPlugin.getExecutorService());
     }
 
 

@@ -3,6 +3,7 @@ package net.wandoria.essentials.user.leaderboard;
 import it.einjojo.economy.db.AccountData;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.wandoria.essentials.EssentialsPlugin;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -41,7 +42,7 @@ public class BalanceTopPostgresAccessor {
         updateFuture = CompletableFuture.runAsync(() -> {
             topTen = getTopTenFromDB();
             lastUpdate = Instant.now();
-        });
+        }, EssentialsPlugin.getExecutorService());
     }
 
     public boolean isRefreshing() {
