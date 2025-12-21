@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,7 @@ import java.util.concurrent.CompletableFuture;
 @Getter
 @Slf4j
 public class ChatSystem implements Listener {
+    private static final Permission COLORED_CHAT_PERMISSION = new Permission("essentials.chat.colored");
     private final Gson gson = new Gson();
     private static final int TTL_SECONDS = 60 * 30;
     private static final String LAST_PRIVATE_MSG_KEY_PREFIX = "lastPM:";
@@ -72,6 +74,7 @@ public class ChatSystem implements Listener {
                       @NotNull JavaPlugin plugin,
                       @NotNull ChatConfiguration chatConfiguration,
                       @NotNull String serverName) {
+        Bukkit.getPluginManager().addPermission(COLORED_CHAT_PERMISSION);
         this.pubSubConnection = pubSubConnection;
         this.chatConfiguration = chatConfiguration;
         this.serverName = serverName;
@@ -106,7 +109,7 @@ public class ChatSystem implements Listener {
 
             String chatFormat = chatConfiguration.getChatFormat();
             chatFormat = PlaceholderAPI.setPlaceholders(event.getPlayer(), chatFormat);
-            if (event.getPlayer().hasPermission("essentials.chat.colored")) {
+            if (event.getPlayer().hasPermission(COLORED_CHAT_PERMISSION)) {
                 event.message(COLOR_ONLY.deserialize(plain.serialize(event.message())));
             }
             Component formattedMessage = miniMessage.deserialize(chatFormat,

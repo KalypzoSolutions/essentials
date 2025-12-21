@@ -59,7 +59,7 @@ public class EssentialsUserParser implements ArgumentParser.FutureArgumentParser
         }
         return futureNetworkUser.thenApply(optionalNetworkUser -> {
             if (optionalNetworkUser.isEmpty()) {
-                return ArgumentParseResult.failure(ComponentException.translatable("wandoria.player.not-found", input));
+                return ArgumentParseResult.failure(ComponentException.translatable("essentials.player.offline", input));
             }
             commandInput.readString();
             return ArgumentParseResult.success(optionalNetworkUser.get());

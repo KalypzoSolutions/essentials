@@ -51,22 +51,22 @@ public class EssentialsOfflineUserParser implements ArgumentParser.FutureArgumen
             CommandContext<Source> commandContext,
             CommandInput commandInput) {
         String input = commandInput.peekString();
-        final CompletableFuture<Optional<EssentialsOfflineUser>> futureNetworkUser;
+        final CompletableFuture<Optional<EssentialsOfflineUser>> futureOfflineUser;
         if (input.length() == UUID_LENGTH) {
             // Wir nutzen bereits existierende Parser für bessere Fehlermeldungen
             ArgumentParseResult<UUID> parsedUUID = uuidParser.parse(commandContext, commandInput.copy());
             if (parsedUUID.failure().isPresent()) {
                 return CompletableFuture.completedFuture(ArgumentParseResult.failure(parsedUUID.failure().get()));
             }
-            futureNetworkUser = environment.getOfflineUser(parsedUUID.parsedValue().orElseThrow());
+            futureOfflineUser = environment.getOfflineUser(parsedUUID.parsedValue().orElseThrow());
         } else {
-            futureNetworkUser = environment.getOfflineUserByName(commandInput.peekString());
+            futureOfflineUser = environment.getOfflineUserByName(commandInput.peekString());
         }
         commandInput.readString();
 
-        return futureNetworkUser.thenApply(optionalNetworkUser -> {
+        return futureOfflineUser.thenApply(optionalNetworkUser -> {
             if (optionalNetworkUser.isEmpty()) {
-                return ArgumentParseResult.failure(ComponentException.translatable("wandoria.player.not-found", input));
+                return ArgumentParseResult.failure(ComponentException.translatable("essentials.player.not-found", input));
             }
             return ArgumentParseResult.success(optionalNetworkUser.get());
         });
@@ -75,8 +75,6 @@ public class EssentialsOfflineUserParser implements ArgumentParser.FutureArgumen
 
     @Override
     public CompletableFuture<? extends Iterable<? extends Suggestion>> suggestionsFuture(CommandContext<Source> context, CommandInput input) {
-        String inputText = input.peekString();
-        context.sender().source().sendActionBar(Component.text("Searching: " + inputText));
         return environment.getUsers()
                 .thenApply(
                         users -> users.stream()

@@ -16,10 +16,12 @@ import org.incendo.cloud.paper.util.sender.PlayerSource;
 @CommandContainer
 public class BackCommand {
 
+    public static final String PERMISSION = "wandoria.essentials.command.back";
+
 
     @Command("back")
     @CommandDescription("Nach dem Tot zurück")
-    @Permission("wandoria.essentials.command.back")
+    @Permission(PERMISSION)
     public void teleportBack(PlayerSource source) {
         if (!BackManager.getInstance().hasBackLocation(source.source().getUniqueId())) {
             source.source().sendMessage(Component.translatable("essentials.back.no-location"));

@@ -36,7 +36,7 @@ public class GameModeParser implements ArgumentParser<Source, GameMode>, Blockin
                 return ArgumentParseResult.success(GameMode.SURVIVAL);
             }
             default -> {
-                return ArgumentParseResult.failure(ComponentException.translatable("wandoria.gamemode.invalid", input));
+                return ArgumentParseResult.failure(ComponentException.translatable("essentials.gamemode.invalid", input));
             }
         }
     }

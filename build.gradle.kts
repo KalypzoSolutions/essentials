@@ -22,6 +22,7 @@ repositories {
         name = "placeholderapi"
         url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
+    maven("https://repo.einjojo.it/releases")
 }
 
 dependencies {

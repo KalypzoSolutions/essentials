@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.annotations.Command;
+import org.incendo.cloud.annotations.Permission;
 import org.incendo.cloud.annotations.processing.CommandContainer;
 import org.incendo.cloud.paper.util.sender.Source;
 
@@ -22,6 +23,7 @@ import org.incendo.cloud.paper.util.sender.Source;
 public class GameModeCommand {
 
     @Command("gamemode|gm <gamemode> [player]")
+    @Permission("wandoria.essentials.command.gamemode")
     public void gameMode(Source source, GameMode gamemode, final EssentialsUser player) {
         Bukkit.getScheduler().runTask(EssentialsPlugin.instance(), () -> {
             if (player != null) { // other player
@@ -37,7 +39,7 @@ public class GameModeCommand {
                 ));
             } else { // self
                 if (!(source.source() instanceof Player playerSender)) {
-                    source.source().sendMessage(Component.translatable("wandoria.command.player-only"));
+                    source.source().sendMessage(Component.translatable("essentials.command.player-only"));
                     return;
                 }
                 playerSender.setGameMode(gamemode);

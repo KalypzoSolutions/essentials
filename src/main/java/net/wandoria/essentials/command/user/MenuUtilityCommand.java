@@ -13,7 +13,7 @@ import org.incendo.cloud.paper.util.sender.PlayerSource;
  * <p>Because of @CommandContainer it gets instantiated by {@link net.wandoria.essentials.command.CommandManager}</p>
  */
 @CommandContainer
-public class UtilityCommand {
+public class MenuUtilityCommand {
 
     @Command("workbench|wb|craft")
     @CommandDescription("Öffne die Werkbank")
@@ -22,6 +22,29 @@ public class UtilityCommand {
         InventoryView view = MenuType.CRAFTING.builder().build(source.source());
         view.open();
     }
+
+    @Command("loom")
+    @CommandDescription("Loom")
+    @Permission("essentials.loom")
+    public void loom(PlayerSource source) {
+        MenuType.LOOM.builder().build(source.source()).open();
+    }
+
+    @Command("anvil")
+    @CommandDescription("Opens anvil")
+    @Permission("essentials.anvil")
+    public void anvil(PlayerSource source) {
+        MenuType.ANVIL.builder().build(source.source()).open();
+    }
+
+    @Command("stonecutter")
+    @CommandDescription("Opens stone cutter")
+    @Permission("essentials.stonecutter")
+    public void stoneCutter(PlayerSource source) {
+        MenuType.STONECUTTER.builder().build(source.source()).open();
+    }
+
+
 
 
 }

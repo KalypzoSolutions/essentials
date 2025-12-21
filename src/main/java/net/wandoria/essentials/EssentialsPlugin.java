@@ -16,7 +16,7 @@ import net.wandoria.essentials.environment.name.DefaultServerNameProvider;
 import net.wandoria.essentials.environment.name.ServerNameProvider;
 import net.wandoria.essentials.rce.RemoteCommandExecutor;
 import net.wandoria.essentials.user.back.BackManager;
-import net.wandoria.essentials.user.back.DeathListener;
+import net.wandoria.essentials.listener.DeathListener;
 import net.wandoria.essentials.user.home.HomeManager;
 import net.wandoria.essentials.util.ConfigWrapper;
 import net.wandoria.essentials.util.Text;
@@ -100,7 +100,7 @@ public class EssentialsPlugin extends JavaPlugin {
         }
 
         // Init section
-        chatSystem = new ChatSystem(pubSub, this, new ConfigWrapper(getConfig()), environment.getServerName());
+        chatSystem = new ChatSystem(pubSub, this, new ConfigWrapper(this), environment.getServerName());
         TeleportExecutor.getInstance().init(pubSub);
         PositionAccessor.getInstance().init(pubSub);
         RemoteCommandExecutor.getInstance().init(pubSub);

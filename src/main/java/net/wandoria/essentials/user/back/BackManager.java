@@ -2,6 +2,7 @@ package net.wandoria.essentials.user.back;
 
 import io.lettuce.core.api.StatefulRedisConnection;
 import net.wandoria.essentials.EssentialsPlugin;
+import net.wandoria.essentials.listener.DeathListener;
 import net.wandoria.essentials.world.NetworkPosition;
 import net.wandoria.essentials.world.TeleportExecutor;
 import org.bukkit.entity.Player;

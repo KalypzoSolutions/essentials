@@ -2,6 +2,9 @@ package net.wandoria.essentials.command.user;
 
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.translation.Argument;
+import org.bukkit.Sound;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
 import org.incendo.cloud.annotations.Permission;
@@ -20,7 +23,7 @@ public class EnderchestCommand {
     @CommandDescription("Öffnet deine Enderchest")
     public void openOtherEnderchest(PlayerSource sender) {
         sender.source().openInventory(sender.source().getEnderChest());
-        sender.source().sendMessage(Component.translatable("essentials.enderchest.open"));
+        sender.source().playSound(sender.source(), Sound.BLOCK_ENDER_CHEST_OPEN, 1, 1.2f);
     }
 
     @Command("enderchest|ec <player>")
@@ -28,5 +31,6 @@ public class EnderchestCommand {
     @CommandDescription("Öffnet die Enderchest eines Spielers")
     public void openOtherEnderchest(PlayerSource sender, SinglePlayerSelector player) {
         sender.source().openInventory(player.single().getEnderChest());
+        sender.source().playSound(sender.source(), Sound.BLOCK_ENDER_CHEST_OPEN, 1, 1.2f);
     }
 }

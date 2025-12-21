@@ -40,7 +40,7 @@ public class HomeParser implements ArgumentParser.FutureArgumentParser<Source, H
 
         }
         return CompletableFuture.completedFuture(ArgumentParseResult.failure(
-                ComponentException.translatable("wandoria.command.player-only")));
+                ComponentException.translatable("essentials.command.player-only")));
     }
 
 

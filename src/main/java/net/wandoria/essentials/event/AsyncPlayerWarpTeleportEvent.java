@@ -17,11 +17,13 @@ import org.jetbrains.annotations.NotNull;
 public class AsyncPlayerWarpTeleportEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private boolean cancelled;
+    private Warp.Reason reason;
     private final Warp warp;
 
-    public AsyncPlayerWarpTeleportEvent(@NotNull Player who, Warp home) {
+    public AsyncPlayerWarpTeleportEvent(@NotNull Player who, Warp warp, Warp.Reason reason) {
         super(who, true);
-        this.warp = home;
+        this.warp = warp;
+        this.reason = reason;
     }
 
     @Override
