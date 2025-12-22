@@ -8,7 +8,7 @@ import net.kyori.adventure.text.Component;
 public class TranslationConstants {
 
     public static final Component GENERIC_ERROR = Component.translatable("wandoria.generic.error");
-    public static final Component PLAYER_NOT_FOUND = Component.translatable("wandoria.player.not-found");
+    public static final Component PLAYER_NOT_FOUND = Component.translatable("essentials.player.not-found");
     public static final Component PLAYER_OFFLINE = Component.translatable("wandoria.player.is-offline");
     public static final Component COMMAND_REQUIRES_PLAYER_EXECUTOR = Component.translatable("wandoria.command.requires-player-executor");
 

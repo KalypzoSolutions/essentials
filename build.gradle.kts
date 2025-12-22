@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "it.einjojo"
-version = "1.1.1-DEV"
+version = "1.2.0-DEV"
 
 repositories {
     mavenCentral()

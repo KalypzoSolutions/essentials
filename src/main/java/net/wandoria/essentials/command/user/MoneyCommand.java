@@ -10,6 +10,7 @@ import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.environment.PluginEnvironment;
 import net.wandoria.essentials.exception.ComponentException;
 import net.wandoria.essentials.exception.TransactionException;
+import net.wandoria.essentials.user.EssentialsOfflineUser;
 import net.wandoria.essentials.user.leaderboard.BalanceTopPostgresAccessor;
 import net.wandoria.essentials.util.NumberFormatter;
 import net.wandoria.essentials.util.TranslationConstants;
@@ -55,10 +56,7 @@ public class MoneyCommand {
 
     @Command("pay <player> <amount>")
     @CommandDescription("Überweise Geld an einen Spieler")
-    public CompletableFuture<Void> pay(PlayerSource sender, OfflinePlayer player, int amount) {
-        if (!player.hasPlayedBefore()) {
-            throw new ComponentException(TranslationConstants.PLAYER_NOT_FOUND);
-        }
+    public CompletableFuture<Void> pay(PlayerSource sender, EssentialsOfflineUser player, int amount) {
         if (amount < 1) {
             throw ComponentException.translatable("essentials.money.pay.amount-too-low");
         }
@@ -72,6 +70,10 @@ public class MoneyCommand {
                     }
                     return economyService.deposit(player.getUniqueId(), amount, "pay from " + sender.source().getName())
                             .thenAccept((success) -> {
+                                sender.source().sendMessage(Component.translatable("essentials.money.pay.sent",
+                                        Argument.component("target", Component.text(player.getName())),
+                                        Argument.component("amount", Component.text(NumberFormatter.doubleToHumanReadable(amount)))
+                                ));
                                 notifyPaymentReceive(player.getUniqueId(), sender.source().displayName(), amount);
                             });
                 });

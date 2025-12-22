@@ -64,7 +64,7 @@ public class CommandManager {
                         })
                 .registerHandler(NoPermissionException.class, context -> {
                     CommandSender sender = extractSender(context.context());
-                    sender.sendMessage(Component.translatable("wandoria.no-permission"));
+                    sender.sendMessage(Component.translatable("essentials.no-permission"));
                 });
     }
 
