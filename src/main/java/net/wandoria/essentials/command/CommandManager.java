@@ -72,8 +72,9 @@ public class CommandManager {
                     var status = context.exception().getStatus();
                     if (status.equals(TransactionStatus.INSUFFICIENT_FUNDS)) {
                         sender.sendMessage(Component.translatable("essentials.economy.insufficient-funds"));
+                    } else {
+                        sender.sendMessage(Component.translatable("essentials.economy.transaction-error", Component.text(status.name().toUpperCase(Locale.ROOT))));
                     }
-                    sender.sendMessage(Component.translatable("essentials.economy.transaction-error", Component.text(status.name().toUpperCase(Locale.ROOT))));
                 })
                 .registerHandler(ComponentException.class,
                         context -> {
