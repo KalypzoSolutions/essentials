@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Blocking;
@@ -154,9 +155,10 @@ public class ChatSystem implements Listener {
         }
         for (Player recipient : recipients) {
             // highlights the contained receiver name and plays a sound based on settings
-            if (chatMessage.serializedMiniMessage().contains(recipient.getName())) { // ping
+            if (chatMessage.serializedMiniMessage().contains("@" + recipient.getName())) { // ping
                 Component pingedMessage = chatMessage.getContent()
-                        .replaceText(builder -> builder.match(recipient.getName())
+                        // Highlights the receiver name in a message via replacement
+                        .replaceText(builder -> builder.match("@" + recipient.getName()).replaceInsideHoverEvents(false)
                                 .replacement(Component.text("@" + recipient.getName()).color(Text.HIGHLIGHT_COLOR)));
                 recipient.sendMessage(pingedMessage);
                 if (!UserSettings.of(recipient.getUniqueId()).disabledPingSound()) {
