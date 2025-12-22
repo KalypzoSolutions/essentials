@@ -15,6 +15,7 @@ import org.incendo.cloud.paper.util.sender.PlayerSource;
 import org.incendo.cloud.paper.util.sender.Source;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -26,7 +27,12 @@ public class WarpCommand {
     @Command("warps")
     @Command("warps list")
     public void list(Source source) {
-        for (Warp warp : WarpManager.getInstance().getWarps()) {
+        var warps = WarpManager.getInstance().getWarps();
+        if (warps.isEmpty()) {
+            source.source().sendMessage(Component.translatable("essentials.warp.warps-empty"));
+            return;
+        }
+        for (Warp warp : warps) {
             source.source().sendMessage(warp);
         }
     }
@@ -36,7 +42,7 @@ public class WarpCommand {
         warp.teleport(player.source());
     }
 
-    @Command("warp reload")
+    @Command("warps reload")
     @Permission("essentials.command.warp.reload")
     public CompletableFuture<Void> reload(Source source) {
         return WarpManager.getInstance().load().thenAccept(_void -> {
@@ -44,7 +50,7 @@ public class WarpCommand {
         });
     }
 
-    @Command("warp set <name>")
+    @Command("warps set <name>")
     @Permission("essentials.command.warp.reload")
     public CompletableFuture<Void> save(PlayerSource source, String name, @Nullable @Flag("permission") String permission, @Nullable @Flag("displayName") String displayName) {
         Component component;
