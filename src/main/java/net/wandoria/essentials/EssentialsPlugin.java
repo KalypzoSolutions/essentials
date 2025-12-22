@@ -14,6 +14,7 @@ import net.wandoria.essentials.environment.PluginEnvironment;
 import net.wandoria.essentials.environment.name.CloudNetServerNameProvider;
 import net.wandoria.essentials.environment.name.DefaultServerNameProvider;
 import net.wandoria.essentials.environment.name.ServerNameProvider;
+import net.wandoria.essentials.listener.JoinSpawnLocationListener;
 import net.wandoria.essentials.rce.RemoteCommandExecutor;
 import net.wandoria.essentials.user.back.BackManager;
 import net.wandoria.essentials.listener.DeathListener;
@@ -109,6 +110,7 @@ public class EssentialsPlugin extends JavaPlugin {
         new CommandManager(this);
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new DeathListener(BackManager.getInstance()), this);
+        pm.registerEvents(new JoinSpawnLocationListener(), this);
         WarpManager.getInstance().load().whenComplete(((unused, throwable) -> {
             if (throwable != null) {
                 getSLF4JLogger().error("Could not load warps", throwable);

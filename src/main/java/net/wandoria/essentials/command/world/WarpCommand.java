@@ -39,7 +39,7 @@ public class WarpCommand {
 
     @Command("warp <warp>")
     public void warp(PlayerSource player, Warp warp) {
-        warp.teleport(player.source());
+        warp.teleport(player.source(), Warp.Reason.COMMAND);
     }
 
     @Command("warps reload")
@@ -65,4 +65,24 @@ public class WarpCommand {
         });
 
     }
+
+    @Command("spawn|hub|l")
+    public void spawn(PlayerSource source) {
+        WarpManager.getInstance().getWarp("spawn").ifPresentOrElse(warp -> warp.teleport(source.source(), Warp.Reason.COMMAND),
+                () -> source.source().sendMessage(Component.translatable("essentials.warp.not-found", Component.text("spawn"))));
+    }
+
+    @Command("farmwelt")
+    public void hub(PlayerSource source) {
+        WarpManager.getInstance().getWarp("farmwelt").ifPresentOrElse(warp -> warp.teleport(source.source(), Warp.Reason.COMMAND),
+                () -> source.source().sendMessage(Component.translatable("essentials.warp.not-found", Component.text("farmwelt"))));
+    }
+
+    @Command("nether")
+    public void nether(PlayerSource source) {
+        WarpManager.getInstance().getWarp("nether").ifPresentOrElse(warp -> warp.teleport(source.source(), Warp.Reason.COMMAND),
+                () -> source.source().sendMessage(Component.translatable("essentials.warp.not-found", Component.text("nether"))));
+    }
+
+
 }
