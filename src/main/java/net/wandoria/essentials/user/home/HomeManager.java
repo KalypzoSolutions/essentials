@@ -70,7 +70,7 @@ public class HomeManager {
 
                 List<Home> homes = new LinkedList<>();
                 while (resultSet.next()) {
-                    String homeName = resultSet.getString("home_name");
+                    String homeName = resultSet.getString("name");
                     String location = resultSet.getString("location");
                     homes.add(new Home(playerUuid, homeName, NetworkPosition.deserialize(location)));
                 }
