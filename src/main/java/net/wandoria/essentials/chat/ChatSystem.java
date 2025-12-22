@@ -154,9 +154,9 @@ public class ChatSystem implements Listener {
         }
         for (Player recipient : recipients) {
             // highlights the contained receiver name and plays a sound based on settings
-            if (chatMessage.serializedMiniMessage().contains("@" + recipient.getName())) { // ping
+            if (chatMessage.serializedMiniMessage().contains(recipient.getName())) { // ping
                 Component pingedMessage = chatMessage.getContent()
-                        .replaceText(builder -> builder.match("@" + recipient.getName())
+                        .replaceText(builder -> builder.match(recipient.getName())
                                 .replacement(Component.text("@" + recipient.getName()).color(Text.HIGHLIGHT_COLOR)));
                 recipient.sendMessage(pingedMessage);
                 if (!UserSettings.of(recipient.getUniqueId()).disabledPingSound()) {
