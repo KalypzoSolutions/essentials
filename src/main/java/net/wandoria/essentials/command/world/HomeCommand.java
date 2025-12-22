@@ -22,15 +22,15 @@ import java.util.concurrent.CompletableFuture;
 @CommandContainer
 public class HomeCommand {
 
-    @Command("home|homes tp <home>")
+    @Command("home|homes <home>")
     @Permission("essentials.command.homes.tp")
     @CommandDescription("Teleportiert den Spieler zu seinem Home")
     public void teleportHome(PlayerSource player, Home home) {
-        player.source().sendMessage(Component.translatable("homes.teleport", Component.text(home.name())));
+        player.source().sendMessage(Component.translatable("essentials.homes.teleport", Component.text(home.name())));
         home.teleport(player.source());
     }
 
-    @Command("home|homes set <name>")
+    @Command("sethome <name>")
     @Permission("essentials.command.homes.set")
     @CommandDescription("Erstellt ein Home auf der aktuellen Position")
     public CompletableFuture<Void> setHome(PlayerSource playerSource, String name) {
@@ -56,7 +56,15 @@ public class HomeCommand {
                 player.sendMessage(Component.translatable("essentials.homes.set.success", Component.text(name)));
             });
         }));
+    }
 
+    @Command("delhome <home>")
+    @Permission("essentials.command.homes.set")
+    @CommandDescription("Löscht ein Home")
+    public CompletableFuture<Void> deleteHome(PlayerSource player, Home home) {
+        return HomeManager.getInstance().deleteHome(home).thenAccept(_void -> {
+            player.source().sendMessage(Component.translatable("essentials.homes.delete.success", Component.text(home.name())));
+        });
     }
 
 

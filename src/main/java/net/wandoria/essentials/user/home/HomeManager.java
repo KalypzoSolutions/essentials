@@ -33,6 +33,20 @@ public class HomeManager {
         }
     }
 
+    public CompletableFuture<Void> deleteHome(Home home) {
+        return CompletableFuture.runAsync(() -> {
+            try (Connection connection = dataSource.getConnection();
+                 PreparedStatement statement = connection.prepareStatement("DELETE FROM essentials_player_homes WHERE owner = ? AND name = ?")) {
+                statement.setObject(1, home.owner());
+                statement.setString(2, home.name());
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                log.error("Could not delete {}", home, e);
+                throw new RuntimeException(e);
+            }
+        }, EssentialsPlugin.getExecutorService());
+    }
+
     private static class OnDemand {
         private final static HomeManager INSTANCE = new HomeManager(EssentialsPlugin.instance().getDataSource());
     }
@@ -58,7 +72,7 @@ public class HomeManager {
                 log.error("Could not get home {} {}", owner, name, e);
                 throw new RuntimeException(e);
             }
-        });
+        }, EssentialsPlugin.getExecutorService());
     }
 
     public CompletableFuture<List<Home>> getHomes(UUID playerUuid) {
@@ -80,7 +94,7 @@ public class HomeManager {
                 log.error("Could not get homes {}", playerUuid, e);
                 throw new RuntimeException(e);
             }
-        });
+        }, EssentialsPlugin.getExecutorService());
     }
 
     public CompletableFuture<Void> saveHome(Home home) {
@@ -99,7 +113,7 @@ public class HomeManager {
                 log.error("Could not save {}", home, e);
                 throw new RuntimeException(e);
             }
-        });
+        }, EssentialsPlugin.getExecutorService());
     }
 
     public int getMaxHomes(Player player) {

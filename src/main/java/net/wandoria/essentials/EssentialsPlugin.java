@@ -169,7 +169,7 @@ public class EssentialsPlugin extends JavaPlugin {
     private void loadLocales() {
         MiniMessageTranslationStore translationStore = MiniMessageTranslationStore.create(new NamespacedKey(this, "messages"), Text.MINI_MESSAGE);
         for (Locale locale : List.of(Locale.GERMANY)) {
-            ResourceBundle bundle = ResourceBundle.getBundle("lang.messages", locale, getClassLoader(), UTF8ResourceBundleControl.utf8ResourceBundleControl());
+            ResourceBundle bundle = ResourceBundle.getBundle("lang.messages", locale, getClassLoader(), UTF8ResourceBundleControl.get());
             translationStore.registerAll(locale, bundle, false);
         }
         //Languages.getInstance().setLanguageProvider(player -> player.locale().toString()); InvUI Translations
