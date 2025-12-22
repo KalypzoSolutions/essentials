@@ -41,19 +41,19 @@ public class HomeCommand {
         }
         int maxHomes = HomeManager.getInstance().getMaxHomes(player);
         if (maxHomes < 1) {
-            player.sendMessage(Component.translatable("homes.set.max-reached", Component.text(maxHomes)));
+            player.sendMessage(Component.translatable("essentials.homes.set.max-reached", Component.text(maxHomes)));
             return CompletableFuture.completedFuture(null);
         }
         return HomeManager.getInstance().getHomes(player.getUniqueId()).thenCompose((homes -> {
             if (homes.size() >= maxHomes) {
-                player.sendMessage(Component.translatable("homes.set.max-reached", Component.text(maxHomes)));
+                player.sendMessage(Component.translatable("essentials.homes.set.max-reached", Component.text(maxHomes)));
                 return CompletableFuture.completedFuture(null);
             }
             return HomeManager.getInstance().saveHome(new Home(
                     player.getUniqueId(),
                     name,
                     NetworkPosition.createByLocation(player.getLocation()))).thenAccept(_void -> {
-                player.sendMessage(Component.translatable("homes.set.success", Component.text(name)));
+                player.sendMessage(Component.translatable("essentials.homes.set.success", Component.text(name)));
             });
         }));
 

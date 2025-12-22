@@ -46,7 +46,7 @@ public class WarpCommand {
     @Permission("essentials.command.warp.reload")
     public CompletableFuture<Void> reload(Source source) {
         return WarpManager.getInstance().load().thenAccept(_void -> {
-            source.source().sendMessage(Component.translatable("essentials.command.warp.reload"));
+            source.source().sendMessage(Component.translatable("essentials.warp.reload"));
         });
     }
 
@@ -61,7 +61,7 @@ public class WarpCommand {
         }
         var warp = new Warp(name, component, permission, NetworkPosition.createByLocation(source.source().getLocation()));
         return WarpManager.getInstance().saveWarp(warp).thenAccept((_void) -> {
-            source.source().sendMessage(Component.translatable("essentials.command.warp.set", warp));
+            source.source().sendMessage(Component.translatable("essentials.warp.set", warp));
         });
 
     }

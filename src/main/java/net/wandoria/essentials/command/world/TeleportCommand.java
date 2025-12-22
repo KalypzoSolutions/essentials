@@ -11,6 +11,7 @@ import net.wandoria.essentials.world.NetworkPosition;
 import net.wandoria.essentials.world.TeleportExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
 import org.incendo.cloud.annotations.Permission;
@@ -49,6 +50,7 @@ public class TeleportCommand {
         Location current = source.source().getLocation();
         var pos = new NetworkPosition(server, world, location.x(), location.y(), location.z(), current.getYaw(), current.getPitch());
         getTeleportExecutor().teleportPlayerToPosition(source.source().getUniqueId(), pos);
+        source.source().playSound(source.source().getLocation(), Sound.ENTITY_PLAYER_TELEPORT, 1, 1.2f);
     }
 
     @Command("teleport|tp <target> [destination]")
@@ -58,7 +60,7 @@ public class TeleportCommand {
         if (destination != null) {
             // Teleportiere den Spieler 1 zu dem Spieler 2
             target.teleport(destination);
-            source.source().sendMessage(Component.translatable("essentials.teleport.success",
+            source.source().sendMessage(Component.translatable("essentials.teleport.other-success",
                     Argument.component("target", Component.text(target.getName())),
                     Argument.component("destination", Component.text(destination.getName()))
             ));
@@ -70,11 +72,10 @@ public class TeleportCommand {
             return;
         }
         UUID targetUuid = target.getUniqueId();
-        getTeleportExecutor().teleportPlayerToPlayer(playerSource.source().getUniqueId(), targetUuid);
         source.source().sendMessage(Component.translatable("essentials.teleport.success",
                 Argument.component("target", target)
         ));
-
+        getTeleportExecutor().teleportPlayerToPlayer(playerSource.source().getUniqueId(), targetUuid);
     }
 
     public TeleportExecutor getTeleportExecutor() {

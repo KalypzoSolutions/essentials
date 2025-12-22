@@ -80,7 +80,7 @@ public record Warp(@NotNull String name,
         if (!new AsyncPlayerWarpTeleportEvent(player, this, reason).callEvent()) {
             return;
         }
-        if (!silent) player.sendMessage(Text.deserialize("<prefix> <p>Du wirst zum Warp teleportiert..."));
+        if (!silent) player.sendMessage(Component.translatable("essentials.warp.teleporting", this));
         TeleportExecutor.getInstance().teleportPlayerToPosition(player.getUniqueId(), location);
     }
 
