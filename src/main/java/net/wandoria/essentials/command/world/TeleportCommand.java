@@ -33,7 +33,7 @@ public class TeleportCommand {
 
 
     @Command("teleportl|tpl <location> [world] [server]")
-    @Permission("wandoria.essentials.command.teleport")
+    @Permission("essentials.command.teleport")
     @CommandDescription("Teleportiert dich zu einem Ort")
     public void teleport(PlayerSource source, Location location, @Nullable String world, @Nullable String server) {
         if (world == null) {
@@ -53,7 +53,7 @@ public class TeleportCommand {
 
     @Command("teleport|tp <target> [destination]")
     @CommandDescription("Teleportiert dich zu einem Spieler oder einem Ort oder teleportiert einen anderen Spieler zu einem Spieler")
-    @Permission("wandoria.essentials.command.teleport")
+    @Permission("essentials.command.teleport")
     public void teleport(Source source, EssentialsUser target, @Nullable EssentialsUser destination) {
         if (destination != null) {
             // Teleportiere den Spieler 1 zu dem Spieler 2

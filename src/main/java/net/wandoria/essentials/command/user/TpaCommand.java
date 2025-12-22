@@ -49,7 +49,7 @@ public class TpaCommand {
         }
         return requestOpt.get().fulfill()
                 .thenAccept((_void) -> {
-                    source.source().sendMessage(Component.translatable("essentials.tpa.request-accepted", Argument.tagResolver(player.playerTagResolver())));
+                    source.source().sendMessage(Component.translatable("essentials.tpa.accept", Argument.tagResolver(player.playerTagResolver())));
                 });
     }
 }

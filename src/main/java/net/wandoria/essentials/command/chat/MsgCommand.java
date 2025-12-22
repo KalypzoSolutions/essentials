@@ -30,7 +30,7 @@ public class MsgCommand {
 
 
     @Command("msg <receiver> <message>")
-    @Permission("wandoria.essentials.command.msg")
+    @Permission("essentials.command.msg")
     public CompletableFuture<Void> msg(PlayerSource sender, EssentialsUser receiver, @Greedy String message) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         Bukkit.getServer().getScheduler().runTaskAsynchronously(schedulerExecutor, () -> {
@@ -47,7 +47,7 @@ public class MsgCommand {
     }
 
     @Command("r|reply <message>")
-    @Permission("wandoria.essentials.command.reply")
+    @Permission("essentials.command.reply")
     public CompletableFuture<Void> reply(PlayerSource sender, @Greedy String message) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         Bukkit.getServer().getScheduler().runTaskAsynchronously(schedulerExecutor, () -> {
@@ -58,7 +58,7 @@ public class MsgCommand {
     }
 
     @Command("msgcancel|msgtoggle")
-    @Permission("wandoria.essentials.command.msgcancel")
+    @Permission("essentials.command.msgcancel")
     @CommandDescription("Unterbinde das empfangen privater Nachrichten")
     public CompletableFuture<Void> cancelMsg(PlayerSource sender) {
         CompletableFuture<Void> future = new CompletableFuture<>();

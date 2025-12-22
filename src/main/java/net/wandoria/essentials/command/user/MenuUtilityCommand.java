@@ -17,7 +17,7 @@ public class MenuUtilityCommand {
 
     @Command("workbench|wb|craft")
     @CommandDescription("Öffne die Werkbank")
-    @Permission("essentials.workbench")
+    @Permission("essentials.command.workbench")
     public void workbench(PlayerSource source) {
         InventoryView view = MenuType.CRAFTING.builder().build(source.source());
         view.open();
@@ -25,21 +25,21 @@ public class MenuUtilityCommand {
 
     @Command("loom")
     @CommandDescription("Loom")
-    @Permission("essentials.loom")
+    @Permission("essentials.command.loom")
     public void loom(PlayerSource source) {
         MenuType.LOOM.builder().build(source.source()).open();
     }
 
     @Command("anvil")
     @CommandDescription("Opens anvil")
-    @Permission("essentials.anvil")
+    @Permission("essentials.command.anvil")
     public void anvil(PlayerSource source) {
         MenuType.ANVIL.builder().build(source.source()).open();
     }
 
     @Command("stonecutter")
     @CommandDescription("Opens stone cutter")
-    @Permission("essentials.stonecutter")
+    @Permission("essentials.command.stonecutter")
     public void stoneCutter(PlayerSource source) {
         MenuType.STONECUTTER.builder().build(source.source()).open();
     }

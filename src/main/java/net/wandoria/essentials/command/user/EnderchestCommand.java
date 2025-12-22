@@ -19,7 +19,7 @@ import org.incendo.cloud.paper.util.sender.PlayerSource;
 public class EnderchestCommand {
 
     @Command("enderchest|ec")
-    @Permission("wandoria.essentials.command.enderchest")
+    @Permission("essentials.command.enderchest")
     @CommandDescription("Öffnet deine Enderchest")
     public void openOtherEnderchest(PlayerSource sender) {
         sender.source().openInventory(sender.source().getEnderChest());
@@ -27,7 +27,7 @@ public class EnderchestCommand {
     }
 
     @Command("enderchest|ec <player>")
-    @Permission("wandoria.essentials.command.enderchest.other")
+    @Permission("essentials.command.enderchest.other")
     @CommandDescription("Öffnet die Enderchest eines Spielers")
     public void openOtherEnderchest(PlayerSource sender, SinglePlayerSelector player) {
         sender.source().openInventory(player.single().getEnderChest());

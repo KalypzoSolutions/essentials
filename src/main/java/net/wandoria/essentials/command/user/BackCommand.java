@@ -16,7 +16,7 @@ import org.incendo.cloud.paper.util.sender.PlayerSource;
 @CommandContainer
 public class BackCommand {
 
-    public static final String PERMISSION = "wandoria.essentials.command.back";
+    public static final String PERMISSION = "essentials.command.back";
 
 
     @Command("back")

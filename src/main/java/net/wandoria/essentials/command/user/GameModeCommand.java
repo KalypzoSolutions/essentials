@@ -23,7 +23,7 @@ import org.incendo.cloud.paper.util.sender.Source;
 public class GameModeCommand {
 
     @Command("gamemode|gm <gamemode> [player]")
-    @Permission("wandoria.essentials.command.gamemode")
+    @Permission("essentials.command.gamemode")
     public void gameMode(Source source, GameMode gamemode, final EssentialsUser player) {
         Bukkit.getScheduler().runTask(EssentialsPlugin.instance(), () -> {
             if (player != null) { // other player
