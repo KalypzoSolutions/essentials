@@ -73,7 +73,7 @@ enable-player-address-logging = true
 # Configure your servers here. Each key represents the server's name, and the value
 # represents the IP address of the server to connect to.
 paper = "paper:25565"
-run = "host.docker.internal:25566"
+run = "172.18.0.1:25566"
 
 # In what order we should try servers when a player logs in or is kicked from a server.
 try = [

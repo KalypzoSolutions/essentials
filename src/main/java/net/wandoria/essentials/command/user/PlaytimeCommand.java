@@ -39,6 +39,7 @@ public class PlaytimeCommand {
         Duration duration = player.getPlayTime();
         String humanReadable = DurationFormatUtils.formatDuration(duration.toMillis(), "HH:mm:ss", true);
         source.source().sendMessage(Component.translatable("essentials.playtime.other",
+                Argument.component("target", Component.text(player.getName())),
                 Argument.component("playtime", Component.text(humanReadable))
         ));
     }
