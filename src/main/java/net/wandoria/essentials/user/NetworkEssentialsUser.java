@@ -31,6 +31,6 @@ public class NetworkEssentialsUser extends EssentialsUser {
 
     @Override
     public Duration getPlayTime() {
-        return Duration.ofMillis(networkPlayer.getSessionTime());
+        return Duration.ofMillis(networkPlayer.getPlaytime() + networkPlayer.getSessionTime());
     }
 }

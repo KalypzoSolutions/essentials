@@ -36,7 +36,7 @@ public class HealthCommand {
     @CommandDescription("Fülle deinen Hunger")
     @Permission("essentials.command.feed")
     public void feed(PlayerSource source) {
-        Long expiryMillis = HealCooldown.INSTANCE.getExpiryTimestamp(source.source().getUniqueId());
+        Long expiryMillis = FeedCooldown.INSTANCE.getExpiryTimestamp(source.source().getUniqueId());
         if (expiryMillis != null) {
             source.source().sendMessage(Component.translatable("essentials.feed.cooldown", cooldownArgument(expiryMillis)));
             return;
@@ -51,6 +51,7 @@ public class HealthCommand {
             } else if (player.hasPermission(Permissions.FEED_60.permission)) {
                 cooldown = Duration.ofMinutes(60);
             } else {
+                EssentialsPlugin.instance().getComponentLogger().warn("Player {} tried to feed without any cooldown-permission.", player.getName());
                 source.source().sendMessage(Component.translatable("essentials.cooldown.unsupported-permission"));
                 return;
             }
@@ -116,22 +117,21 @@ public class HealthCommand {
 
     private ComponentLike cooldownArgument(long expiryTimestampMillis) {
         long delta = expiryTimestampMillis - System.currentTimeMillis(); // remaining millis
-
-        return Argument.string("cooldown", DurationFormatUtils.formatDurationHMS(delta));
+        return Argument.component("cooldown", Component.text(DurationFormatUtils.formatDuration(delta, "mm'm' ss's'")));
     }
 
     /**
      * Lazy instance
      */
     private static final class FeedCooldown {
-        private static CooldownManager INSTANCE = new CooldownManager("feed", LazyCooldownConnection.INSTANCE);
+        private static final CooldownManager INSTANCE = new CooldownManager("feed", LazyCooldownConnection.INSTANCE);
     }
 
     /**
      * Lazy instance
      */
     private static final class HealCooldown {
-        private static CooldownManager INSTANCE = new CooldownManager("heal", LazyCooldownConnection.INSTANCE);
+        private static final CooldownManager INSTANCE = new CooldownManager("heal", LazyCooldownConnection.INSTANCE);
     }
 
     /**
