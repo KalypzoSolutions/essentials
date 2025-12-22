@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 public class HomeCommand {
 
     @Command("home|homes tp <home>")
-    @Permission("homes.tp")
+    @Permission("essentials.command.homes.tp")
     @CommandDescription("Teleportiert den Spieler zu seinem Home")
     public void teleportHome(PlayerSource player, Home home) {
         player.source().sendMessage(Component.translatable("homes.teleport", Component.text(home.name())));
@@ -31,7 +31,7 @@ public class HomeCommand {
     }
 
     @Command("home|homes set <name>")
-    @Permission("homes.set")
+    @Permission("essentials.command.homes.set")
     @CommandDescription("Erstellt ein Home auf der aktuellen Position")
     public CompletableFuture<Void> setHome(PlayerSource playerSource, String name) {
         Player player = playerSource.source();

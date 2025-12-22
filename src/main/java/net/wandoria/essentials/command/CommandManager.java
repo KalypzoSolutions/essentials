@@ -1,11 +1,14 @@
 package net.wandoria.essentials.command;
 
 
+import it.einjojo.economy.TransactionStatus;
+import it.einjojo.economy.exception.EconomyException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.command.parser.*;
 import net.wandoria.essentials.exception.ComponentException;
+import net.wandoria.essentials.exception.TransactionException;
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.brigadier.BrigadierSetting;
@@ -21,6 +24,8 @@ import org.incendo.cloud.paper.PaperCommandManager;
 import org.incendo.cloud.paper.util.sender.PaperSimpleSenderMapper;
 import org.incendo.cloud.paper.util.sender.Source;
 import org.jspecify.annotations.NullMarked;
+
+import java.util.Locale;
 
 @NullMarked
 public class CommandManager {
@@ -57,6 +62,19 @@ public class CommandManager {
                                 plugin.getSLF4JLogger().error("An error occurred while parsing arguments for a command", cause);
                             }
                         })
+                .registerHandler(EconomyException.class, context -> {
+                    CommandSender sender = extractSender(context.context());
+                    plugin.getSLF4JLogger().error("Economy error by {} ", sender.getName(), context.exception());
+                    sender.sendMessage(Component.translatable("essentials.economy.error", Component.text("")));
+                })
+                .registerHandler(TransactionException.class, context -> {
+                    CommandSender sender = extractSender(context.context());
+                    var status = context.exception().getStatus();
+                    if (status.equals(TransactionStatus.INSUFFICIENT_FUNDS)) {
+                        sender.sendMessage(Component.translatable("essentials.economy.insufficient-funds"));
+                    }
+                    sender.sendMessage(Component.translatable("essentials.economy.transaction-error", Component.text(status.name().toUpperCase(Locale.ROOT))));
+                })
                 .registerHandler(ComponentException.class,
                         context -> {
                             CommandSender sender = extractSender(context.context());

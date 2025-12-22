@@ -66,9 +66,9 @@ public class MsgCommand {
             boolean disabledCurrently = chatSystem.hasDisabledPrivateMessages(sender.source().getUniqueId());
             chatSystem.setPrivateMessagesDisabled(sender.source().getUniqueId(), !disabledCurrently);
             if (disabledCurrently) {
-                sender.source().sendMessage(Component.translatable("essentials.chat.msgcancel-enabled"));
-            } else {
                 sender.source().sendMessage(Component.translatable("essentials.chat.msgcancel-disabled"));
+            } else {
+                sender.source().sendMessage(Component.translatable("essentials.chat.msgcancel-enabled"));
             }
             future.complete(null);
         });

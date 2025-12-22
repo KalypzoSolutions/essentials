@@ -3,8 +3,10 @@ package net.wandoria.essentials.user.home;
 
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.world.NetworkPosition;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.permissions.Permission;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
@@ -26,6 +28,9 @@ public class HomeManager {
 
     private HomeManager(DataSource dataSource) {
         this.dataSource = dataSource;
+        for (int i = 0; i < MAX_HOME_COUNT; i++) {
+            Bukkit.getPluginManager().addPermission(new Permission("essentials.homes.max." + i, "Allows to set up " + i + " homes"));
+        }
     }
 
     private static class OnDemand {
@@ -98,21 +103,18 @@ public class HomeManager {
     }
 
     public int getMaxHomes(Player player) {
-        var meta = player.getMetadata("max-homes");
-        if (meta.isEmpty()) {
-            int maxHomes = 0;
-            if (player.hasPermission("homes.max.*")) return MAX_HOME_COUNT;
-            for (int i = 0; i < MAX_HOME_COUNT; i++) {
-                if (player.hasPermission("homes.max." + i)) {
-                    maxHomes = i;
-                    meta.add(new FixedMetadataValue(EssentialsPlugin.instance(), maxHomes));
-                    break;
-                }
-                ;
+
+        int maxHomes = 0;
+        if (player.hasPermission("essentials.homes.max.*")) return MAX_HOME_COUNT;
+        for (int i = 0; i < MAX_HOME_COUNT; i++) {
+            if (player.hasPermission("essentials.homes.max." + i)) {
+                maxHomes = i;
+                break;
             }
-            return maxHomes;
+
         }
-        return meta.getFirst().asInt();
+        return maxHomes;
+
     }
 
 }
