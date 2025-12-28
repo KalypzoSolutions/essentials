@@ -23,7 +23,7 @@ public class DebugCommand {
 
     @Command("debug position <player>")
     @CommandDescription("Gibt die Position eines Spielers aus")
-    @Permission("essentials.command.debug.position")
+    @Permission("essentials.admin.debug.position")
     public void debugPositon(Source source, EssentialsUser player) {
         long start = System.currentTimeMillis();
         player.getPosition().thenAccept((pos) -> {
@@ -39,7 +39,7 @@ public class DebugCommand {
 
     @Command("debug reload")
     @CommandDescription("reloads the plugin configuration")
-    @Permission("essentials.command.debug.reload")
+    @Permission("essentials.admin.debug.reload")
     public void reloadConfig(Source source, @Flag("printConfig") boolean printConfig) {
         EssentialsPlugin.instance().reloadConfig();
         source.source().sendRichMessage("<#00d492>◆ <#b9f8cf>Configuration reloaded");
@@ -68,7 +68,7 @@ public class DebugCommand {
 
     @Command("debug environmentUsers")
     @CommandDescription("Gibt alle Nutzer aus, die dem Environment vorliegen")
-    @Permission("essentials.command.debug.environmentusers")
+    @Permission("essentials.admin.debug.environmentusers")
     public CompletableFuture<Void> printEnvironmentUsers(Source source) {
         return EssentialsPlugin.instance().getEnvironment().getUsers().thenAccept((users) -> {
             source.source().sendRichMessage("<#00d492>◆ <#b9f8cf>Environment Users <gray>(" + users.size() + ")");

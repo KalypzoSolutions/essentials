@@ -24,6 +24,8 @@ import java.util.concurrent.CompletableFuture;
  */
 @CommandContainer
 public class WarpCommand {
+    public static final String SET_PERMISSION = "essentials.command.warp.set";
+
     @Command("warps")
     @Command("warps list")
     public void list(Source source) {
@@ -51,7 +53,7 @@ public class WarpCommand {
     }
 
     @Command("warps set <name>")
-    @Permission("essentials.command.warp.reload")
+    @Permission(SET_PERMISSION)
     public CompletableFuture<Void> save(PlayerSource source, String name, @Nullable @Flag("permission") String permission, @Nullable @Flag("displayName") String displayName) {
         Component component;
         if (displayName != null) {

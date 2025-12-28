@@ -1,9 +1,11 @@
 package net.wandoria.essentials.listener;
 
 import net.kyori.adventure.text.Component;
+import net.wandoria.essentials.command.world.WarpCommand;
 import net.wandoria.essentials.util.InternalServerName;
 import net.wandoria.essentials.world.warps.Warp;
 import net.wandoria.essentials.world.warps.WarpManager;
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
@@ -29,9 +31,15 @@ public class JoinSpawnLocationListener implements Listener {
             isSpawnServer = spawn.location().serverName().equals(InternalServerName.get());
         }
         if (isSpawnServer != null && isSpawnServer) {
-            event.setSpawnLocation(spawn.location().toLocation());
+            Location location = spawn.location().toLocation();
+            if (location.getWorld() == null) {
+                event.getPlayer().sendMessage(Component.translatable("essentials.spawn-location.world-null"));
+                if (event.getPlayer().hasPermission(WarpCommand.SET_PERMISSION)) {
+                    event.getPlayer().sendMessage(Component.translatable("essentials.spawn-location.spawn-advice"));
+                }
+                return;
+            }
+            event.setSpawnLocation(location);
         }
     }
-
-
 }
