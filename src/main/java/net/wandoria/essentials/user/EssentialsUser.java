@@ -14,6 +14,7 @@ import net.wandoria.essentials.world.PositionAccessor;
 import net.wandoria.essentials.world.TeleportExecutor;
 import net.wandoria.essentials.world.TeleportResult;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,6 @@ import java.util.function.Consumer;
  */
 @Getter
 public abstract class EssentialsUser implements EssentialsOfflineUser, ComponentLike {
-
     private final EssentialsPlugin plugin = EssentialsPlugin.instance();
     private final UUID uuid;
     private final String name;
@@ -120,5 +120,14 @@ public abstract class EssentialsUser implements EssentialsOfflineUser, Component
     @Override
     public @NotNull Component asComponent() {
         return Component.text(name).hoverEvent(Component.text(uuid.toString()));
+    }
+
+    public void playSound(Sound sound, float volume, float pitch) {
+        ifOnlineLocallyOrElse(
+                player -> player.playSound(player.getLocation(), sound, volume, pitch),
+                () -> {
+
+                }
+        );
     }
 }

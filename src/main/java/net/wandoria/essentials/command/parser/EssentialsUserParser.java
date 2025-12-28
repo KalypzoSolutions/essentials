@@ -47,6 +47,7 @@ public class EssentialsUserParser implements ArgumentParser.FutureArgumentParser
     public CompletableFuture<ArgumentParseResult<EssentialsUser>> parseFuture(CommandContext<Source> commandContext, CommandInput commandInput) {
         String input = commandInput.peekString();
         final CompletableFuture<Optional<EssentialsUser>> futureNetworkUser;
+
         if (input.length() == UUID_LENGTH) {
             // für bessere Fehlermeldungen nutzen wir den bereits existierenden UUIDParser
             ArgumentParseResult<UUID> parsedUUID = uuidParser.parse(commandContext, commandInput.copy());

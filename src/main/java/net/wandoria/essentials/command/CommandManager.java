@@ -42,6 +42,7 @@ public class CommandManager {
         commandManager.parserRegistry().registerParser(HomeParser.descriptor());
         commandManager.parserRegistry().registerParser(WarpParser.descriptor());
         commandManager.parserRegistry().registerParser(GameModeParser.descriptor());
+        commandManager.parserRegistry().registerParser(MultiUserParser.descriptor());
         registerExceptionControllers(commandManager);
         AnnotationParser<Source> parser = new AnnotationParser<>(commandManager, Source.class);
         registerCommands(parser);
