@@ -147,7 +147,7 @@ public class TeleportExecutor implements Listener {
     private CompletableFuture<Boolean> tpPlayerToPositionLocally(Player player, NetworkPosition position) {
         World world = position.toLocation().getWorld();
         if (world == null) {
-            player.sendMessage(Component.translatable("essentials.teleport.invalid-world", position.worldName()));
+            player.sendMessage(Component.translatable("essentials.teleport.invalid-world", Component.text(position.worldName())));
             return CompletableFuture.completedFuture(false);
         }
         if (!Bukkit.isPrimaryThread()) {
