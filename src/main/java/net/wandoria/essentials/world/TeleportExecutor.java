@@ -5,10 +5,12 @@ import io.lettuce.core.pubsub.RedisPubSubAdapter;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import net.kyori.adventure.text.Component;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.environment.PluginEnvironment;
 import net.wandoria.essentials.util.InternalServerName;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /**
@@ -135,17 +138,24 @@ public class TeleportExecutor implements Listener {
     }
 
     /**
-     * Thread safe
+     * Thread safe.
+     * Checks if the world exists: if not the player receives a message.
      *
      * @param player   player
      * @param position destination
      */
-    private void tpPlayerToPositionLocally(Player player, NetworkPosition position) {
-        if (!Bukkit.isPrimaryThread()) {
-            Bukkit.getScheduler().runTask(EssentialsPlugin.instance(), () -> tpPlayerToPositionLocally(player, position));
-            return;
+    private CompletableFuture<Boolean> tpPlayerToPositionLocally(Player player, NetworkPosition position) {
+        World world = position.toLocation().getWorld();
+        if (world == null) {
+            player.sendMessage(Component.translatable("essentials.teleport.invalid-world", position.worldName()));
+            return CompletableFuture.completedFuture(false);
         }
-        player.teleportAsync(position.toLocation());
+        if (!Bukkit.isPrimaryThread()) {
+            var future = new CompletableFuture<Boolean>();
+            Bukkit.getScheduler().runTask(EssentialsPlugin.instance(), () -> tpPlayerToPositionLocally(player, position).whenComplete((success, throwable) -> future.complete(success)));
+            return future;
+        }
+        return player.teleportAsync(position.toLocation());
     }
 
     /**
@@ -155,17 +165,17 @@ public class TeleportExecutor implements Listener {
      * @param player player
      * @param target destination
      */
-    private void tpPlayerToPlayerLocally(@NotNull Player player, @NonNull UUID target) {
+    private boolean tpPlayerToPlayerLocally(@NotNull Player player, @NonNull UUID target) {
         if (!Bukkit.isPrimaryThread()) {
             Bukkit.getScheduler().runTask(EssentialsPlugin.instance(), () -> tpPlayerToPlayerLocally(player, target));
-            return;
+            return true;
         }
         Player targetPlayer = Bukkit.getPlayer(target);
         if (targetPlayer == null) {
             log.warn("Player {} tried to teleport to an offline player {}.", player.getName(), target);
-            return;
+            return false;
         }
-        player.teleport(targetPlayer);
+        return player.teleport(targetPlayer);
 
     }
 
