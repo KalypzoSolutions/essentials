@@ -13,21 +13,16 @@ group = "it.einjojo"
 version = "0.0.0-SNAPSHOT"
 gitVersioning.apply {
     refs {
-        describeTagFirstParent = false
         tag("v(?<tagVersion>[0-9].*)") {
             version = "\${ref.tagVersion}"
         }
-
         branch("main") {
-            version = "\${describe.tag.version}." +
-                    "\${describe.distance}-SNAPSHOT"
+            version = "\${describe.tag.version}-\${describe.distance}\${dirty:+-DEV}"
         }
-
         branch(".+") {
             version = "\${ref}-\${commit.short}"
         }
     }
-
     rev {
         version = "\${commit.short}"
     }
