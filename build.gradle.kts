@@ -17,7 +17,7 @@ gitVersioning.apply {
             version = "\${ref.tagVersion}"
         }
         branch("main") {
-            version = "\${describe.tag.version}-\${describe.distance}\${dirty.snapshot}"
+            version = "\${describe.tag.version}-\${describe.distance}"
         }
         branch(".+") {
             version = "\${ref}-\${commit.short}"
