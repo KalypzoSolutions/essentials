@@ -2,6 +2,7 @@ package net.wandoria.essentials.user.home;
 
 
 import net.wandoria.essentials.EssentialsPlugin;
+import net.wandoria.essentials.util.PermissionsRange;
 import net.wandoria.essentials.world.NetworkPosition;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -117,17 +118,8 @@ public class HomeManager {
     }
 
     public int getMaxHomes(Player player) {
-
-        int maxHomes = 0;
-        if (player.hasPermission("essentials.homes.max.*")) return MAX_HOME_COUNT;
-        for (int i = 0; i < MAX_HOME_COUNT; i++) {
-            if (player.hasPermission("essentials.homes.max." + i)) {
-                maxHomes = i;
-                break;
-            }
-
-        }
-        return maxHomes;
+        if (player.hasPermission("essentials.homes.max.*")) return Integer.MAX_VALUE;
+        return PermissionsRange.max(player, "essentials.homes.max");
 
     }
 
