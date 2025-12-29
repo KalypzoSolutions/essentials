@@ -5,12 +5,21 @@ plugins {
     id("xyz.jpenilla.run-paper") version "2.3.1"
     id("de.eldoria.plugin-yml.paper") version "0.7.1"
     id("com.gradleup.shadow") version "9.2.2"
-
+    id("me.qoomon.git-versioning") version "6.4.4"
 }
 
 group = "it.einjojo"
-version = "1.3.1-DEV"
-
+// set version
+gitVersioning.apply {
+    refs {
+        tag("v(?<version>.*)") {
+            version = "\${ref.version}"
+        }
+    }
+    rev {
+        version = "\${describe.tag.version.major}.\${describe.tag.version.minor}.\${describe.tag.version.patch.next}-\${commit.short}"
+    }
+}
 repositories {
     mavenCentral()
     mavenLocal()
