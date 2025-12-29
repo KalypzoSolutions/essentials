@@ -18,26 +18,12 @@ jobs:
           java-version: '21'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-
-      - name: Checkout player-service-api
-        uses: actions/checkout@v5
-        with:
-          repository: wandoriamc/player-service-api
-          path: player-service-api
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish player-service-api to local Maven
-        working-directory: player-service-api
-        run: |
-          chmod +x ./gradlew || true
-          ./gradlew publishToMavenLocal --no-daemon
-
       - name: Build with Gradle
         run: ./gradlew build
       - name: Upload build artifacts
         uses: actions/upload-artifact@v5
         with:
           name: build-artifacts
+          retention-days: 1
           path: |
-            build/libs/*-all.jar
-            **/build/libs/*-all.jar
+            build/libs/*.jar
