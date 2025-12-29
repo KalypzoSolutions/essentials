@@ -27,15 +27,20 @@ public class ProxiedPlotCommand {
         this.environment = EssentialsPlugin.environment();
     }
 
-
+    @Command("plot|p a")
     @Command("plot|p auto")
-    @Command("plot|p home")
-    @Command("plot|p h")
     public CompletableFuture<Void> proxy(PlayerSource source, CommandContext<Source> ctx) {
         return proxyCommand(source.source().getUniqueId(), ctx.rawInput().input(), source.source());
     }
 
-    @Command("plot|p h visit <player> [plot]")
+    @Command("plot|p home [plot]")
+    @Command("plot|p h [plot]")
+    public CompletableFuture<Void> proxyHome(PlayerSource source, CommandContext<Source> ctx, @Nullable Integer plot) {
+        return proxyCommand(source.source().getUniqueId(), ctx.rawInput().input(), source.source());
+    }
+
+    @Command("plot|p visit <player> [plot]")
+    @Command("plot|p v <player> [plot]")
     public CompletableFuture<Void> proxyVisit(PlayerSource source, CommandContext<Source> ctx, EssentialsOfflineUser player, @Nullable Integer plot) {
         return proxyCommand(source.source().getUniqueId(), ctx.rawInput().input(), source.source());
     }
