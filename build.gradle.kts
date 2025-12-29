@@ -10,16 +10,29 @@ plugins {
 
 group = "it.einjojo"
 // set version
+version = "0.0.0-SNAPSHOT"
 gitVersioning.apply {
     refs {
-        tag("v(?<version>.*)") {
-            version = "\${ref.version}"
+        describeTagFirstParent = false
+        tag("v(?<tagVersion>[0-9].*)") {
+            version = "\${ref.tagVersion}"
+        }
+
+        branch("main") {
+            version = "\${describe.tag.version}." +
+                    "\${describe.distance}-SNAPSHOT"
+        }
+
+        branch(".+") {
+            version = "\${ref}-\${commit.short}"
         }
     }
+
     rev {
-        version = "\${describe.tag.version.major}.\${describe.tag.version.minor}.\${describe.tag.version.patch.next}-\${commit.short}"
+        version = "\${commit.short}"
     }
 }
+
 repositories {
     mavenCentral()
     mavenLocal()
