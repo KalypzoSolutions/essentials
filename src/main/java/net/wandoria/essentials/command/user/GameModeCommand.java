@@ -30,7 +30,7 @@ public class GameModeCommand {
                 player.ifOnlineLocallyOrElse(bukkit -> {
                     bukkit.setGameMode(gamemode);
                 }, () -> {
-                    RemoteCommandCall.console(player.getServerName(), "gm " + gamemode.name() + " " + player.getName()).execute();
+                    RemoteCommandCall.console(player.getServerName(), "gm " + gamemode.name() + " " + player.getName()).executeNow();
 
                 });
                 source.source().sendMessage(Component.translatable("essentials.command.gamemode.other",

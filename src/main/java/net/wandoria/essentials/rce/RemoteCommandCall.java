@@ -22,8 +22,11 @@ public record RemoteCommandCall(@NotNull String serverName, @NotNull String comm
     public static RemoteCommandCall player(UUID player, String serverName, String command) {
         return new RemoteCommandCall(serverName, command, player);
     }
+    public void executeWhenOnline() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 
-    public void execute() {
+    public void executeNow() {
         RemoteCommandExecutor.getInstance().execute(this);
     }
 

@@ -47,7 +47,7 @@ public class ProxiedPlotCommand {
                 sender.sendMessage(Component.translatable("essentials.plot.connect.failed"));
                 return;
             }
-            RemoteCommandCall.player(playerId, serverName, command);
+            RemoteCommandCall.player(playerId, serverName, command).executeNow();
         });
     }
 
