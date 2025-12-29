@@ -16,6 +16,7 @@ import org.incendo.cloud.bukkit.BukkitCommandContextKeys;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.exception.ArgumentParseException;
 import org.incendo.cloud.exception.CommandExecutionException;
+import org.incendo.cloud.exception.InvalidSyntaxException;
 import org.incendo.cloud.exception.NoPermissionException;
 import org.incendo.cloud.exception.handling.ExceptionContext;
 import org.incendo.cloud.exception.handling.ExceptionHandler;
@@ -82,6 +83,10 @@ public class CommandManager {
                             CommandSender sender = extractSender(context.context());
                             sender.sendMessage(context.exception());
                         })
+                .registerHandler(InvalidSyntaxException.class, context -> {
+                    CommandSender sender = extractSender(context.context());
+                    sender.sendMessage(Component.translatable("essentials.command.invalid-syntax", Component.text(context.exception().correctSyntax())));
+                })
                 .registerHandler(NoPermissionException.class, context -> {
                     CommandSender sender = extractSender(context.context());
                     sender.sendMessage(Component.translatable("essentials.no-permission"));

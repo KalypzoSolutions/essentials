@@ -30,6 +30,7 @@ public class HomeCommand {
         home.teleport(player.source());
     }
 
+    @Command("home|homes set <name>")
     @Command("sethome <name>")
     @Permission("essentials.command.homes.set")
     @CommandDescription("Erstellt ein Home auf der aktuellen Position")
@@ -39,25 +40,29 @@ public class HomeCommand {
         if (!event.callEvent()) {
             return CompletableFuture.completedFuture(null);
         }
-        int maxHomes = HomeManager.getInstance().getMaxHomes(player);
+        final int maxHomes = HomeManager.getInstance().getMaxHomes(player);
         if (maxHomes < 1) {
             player.sendMessage(Component.translatable("essentials.homes.set.max-reached", Component.text(maxHomes)));
             return CompletableFuture.completedFuture(null);
         }
-        return HomeManager.getInstance().getHomes(player.getUniqueId()).thenCompose((homes -> {
-            if (homes.size() >= maxHomes) {
-                player.sendMessage(Component.translatable("essentials.homes.set.max-reached", Component.text(maxHomes)));
-                return CompletableFuture.completedFuture(null);
-            }
-            return HomeManager.getInstance().saveHome(new Home(
-                    player.getUniqueId(),
-                    name,
-                    NetworkPosition.createByLocation(player.getLocation()))).thenAccept(_void -> {
-                player.sendMessage(Component.translatable("essentials.homes.set.success", Component.text(name)));
-            });
-        }));
+        return HomeManager.getInstance().getHomes(player.getUniqueId()).thenCompose((homes -> HomeManager.getInstance().getHome(player.getUniqueId(), name)
+                .thenCompose(existing -> {
+                    if (homes.size() >= maxHomes && existing.isEmpty()) {
+                        player.sendMessage(Component.translatable("essentials.homes.set.max-reached", Component.text(maxHomes)));
+                        return CompletableFuture.completedFuture(null);
+                    }
+                    return HomeManager.getInstance().saveHome(new Home(
+                                    player.getUniqueId(),
+                                    name,
+                                    NetworkPosition.createByLocation(player.getLocation())))
+                            .thenAccept(_void -> {
+                                player.sendMessage(Component.translatable("essentials.homes.set.success", Component.text(name)));
+                            });
+                })));
     }
 
+
+    @Command("home|homes delete <home>")
     @Command("delhome <home>")
     @Permission("essentials.command.homes.set")
     @CommandDescription("Löscht ein Home")
