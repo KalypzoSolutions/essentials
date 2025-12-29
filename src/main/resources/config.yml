@@ -8,3 +8,6 @@ chat:
   private:
     sender: "<white>Du <dark_gray>➥ <gray><receiver> <gray><message>"
     receiver: "<gray><sender> <dark_gray>➥ <white>Dich <gray><message>"
+plots-cmd-proxy:
+  enabled: true
+  server: "citybuild"

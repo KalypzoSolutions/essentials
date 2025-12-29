@@ -69,9 +69,7 @@ public interface PluginEnvironment extends ServerNameProvider {
     CompletableFuture<List<EssentialsUser>> getUsers();
 
 
-    void connectPlayerToServer(UUID player, String serverName);
-
-    void connectPlayerToGroup(UUID player, String groupName);
+    CompletableFuture<Boolean> connectPlayerToServer(UUID player, String serverName);
 
     CompletableFuture<Optional<EssentialsOfflineUser>> getOfflineUser(UUID uuid);
 

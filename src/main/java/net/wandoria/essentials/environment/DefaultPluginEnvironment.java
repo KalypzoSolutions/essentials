@@ -2,6 +2,7 @@ package net.wandoria.essentials.environment;
 
 import it.einjojo.playerapi.PlayerApi;
 import it.einjojo.playerapi.PlayerApiProvider;
+import it.einjojo.playerapi.ServerConnectResult;
 import lombok.Getter;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.environment.name.ServerNameProvider;
@@ -75,20 +76,14 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
     }
 
     @Override
-    public void connectPlayerToServer(UUID player, String serverName) {
-        playerApi.connectPlayer(player, serverName).exceptionally(ex -> {
-            EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player to server", ex);
-            return null;
-        });
+    public CompletableFuture<Boolean> connectPlayerToServer(UUID player, String serverName) {
+        return playerApi.connectPlayer(player, serverName).thenApply(result -> result.equals(ServerConnectResult.SUCCESS))
+                .exceptionally(ex -> {
+                    EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player to server", ex);
+                    throw new RuntimeException(ex);
+                });
     }
 
-    @Override
-    public void connectPlayerToGroup(UUID player, String groupName) {
-        playerApi.connectPlayer(player, groupName).exceptionally(ex -> {
-            EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player to server", ex);
-            return null;
-        });
-    }
 
     @Override
     public CompletableFuture<Optional<EssentialsOfflineUser>> getOfflineUser(UUID uuid) {

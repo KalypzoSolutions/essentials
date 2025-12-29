@@ -7,8 +7,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.command.parser.*;
+import net.wandoria.essentials.command.plot.ProxiedPlotCommand;
 import net.wandoria.essentials.exception.ComponentException;
 import net.wandoria.essentials.exception.TransactionException;
+import net.wandoria.essentials.util.InternalServerName;
+import net.wandoria.essentials.util.Text;
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.brigadier.BrigadierSetting;
@@ -46,7 +49,15 @@ public class CommandManager {
         commandManager.parserRegistry().registerParser(MultiUserParser.descriptor());
         registerExceptionControllers(commandManager);
         AnnotationParser<Source> parser = new AnnotationParser<>(commandManager, Source.class);
-        registerCommands(parser);
+        registerDefaultCommands(parser);
+        if (plugin.getConfig().getBoolean("plot-cmd-proxy.enabled", true)) {
+            String destination = plugin.getConfig().getString("plot-cmd-proxy.server", "citybuild");
+            if (!destination.equals(InternalServerName.get())) { // prevent proxied command on the destination server
+                parser.parse(new ProxiedPlotCommand(destination));
+                plugin.getComponentLogger().info(Text.deserialize("<ss>Registered Proxy-Plot command proxied to " + destination));
+            }
+        }
+
 
     }
 
@@ -91,14 +102,15 @@ public class CommandManager {
                     CommandSender sender = extractSender(context.context());
                     sender.sendMessage(Component.translatable("essentials.no-permission"));
                 });
+
+
     }
 
-    private void registerCommands(AnnotationParser<Source> parser) {
+    private void registerDefaultCommands(AnnotationParser<Source> parser) {
         try {
             var registeredCommanadsCollection = parser.parseContainers(plugin.getClass().getClassLoader());
-            for (var command : registeredCommanadsCollection) {
-                plugin.getComponentLogger().info(Component.text("Registered Command: " + command.rootComponent().name(), NamedTextColor.GREEN));
-            }
+            plugin.getComponentLogger().info(Text.deserialize("<ss>" + registeredCommanadsCollection.size() + " commands registered"));
+
         } catch (Exception e) {
             plugin.getSLF4JLogger().error("Could not register commands", e);
         }
