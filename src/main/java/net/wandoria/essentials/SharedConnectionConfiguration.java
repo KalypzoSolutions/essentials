@@ -23,8 +23,7 @@ public class SharedConnectionConfiguration {
     private PostgresConfiguration postgres = new PostgresConfiguration(
             "jdbc:postgresql://localhost:5432/minecraft",
             "root",
-            "password",
-            PostgresConfiguration.DEFAULT_POOL_SETTINGS
+            "password"
     );
 
 
@@ -57,13 +56,8 @@ public class SharedConnectionConfiguration {
         }
     }
 
-    public record PostgresConfiguration(String jdbcUrl, String username, String password,
-                                        Map<String, Object> poolSettings) {
-        public static Map<String, Object> DEFAULT_POOL_SETTINGS = Map.of(
-                "maximum-pool-size", "16",
-                "max-idle", "8",
-                "minimum-idle", "0"
-        );
+    public record PostgresConfiguration(String jdbcUrl, String username, String password) {
+
 
         /**
          * Converts driver properties to a java.util.Properties object, suitable for HikariConfig.setDataSourceProperties.
@@ -85,13 +79,7 @@ public class SharedConnectionConfiguration {
             props.setProperty("cacheServerConfiguration", "true");
             props.setProperty("elideSetAutoCommits", "true");
             props.setProperty("maintainTimeStats", "false");
-            poolSettings.forEach((key, value) -> {
-                if (value instanceof String) { // HikariCP often expects String properties here
-                    props.setProperty(key, (String) value);
-                } else if (value != null) {
-                    props.setProperty(key, value.toString()); // Convert other types to string
-                }
-            });
+
             return props;
         }
 
@@ -102,6 +90,8 @@ public class SharedConnectionConfiguration {
             config.setPassword(password);
             config.setDriverClassName("org.postgresql.Driver");
             config.setDataSourceProperties(dataSourceProperties());
+            config.setMinimumIdle(2);
+            config.setMaximumPoolSize(2);
             config.setSchema("public");
             return config;
         }
