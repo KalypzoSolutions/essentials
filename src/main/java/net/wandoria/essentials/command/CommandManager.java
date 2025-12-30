@@ -4,8 +4,8 @@ package net.wandoria.essentials.command;
 import it.einjojo.economy.TransactionStatus;
 import it.einjojo.economy.exception.EconomyException;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.wandoria.essentials.EssentialsPlugin;
+import net.wandoria.essentials.command.admin.LabyModDebugCommand;
 import net.wandoria.essentials.command.parser.*;
 import net.wandoria.essentials.command.plot.ProxiedPlotCommand;
 import net.wandoria.essentials.exception.ComponentException;
@@ -56,6 +56,11 @@ public class CommandManager {
                 parser.parse(new ProxiedPlotCommand(destination));
                 plugin.getComponentLogger().info(Text.deserialize("<ss>Registered Proxy-Plot command proxied to " + destination));
             }
+        }
+
+        if (plugin.getServer().getPluginManager().isPluginEnabled("LabyModServerAPI")) {
+            parser.parse(new LabyModDebugCommand());
+            plugin.getComponentLogger().info(Text.deserialize("<ss>Registered Labymod-Debug command"));
         }
 
 

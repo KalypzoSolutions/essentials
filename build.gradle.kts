@@ -39,10 +39,16 @@ repositories {
         name = "placeholderapi"
         url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
+    maven {
+        name = "labymod"
+        url = uri("https://dist.labymod.net/api/v1/maven/release/")
+    }
     maven("https://repo.einjojo.it/releases")
 }
 
 dependencies {
+    compileOnly("net.labymod.serverapi:server-bukkit:1.0.9")
+
     compileOnly("it.einjojo.playerapi:api:1.5")
     compileOnly("it.einjojo:economy:2.0.1")
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
@@ -102,6 +108,9 @@ paper {
         register("EconomyProviderPlugin") {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
             required = true
+        }
+        register("LabyModServerAPI") {
+            required = false
         }
     }
 }
