@@ -45,7 +45,7 @@ repositories {
         url = uri("https://dist.labymod.net/api/v1/maven/release/")
     }
     maven("https://repo.einjojo.it/releases")
-    maven("https://maven.pvphub.me/tofaa")
+    // maven("https://maven.pvphub.me/tofaa") not used
 }
 
 dependencies {
@@ -67,7 +67,7 @@ dependencies {
 
     compileOnly("com.github.retrooper:packetevents-spigot:2.11.1")
     // head preview
-    paperLibrary("io.github.tofaa2:spigot:3.0.3-SNAPSHOT")
+    // paperLibrary("io.github.tofaa2:spigot:3.0.3-SNAPSHOT") not used yet. TODO: add packet events dep.
 
     //cloudnet
     implementation(platform("eu.cloudnetservice.cloudnet:bom:4.0.0-RC14"))
