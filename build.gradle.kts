@@ -6,6 +6,7 @@ plugins {
     id("de.eldoria.plugin-yml.paper") version "0.7.1"
     id("com.gradleup.shadow") version "9.2.2"
     id("me.qoomon.git-versioning") version "6.4.4"
+
 }
 
 group = "it.einjojo"
@@ -30,7 +31,7 @@ gitVersioning.apply {
 
 repositories {
     mavenCentral()
-    mavenLocal()
+
     maven {
         name = "papermc"
         url = uri("https://repo.papermc.io/repository/maven-public/")
@@ -44,6 +45,7 @@ repositories {
         url = uri("https://dist.labymod.net/api/v1/maven/release/")
     }
     maven("https://repo.einjojo.it/releases")
+    maven("https://maven.pvphub.me/tofaa")
 }
 
 dependencies {
