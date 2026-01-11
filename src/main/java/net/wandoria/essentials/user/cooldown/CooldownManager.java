@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * Uses Redis to manage cooldowns
  */
+@Deprecated
 public class CooldownManager {
     private static final String REDIS_KEY = "essentials:cooldown:";
     private final String cooldownKey;

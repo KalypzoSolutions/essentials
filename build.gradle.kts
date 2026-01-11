@@ -63,6 +63,10 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
 
+    compileOnly("com.github.retrooper:packetevents-spigot:2.11.1")
+    // head preview
+    paperLibrary("io.github.tofaa2:spigot:3.0.3-SNAPSHOT")
+
     //cloudnet
     implementation(platform("eu.cloudnetservice.cloudnet:bom:4.0.0-RC14"))
     compileOnly("eu.cloudnetservice.cloudnet:driver-api")
@@ -103,6 +107,9 @@ paper {
         }
         register("PlayerApi") {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+            required = true
+        }
+        register("packetevents") {
             required = true
         }
         register("EconomyProviderPlugin") {
