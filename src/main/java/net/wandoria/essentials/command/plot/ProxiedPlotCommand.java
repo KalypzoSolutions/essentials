@@ -16,7 +16,9 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- *
+ * Allows to run plot-squared commands on a different server.
+ * <p>
+ * Registered conditionally if Plot-Squared is not present and proxying is enabled in the config. Proxies plot commands to a different server, where the plot plugin is installed.
  */
 public class ProxiedPlotCommand {
     private final String serverName;

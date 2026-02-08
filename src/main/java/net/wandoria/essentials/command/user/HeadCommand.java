@@ -35,7 +35,7 @@ public class HeadCommand {
         Bukkit.getPluginManager().addPermission(new org.bukkit.permissions.Permission("essentials.cooldown.head.bypass"));
     }
 
-    private class LAZY {
+    private static class LAZY {
         private static final RedisCooldownManager INSTANCE = new RedisCooldownManager(EssentialsPlugin.instance().getRedis().connect(), "head");
     }
 
