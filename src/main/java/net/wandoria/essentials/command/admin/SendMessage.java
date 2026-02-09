@@ -22,25 +22,6 @@ import java.util.Set;
 public class SendMessage {
     private final Set<String> transactions = new HashSet<>();
 
-    @Command("sendMiniMessage <receiver> <message>")
-    @Permission("essentials.admin.sendminimessage")
-    public void sendMiniMessage(Source source, Either<EssentialsUser, WildcardEssentialUser> receiver, @Quoted String message, @Flag("eggsound") boolean eggSound) {
-        receiver.mapEither(user -> sendMiniMessage(user, message, eggSound), wildcard -> sendMiniMessage(wildcard, message));
-        source.source().sendActionBar(Component.text("Message delivered ", NamedTextColor.GREEN));
-
-    }
-
-    private boolean sendMiniMessage(EssentialsUser receiver, String message, boolean eggSound) {
-        receiver.sendMessage(Text.deserialize(message));
-        receiver.playSound(Sound.ENTITY_CHICKEN_EGG, 1f, 1.4f);
-        return true;
-    }
-
-    private boolean sendMiniMessage(WildcardEssentialUser receiver, String message) {
-        receiver.sendMessage(Text.deserialize(message));
-        return true;
-    }
-
 
     @Command("sendPurchaseNotification <receiver> <transactionId>")
     @Permission("essentials.admin.sendpurchasenotification")

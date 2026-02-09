@@ -1,8 +1,7 @@
 package net.wandoria.essentials.util.servername;
 
+import lombok.Getter;
 import lombok.Setter;
-import net.wandoria.essentials.environment.name.CloudNetServerNameProvider;
-import net.wandoria.essentials.environment.name.ServerNameProvider;
 import org.bukkit.Bukkit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +20,9 @@ import java.lang.reflect.InvocationTargetException;
  * @author Johannes / EinJOJO
  * @version 2
  */
+@Getter
 @Setter
-public class InternalServerName implements ServerNameProvider {
+public class InternalServerName {
     private static final Logger log = LoggerFactory.getLogger(InternalServerName.class);
     private final String serverName;
 
@@ -49,10 +49,6 @@ public class InternalServerName implements ServerNameProvider {
         this.serverName = name;
     }
 
-    @Override
-    public String getServerName() {
-        return serverName;
-    }
 
     private static class LazyHolder {
         private static final InternalServerName INSTANCE = new InternalServerName();

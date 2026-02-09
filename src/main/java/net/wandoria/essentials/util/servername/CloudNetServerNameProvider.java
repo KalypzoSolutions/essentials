@@ -5,14 +5,13 @@ import eu.cloudnetservice.driver.inject.InjectionLayer;
 import eu.cloudnetservice.wrapper.holder.ServiceInfoHolder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.wandoria.essentials.environment.name.ServerNameProvider;
 
 /**
  * Uses the cloudnet api to retrieve the server name.
  */
 @Slf4j
 @Getter
-class CloudNetServerNameProvider implements ServerNameProvider {
+class CloudNetServerNameProvider {
     private final InjectionLayer<Injector> injector = InjectionLayer.ext();
     private final String serverName;
 
