@@ -1,18 +1,17 @@
 package de.kalypzo.essentials.command;
 
 
-import de.kalypzo.essentials.command.parser.*;
-import it.einjojo.economy.TransactionStatus;
-import it.einjojo.economy.exception.EconomyException;
-import net.kyori.adventure.text.Component;
 import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.command.admin.LabyModDebugCommand;
-import net.wandoria.essentials.command.parser.*;
+import de.kalypzo.essentials.command.parser.*;
 import de.kalypzo.essentials.command.plot.ProxiedPlotCommand;
 import de.kalypzo.essentials.exception.ComponentException;
 import de.kalypzo.essentials.exception.TransactionException;
 import de.kalypzo.essentials.util.Text;
 import de.kalypzo.essentials.util.servername.InternalServerName;
+import it.einjojo.economy.TransactionStatus;
+import it.einjojo.economy.exception.EconomyException;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.brigadier.BrigadierSetting;
@@ -47,7 +46,7 @@ public class CommandManager {
         commandManager.parserRegistry().registerParser(HomeParser.descriptor());
         commandManager.parserRegistry().registerParser(WarpParser.descriptor());
         commandManager.parserRegistry().registerParser(GameModeParser.descriptor());
-        
+
         registerExceptionControllers(commandManager);
         AnnotationParser<Source> parser = new AnnotationParser<>(commandManager, Source.class);
         registerDefaultCommands(parser);
