@@ -2,7 +2,7 @@
 # Essentials plugin configuration.
 # The database connection details are stored according to the shared-connections configuration specification inside the "connections.json"
 #
-_version: 1
+_version: 2
 chat:
   format: "%luckperms_prefix% %player_name% <dark_gray>➥ <gray><message>" # <message> interne Variable. % % gehören zur Placeholder API
   private:
@@ -11,3 +11,7 @@ chat:
 plots-cmd-proxy:
   enabled: true
   server: "citybuild"
+# '|' is used to indicate a multi-line string in YAML
+info-message: |
+  <prefix> <p>Feli hat die config.yml von Essentials nicht angepasst.  
+  <prefix> <gray>Viel Spaß beim Spielen!

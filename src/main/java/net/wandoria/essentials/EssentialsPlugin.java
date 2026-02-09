@@ -8,6 +8,9 @@ import net.wandoria.essentials.chat.ChatSystem;
 import net.wandoria.essentials.command.CommandManager;
 import net.wandoria.essentials.environment.DefaultPluginEnvironment;
 import net.wandoria.essentials.environment.PluginEnvironment;
+import net.wandoria.essentials.environment.name.CloudNetServerNameProvider;
+import net.wandoria.essentials.environment.name.DefaultServerNameProvider;
+import net.wandoria.essentials.environment.name.ServerNameProvider;
 import net.wandoria.essentials.listener.DeathListener;
 import net.wandoria.essentials.listener.JoinSpawnLocationListener;
 import net.wandoria.essentials.rce.RemoteCommandExecutor;
@@ -31,6 +34,7 @@ import java.util.concurrent.TimeUnit;
  * Loads language files from resource bundle, and does plugin setup
  */
 public class EssentialsPlugin extends JavaPlugin {
+    private static final int LATEST_CONFIG_VERSION = 2;
     @Getter
     private static ExecutorService executorService = Executors.newCachedThreadPool();
     private static EssentialsPlugin instance;
@@ -47,6 +51,11 @@ public class EssentialsPlugin extends JavaPlugin {
     @Override
     public void onLoad() {
         saveDefaultConfig();
+        int configVersion = getConfig().getInt("config-version", 1);
+        if (configVersion < LATEST_CONFIG_VERSION) {
+            new ConfigUpdater(this).updateConfig();
+        }
+
     }
 
     @Override
@@ -159,22 +168,6 @@ public class EssentialsPlugin extends JavaPlugin {
 
     public static EssentialsPlugin instance() {
         return instance;
-    }
-
-    public WarpManager getWarpManager() {
-        return WarpManager.getInstance();
-    }
-
-    public HomeManager getHomeManager() {
-        return HomeManager.getInstance();
-    }
-
-    public PositionAccessor getPositionAccessor() {
-        return PositionAccessor.getInstance();
-    }
-
-    public TeleportExecutor getTeleportExecutor() {
-        return TeleportExecutor.getInstance();
     }
 
     public DataSource getDataSource() {
