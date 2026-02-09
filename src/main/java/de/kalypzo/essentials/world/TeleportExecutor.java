@@ -2,15 +2,15 @@ package de.kalypzo.essentials.world;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
+import de.kalypzo.essentials.EssentialsPlugin;
+import de.kalypzo.essentials.environment.PluginEnvironment;
+import de.kalypzo.essentials.util.MainThreadUtil;
+import de.kalypzo.essentials.util.servername.InternalServerName;
 import io.lettuce.core.pubsub.RedisPubSubAdapter;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
-import de.kalypzo.essentials.EssentialsPlugin;
-import de.kalypzo.essentials.environment.PluginEnvironment;
-import de.kalypzo.essentials.util.MainThreadUtil;
-import de.kalypzo.essentials.util.servername.InternalServerName;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -99,10 +99,12 @@ public class TeleportExecutor implements Listener {
             if (!teleportAnnounce.player().equals(player.getUniqueId())) {
                 return false;
             }
-            teleportAnnounce.positionOrTarget(
-                    position -> tpPlayerToPositionLocally(player, position),
-                    target -> tpPlayerToPlayerLocally(player, target)
-            );
+            event.getPlayer().getScheduler().runDelayed(EssentialsPlugin.instance(), (s) -> {
+                teleportAnnounce.positionOrTarget(
+                        position -> tpPlayerToPositionLocally(player, position),
+                        target -> tpPlayerToPlayerLocally(player, target)
+                );
+            }, null, 5);
             log.info("Executed teleport announcement {} ", teleportAnnounce);
             return true;
         });
@@ -113,21 +115,30 @@ public class TeleportExecutor implements Listener {
      * @param player does not need to be on the executing server
      * @param target does not need to be on the executing server
      */
-    public void teleportPlayerToPlayer(UUID player, UUID target) {
+    public CompletableFuture<Void> teleportPlayerToPlayer(UUID player, UUID target) {
         Player sender = Bukkit.getPlayer(player);
         Player targetPlayer = Bukkit.getPlayer(target);
         if (sender != null && targetPlayer != null) { // both on same server
             tpPlayerToPlayerLocally(sender, target);
-            return;
+            return CompletableFuture.completedFuture(null);
         }
-        var optTarget = environment.getUser(target).join();
-        if (optTarget.isEmpty()) {
-            return;
-        }
-        String targetServerName = optTarget.get().getServerName();
-        connection.async().publish(CHANNEL, gson.toJson(new TeleportAnnounce(player, targetServerName, null, target, System.currentTimeMillis() + EXPIRY_MILLIS)));
-        environment.connectPlayerToServer(player, targetServerName);
-        log.info("Published Teleport Announcement to {}. {} to player {}", targetServerName, player, target);
+        return environment.getUser(target).thenCompose(optTarget -> {
+            if (optTarget.isEmpty()) {
+                log.warn("Player {} tried to teleport to player {}, but the target player is not online.", player, target);
+                return CompletableFuture.completedFuture(null);
+            }
+            String targetServerName = optTarget.get().getServerName();
+            connection.async().publish(CHANNEL, gson.toJson(new TeleportAnnounce(player, targetServerName, null, target, System.currentTimeMillis() + EXPIRY_MILLIS)));
+            log.info("Published Teleport Announcement to {}. {} to player {}", targetServerName, player, target);
+            return environment.connectPlayerToServer(player, targetServerName)
+                    .thenAccept(connection -> {
+                    })
+                    .exceptionally(ex -> {
+                        log.error("Failed to connect player {} to server {}", player, targetServerName, ex);
+                        return null;
+                    });
+        });
+
 
     }
 
@@ -172,18 +183,19 @@ public class TeleportExecutor implements Listener {
      * @param target destination
      */
     @CanIgnoreReturnValue
-    private boolean tpPlayerToPlayerLocally(@NotNull Player player, @NonNull UUID target) {
+    private CompletableFuture<Void> tpPlayerToPlayerLocally(@NotNull Player player, @NonNull UUID target) {
         if (!Bukkit.isPrimaryThread()) {
-            MainThreadUtil.run(player, () -> tpPlayerToPlayerLocally(player, target));
-            return true;
+            return CompletableFuture.runAsync(() -> {
+                tpPlayerToPlayerLocally(player, target).join();
+            }, MainThreadUtil.createExecutor(player));
         }
         Player targetPlayer = Bukkit.getPlayer(target);
         if (targetPlayer == null) {
             log.warn("Player {} tried to teleport to an offline player {}.", player.getName(), target);
-            return false;
+            return CompletableFuture.failedFuture(new IllegalStateException("Target player is not online"));
         }
-        return player.teleport(targetPlayer);
-
+        player.teleport(targetPlayer);
+        return CompletableFuture.completedFuture(null);
     }
 
 
