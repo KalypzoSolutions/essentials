@@ -77,7 +77,7 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
     public CompletableFuture<Boolean> connectPlayerToServer(UUID player, String serverName) {
         return playerApi.connectPlayer(player, serverName).thenApply(result -> result.equals(ServerConnectResult.SUCCESS))
                 .exceptionally(ex -> {
-                    EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player to server", ex);
+                    EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player {} to server {}", player, serverName, ex);
                     throw new RuntimeException(ex);
                 });
     }
@@ -97,9 +97,6 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
 
     @Override
     public CompletableFuture<List<String>> suggestOfflinePlayerNames(String input, @Nullable UUID querying, int limit) {
-        if (input == null || input.trim().isEmpty() || limit <= 0) {
-            return CompletableFuture.completedFuture(Collections.emptyList());
-        }
 
         // Collect all offline player names, excluding the querying player
         List<String> candidateNames;
@@ -114,6 +111,9 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
                     .map(org.bukkit.OfflinePlayer::getName)
                     .filter(Objects::nonNull)
                     .toList();
+        }
+        if (input == null || input.trim().isEmpty() || limit <= 0) {
+            return CompletableFuture.completedFuture(candidateNames.stream().limit(limit).toList());
         }
         // Use fuzzy search to rank and filter matches (case-insensitive)
         List<String> suggestions = FuzzySearch.suggest(input, candidateNames, limit);
