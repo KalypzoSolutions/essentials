@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 /**
  * @author Tiko
- * @created 30.01.2025, 16:37
+ * 30.01.2025
  */
 public class PermissionsRange {
 

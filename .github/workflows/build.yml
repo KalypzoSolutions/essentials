@@ -1,33 +1,69 @@
 name: build.yml
+
 on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  JAVA_VERSION: '21'
+  GRADLE_OPTS: '-Dorg.gradle.workers.max=4'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      actions: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
-          fetch-depth: '0'
+          fetch-depth: 0
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v5
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: gradle
+
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --no-daemon --info
+
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v5
+        if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@v6
         with:
-          name: build-artifacts
+          name: essentials-build
           retention-days: 1
-          path: |
-            build/libs/*.jar
+          path: build/libs/*.jar
+          if-no-files-found: error
+
+      - name: Upload Release Assets
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+
+          files: build/libs/*.jar
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

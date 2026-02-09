@@ -4,9 +4,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.lettuce.core.RedisClient;
 import lombok.Getter;
-import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslationStore;
-import net.kyori.adventure.translation.GlobalTranslator;
-import net.kyori.adventure.util.UTF8ResourceBundleControl;
 import net.wandoria.essentials.chat.ChatSystem;
 import net.wandoria.essentials.command.CommandManager;
 import net.wandoria.essentials.environment.DefaultPluginEnvironment;
@@ -18,21 +15,17 @@ import net.wandoria.essentials.listener.DeathListener;
 import net.wandoria.essentials.listener.JoinSpawnLocationListener;
 import net.wandoria.essentials.rce.RemoteCommandExecutor;
 import net.wandoria.essentials.user.back.BackManager;
+import net.wandoria.essentials.user.home.HomeManager;
 import net.wandoria.essentials.util.ConfigWrapper;
-import net.wandoria.essentials.util.Text;
 import net.wandoria.essentials.world.PositionAccessor;
 import net.wandoria.essentials.world.TeleportExecutor;
 import net.wandoria.essentials.world.warps.WarpManager;
-import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.flywaydb.core.Flyway;
 import org.jetbrains.annotations.Nullable;
 
 import javax.sql.DataSource;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -111,7 +104,7 @@ public class EssentialsPlugin extends JavaPlugin {
         PositionAccessor.getInstance().init(pubSub);
         RemoteCommandExecutor.getInstance().init(pubSub);
         getSLF4JLogger().info("All pub sub components initialized. Client subscribed to: {}", pubSub.sync().pubsubChannels());
-        loadLocales();
+        new LocaleLoader(this, getClassLoader()).loadLocales();
         new CommandManager(this);
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new DeathListener(BackManager.getInstance()), this);
@@ -125,18 +118,15 @@ public class EssentialsPlugin extends JavaPlugin {
         }));
     }
 
+    /**
+     *
+     * @return
+     */
     private @Nullable PluginEnvironment createEnvironment() {
         getSLF4JLogger().info("Determining server environment...");
-        ServerNameProvider serverNameProvider;
-        if (CloudNetServerNameProvider.isAvailable()) {
-            getSLF4JLogger().info("CloudNet detected, using CloudNetServerNameProvider");
-            serverNameProvider = new CloudNetServerNameProvider();
-        } else {
-            getSLF4JLogger().info("CloudNet not detected, falling back to default server name provider");
-            serverNameProvider = new DefaultServerNameProvider();
-        }
+
         try {
-            return new DefaultPluginEnvironment(this, serverNameProvider);
+            return new DefaultPluginEnvironment(this);
         } catch (NoClassDefFoundError noClass) {
             getSLF4JLogger().error("The Environment could not be created because a class could not be found. Probably the player api has failed to load!");
         } catch (Exception ex) {
@@ -171,16 +161,6 @@ public class EssentialsPlugin extends JavaPlugin {
         }
     }
 
-    private void loadLocales() {
-        MiniMessageTranslationStore translationStore = MiniMessageTranslationStore.create(new NamespacedKey(this, "messages"), Text.MINI_MESSAGE);
-        for (Locale locale : List.of(Locale.GERMANY)) {
-            ResourceBundle bundle = ResourceBundle.getBundle("lang.messages", locale, getClassLoader(), UTF8ResourceBundleControl.get());
-            translationStore.registerAll(locale, bundle, false);
-        }
-        //Languages.getInstance().setLanguageProvider(player -> player.locale().toString()); InvUI Translations
-        translationStore.defaultLocale(Locale.GERMANY);
-        GlobalTranslator.translator().addSource(translationStore);
-    }
 
     public static PluginEnvironment environment() {
         return instance.environment;

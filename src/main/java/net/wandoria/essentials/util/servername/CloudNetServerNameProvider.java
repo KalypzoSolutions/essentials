@@ -1,4 +1,4 @@
-package net.wandoria.essentials.environment.name;
+package net.wandoria.essentials.util.servername;
 
 import dev.derklaro.aerogel.Injector;
 import eu.cloudnetservice.driver.inject.InjectionLayer;
@@ -6,9 +6,12 @@ import eu.cloudnetservice.wrapper.holder.ServiceInfoHolder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Uses the cloudnet api to retrieve the server name.
+ */
 @Slf4j
 @Getter
-public class CloudNetServerNameProvider implements ServerNameProvider {
+class CloudNetServerNameProvider {
     private final InjectionLayer<Injector> injector = InjectionLayer.ext();
     private final String serverName;
 
@@ -23,12 +26,12 @@ public class CloudNetServerNameProvider implements ServerNameProvider {
 
 
     public static boolean isAvailable() {
-         try {
-             Class.forName("eu.cloudnetservice.wrapper.holder.ServiceInfoHolder");
-         } catch (NoClassDefFoundError | ClassNotFoundException e) {
-             return false;
-         }
-         return  true;
+        try {
+            Class.forName("eu.cloudnetservice.wrapper.holder.ServiceInfoHolder");
+        } catch (NoClassDefFoundError | ClassNotFoundException e) {
+            return false;
+        }
+        return true;
     }
 
 }

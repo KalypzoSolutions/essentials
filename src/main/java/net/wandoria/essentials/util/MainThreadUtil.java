@@ -1,17 +1,27 @@
 package net.wandoria.essentials.util;
 
-import lombok.experimental.UtilityClass;
 import net.wandoria.essentials.EssentialsPlugin;
-import org.bukkit.Utility;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.Executor;
 
 /**
- * Creates an executor for the player
+ *
  */
-@UtilityClass
-public class PlayerExecutorFactory {
+public class MainThreadUtil {
+
+    public static boolean isMainThread() {
+        return Bukkit.isPrimaryThread();
+    }
+
+    public static void run(Player scheduler, Runnable task) {
+        scheduler.getScheduler().run(
+                EssentialsPlugin.instance(),
+                (s) -> task.run(),
+                null
+        );
+    }
 
     public static Executor createExecutor(Player player) {
         return task -> {

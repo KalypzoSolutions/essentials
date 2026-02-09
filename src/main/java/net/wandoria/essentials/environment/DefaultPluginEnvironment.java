@@ -5,18 +5,18 @@ import it.einjojo.playerapi.PlayerApiProvider;
 import it.einjojo.playerapi.ServerConnectResult;
 import lombok.Getter;
 import net.wandoria.essentials.EssentialsPlugin;
-import net.wandoria.essentials.environment.name.ServerNameProvider;
 import net.wandoria.essentials.user.EssentialsOfflineUser;
 import net.wandoria.essentials.user.EssentialsUser;
 import net.wandoria.essentials.user.NetworkEssentialsOfflineUser;
 import net.wandoria.essentials.user.NetworkEssentialsUser;
+import net.wandoria.essentials.util.FuzzySearch;
+import net.wandoria.essentials.util.servername.InternalServerName;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -26,16 +26,16 @@ import java.util.concurrent.CompletableFuture;
 public class DefaultPluginEnvironment implements PluginEnvironment {
     @Getter
     private final PlayerApi playerApi;
-    private final ServerNameProvider serverNameProvider;
+    private final EssentialsPlugin plugin;
 
-    public DefaultPluginEnvironment(EssentialsPlugin plugin, ServerNameProvider serverNameProvider) {
+    public DefaultPluginEnvironment(EssentialsPlugin plugin) {
         this.playerApi = PlayerApiProvider.getInstance();
-        this.serverNameProvider = serverNameProvider;
+        this.plugin = plugin;
     }
 
     @Override
     public String getServerName() {
-        return serverNameProvider.getServerName();
+        return InternalServerName.get();
     }
 
     @Override
@@ -45,10 +45,10 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
 
     @Override
     public CompletableFuture<Optional<EssentialsUser>> getUser(UUID uuid) {
-        return playerApi.getOnlinePlayer(uuid).thenApply((networkPlayer -> {
+        return playerApi.getOnlinePlayer(uuid).thenApplyAsync((networkPlayer -> {
             if (networkPlayer == null) return Optional.empty();
             return Optional.of(new NetworkEssentialsUser(networkPlayer));
-        }));
+        }), EssentialsPlugin.getExecutorService());
     }
 
     @Override
@@ -58,28 +58,29 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
 
     @Override
     public CompletableFuture<Optional<EssentialsUser>> getUserByName(String userName) {
-        return playerApi.getOnlinePlayer(userName).thenApply((networkPlayer -> {
+        return playerApi.getOnlinePlayer(userName).thenApplyAsync((networkPlayer -> {
             if (networkPlayer == null) return Optional.empty();
             return Optional.of(new NetworkEssentialsUser(networkPlayer));
-        }));
+        }), EssentialsPlugin.getExecutorService());
     }
 
     @Override
     public CompletableFuture<List<EssentialsUser>> getUsers() {
-        return playerApi.getOnlinePlayers().thenApply(players -> {
+        return playerApi.getOnlinePlayers().thenApplyAsync(players -> {
             List<EssentialsUser> users = new ArrayList<>();
             for (var player : players) {
                 users.add(new NetworkEssentialsUser(player));
             }
             return users;
-        });
+        }, EssentialsPlugin.getExecutorService());
     }
 
     @Override
     public CompletableFuture<Boolean> connectPlayerToServer(UUID player, String serverName) {
-        return playerApi.connectPlayer(player, serverName).thenApply(result -> result.equals(ServerConnectResult.SUCCESS))
+        return playerApi.connectPlayer(player, serverName)
+                .thenApply(result -> result.equals(ServerConnectResult.SUCCESS))
                 .exceptionally(ex -> {
-                    EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player to server", ex);
+                    EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player {} to server {}", player, serverName, ex);
                     throw new RuntimeException(ex);
                 });
     }
@@ -95,6 +96,32 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
     public CompletableFuture<Optional<EssentialsOfflineUser>> getOfflineUserByName(@NonNull String playerName) {
         return playerApi.getOfflinePlayer(playerName).thenApply((player) ->
                 Optional.ofNullable(player).map(NetworkEssentialsOfflineUser::new));
+    }
+
+    @Override
+    public CompletableFuture<List<String>> suggestOfflinePlayerNames(String input, @Nullable UUID querying, int limit) {
+
+        // Collect all offline player names, excluding the querying player
+        List<String> candidateNames;
+        if (querying == null) {
+            candidateNames = Arrays.stream(Bukkit.getOfflinePlayers())
+                    .map(org.bukkit.OfflinePlayer::getName)
+                    .filter(Objects::nonNull)
+                    .toList();
+        } else {
+            candidateNames = Arrays.stream(Bukkit.getOfflinePlayers())
+                    .filter(p -> !p.getUniqueId().equals(querying))
+                    .map(org.bukkit.OfflinePlayer::getName)
+                    .filter(Objects::nonNull)
+                    .toList();
+        }
+        if (input == null || input.trim().isEmpty() || limit <= 0) {
+            return CompletableFuture.completedFuture(candidateNames.stream().limit(limit).toList());
+        }
+        // Use fuzzy search to rank and filter matches (case-insensitive)
+        List<String> suggestions = FuzzySearch.suggest(input, candidateNames, limit);
+
+        return CompletableFuture.completedFuture(suggestions);
     }
 
 }

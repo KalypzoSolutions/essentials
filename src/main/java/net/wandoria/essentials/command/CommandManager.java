@@ -10,8 +10,8 @@ import net.wandoria.essentials.command.parser.*;
 import net.wandoria.essentials.command.plot.ProxiedPlotCommand;
 import net.wandoria.essentials.exception.ComponentException;
 import net.wandoria.essentials.exception.TransactionException;
-import net.wandoria.essentials.util.InternalServerName;
 import net.wandoria.essentials.util.Text;
+import net.wandoria.essentials.util.servername.InternalServerName;
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.brigadier.BrigadierSetting;
@@ -46,7 +46,7 @@ public class CommandManager {
         commandManager.parserRegistry().registerParser(HomeParser.descriptor());
         commandManager.parserRegistry().registerParser(WarpParser.descriptor());
         commandManager.parserRegistry().registerParser(GameModeParser.descriptor());
-        commandManager.parserRegistry().registerParser(MultiUserParser.descriptor());
+        
         registerExceptionControllers(commandManager);
         AnnotationParser<Source> parser = new AnnotationParser<>(commandManager, Source.class);
         registerDefaultCommands(parser);

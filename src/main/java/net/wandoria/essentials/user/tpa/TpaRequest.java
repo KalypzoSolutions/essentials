@@ -23,16 +23,18 @@ public record TpaRequest(UUID sender, UUID receiver) {
      * @return a future containing the teleport result
      */
     public CompletableFuture<TeleportResult> fulfill() {
-        return CompletableFuture.supplyAsync(() -> {
-            var optReceiver = getReceiverPlayer().join();
+        return getReceiverPlayer().thenCompose(optReceiver -> {
             if (optReceiver.isEmpty()) {
-                return TeleportResult.DESTINATION_PLAYER_OFFLINE;
+                return CompletableFuture.completedFuture(TeleportResult.DESTINATION_PLAYER_OFFLINE);
             }
-            var optSender = getSenderPlayer().join();
-            if (optSender.isEmpty()) {
-                return TeleportResult.TELEPORTING_PLAYER_OFFLINE;
-            }
-            return internalTeleportPlayers(optSender.get(), optReceiver.get()).join();
+            var receiver = optReceiver.get();
+            return getSenderPlayer().thenCompose(optSender -> {
+                if (optSender.isEmpty()) {
+                    return CompletableFuture.completedFuture(TeleportResult.TELEPORTING_PLAYER_OFFLINE);
+                }
+                var sender = optSender.get();
+                return internalTeleportPlayers(sender, receiver);
+            });
         });
     }
 

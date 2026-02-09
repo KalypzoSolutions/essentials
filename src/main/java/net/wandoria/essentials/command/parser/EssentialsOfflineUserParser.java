@@ -1,11 +1,12 @@
 package net.wandoria.essentials.command.parser;
 
 
-import net.kyori.adventure.text.Component;
 import net.wandoria.essentials.environment.PluginEnvironment;
 import net.wandoria.essentials.exception.ComponentException;
 import net.wandoria.essentials.user.EssentialsOfflineUser;
-import net.wandoria.essentials.user.EssentialsUser;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.incendo.cloud.bukkit.BukkitCommandContextKeys;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.paper.util.sender.Source;
@@ -75,12 +76,10 @@ public class EssentialsOfflineUserParser implements ArgumentParser.FutureArgumen
 
     @Override
     public CompletableFuture<? extends Iterable<? extends Suggestion>> suggestionsFuture(CommandContext<Source> context, CommandInput input) {
-        return environment.getUsers()
-                .thenApply(
-                        users -> users.stream()
-                                .map(EssentialsUser::getName)
-                                .map(Suggestion::suggestion)
-                                .toList()
-                );
+        CommandSender sender = context.get(BukkitCommandContextKeys.BUKKIT_COMMAND_SENDER);
+        if (sender instanceof Player player) {
+            return environment.suggestOfflinePlayerNames(input.peekString(), player.getUniqueId()).thenApply(list -> list.stream().map(Suggestion::suggestion).toList());
+        }
+        return environment.suggestOfflinePlayerNames(input.peekString(), null).thenApply(list -> list.stream().map(Suggestion::suggestion).toList());
     }
 }

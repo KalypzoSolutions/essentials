@@ -2,15 +2,13 @@ package net.wandoria.essentials.listener;
 
 import net.kyori.adventure.text.Component;
 import net.wandoria.essentials.command.world.WarpCommand;
-import net.wandoria.essentials.util.InternalServerName;
+import net.wandoria.essentials.util.servername.InternalServerName;
 import net.wandoria.essentials.world.warps.Warp;
 import net.wandoria.essentials.world.warps.WarpManager;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
-
-import java.util.Locale;
 
 /**
  * Overwrites the spawn location of a player to be the spawn
