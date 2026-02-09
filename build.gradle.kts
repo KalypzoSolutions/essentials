@@ -87,13 +87,13 @@ dependencies {
 
 paper {
     name = "EssentialsW"
-    main = "net.wandoria.essentials.EssentialsPlugin"
+    main = "de.kalypzo.essentials.EssentialsPlugin"
     foliaSupported = false
     authors = listOf("EinJOJO")
     description = "Provides the economy- and basic commands, scoreboard, position management, etc."
     website = "https://einjojo.it"
     apiVersion = "1.20"
-    loader = "net.wandoria.essentials.PluginLibrariesLoader"
+    loader = "de.kalypzo.essentials.PluginLibrariesLoader"
     generateLibrariesJson = true
     serverDependencies {
         register("PlaceholderAPI") {
