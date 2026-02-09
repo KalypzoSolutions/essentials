@@ -38,7 +38,7 @@ import java.util.function.Consumer;
 public class TeleportExecutor implements Listener {
 
     private static final String CHANNEL = "essentials:tp-announce";
-    public static final long EXPIRY_MILLIS = 3000;
+    public static final long EXPIRY_MILLIS = 5000;
     private final Gson gson = new Gson();
     private final LinkedList<TeleportAnnounce> pendingTeleports = new LinkedList<>();
     private final PluginEnvironment environment;
@@ -92,7 +92,10 @@ public class TeleportExecutor implements Listener {
     private void executePendingTeleports(PlayerSpawnLocationEvent event) {
         Player player = event.getPlayer();
         pendingTeleports.removeIf(teleportAnnounce -> {
-            if (teleportAnnounce.isExpired()) return true;
+            if (teleportAnnounce.isExpired()) {
+                log.info("Removing expired teleport announce {}", teleportAnnounce);
+                return true;
+            }
             if (!teleportAnnounce.player().equals(player.getUniqueId())) {
                 return false;
             }
