@@ -14,6 +14,7 @@ import net.wandoria.essentials.util.servername.InternalServerName;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -95,18 +96,25 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
     }
 
     @Override
-    public CompletableFuture<List<String>> suggestOfflinePlayerNames(String input, UUID querying, int limit) {
+    public CompletableFuture<List<String>> suggestOfflinePlayerNames(String input, @Nullable UUID querying, int limit) {
         if (input == null || input.trim().isEmpty() || limit <= 0) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
 
         // Collect all offline player names, excluding the querying player
-        List<String> candidateNames = Arrays.stream(Bukkit.getOfflinePlayers())
-                .filter(p -> !p.getUniqueId().equals(querying))
-                .map(org.bukkit.OfflinePlayer::getName)
-                .filter(Objects::nonNull)
-                .toList();
-
+        List<String> candidateNames;
+        if (querying == null) {
+            candidateNames = Arrays.stream(Bukkit.getOfflinePlayers())
+                    .map(org.bukkit.OfflinePlayer::getName)
+                    .filter(Objects::nonNull)
+                    .toList();
+        } else {
+            candidateNames = Arrays.stream(Bukkit.getOfflinePlayers())
+                    .filter(p -> !p.getUniqueId().equals(querying))
+                    .map(org.bukkit.OfflinePlayer::getName)
+                    .filter(Objects::nonNull)
+                    .toList();
+        }
         // Use fuzzy search to rank and filter matches (case-insensitive)
         List<String> suggestions = FuzzySearch.suggest(input, candidateNames, limit);
 
