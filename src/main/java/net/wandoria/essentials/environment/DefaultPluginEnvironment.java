@@ -5,11 +5,11 @@ import it.einjojo.playerapi.PlayerApiProvider;
 import it.einjojo.playerapi.ServerConnectResult;
 import lombok.Getter;
 import net.wandoria.essentials.EssentialsPlugin;
-import net.wandoria.essentials.environment.name.ServerNameProvider;
 import net.wandoria.essentials.user.EssentialsOfflineUser;
 import net.wandoria.essentials.user.EssentialsUser;
 import net.wandoria.essentials.user.NetworkEssentialsOfflineUser;
 import net.wandoria.essentials.user.NetworkEssentialsUser;
+import net.wandoria.essentials.util.servername.InternalServerName;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -26,16 +26,14 @@ import java.util.concurrent.CompletableFuture;
 public class DefaultPluginEnvironment implements PluginEnvironment {
     @Getter
     private final PlayerApi playerApi;
-    private final ServerNameProvider serverNameProvider;
 
-    public DefaultPluginEnvironment(EssentialsPlugin plugin, ServerNameProvider serverNameProvider) {
+    public DefaultPluginEnvironment(EssentialsPlugin plugin) {
         this.playerApi = PlayerApiProvider.getInstance();
-        this.serverNameProvider = serverNameProvider;
     }
 
     @Override
     public String getServerName() {
-        return serverNameProvider.getServerName();
+        return InternalServerName.get();
     }
 
     @Override

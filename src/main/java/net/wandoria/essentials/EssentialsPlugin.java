@@ -12,14 +12,14 @@ import net.wandoria.essentials.command.CommandManager;
 import net.wandoria.essentials.environment.DefaultPluginEnvironment;
 import net.wandoria.essentials.environment.PluginEnvironment;
 import net.wandoria.essentials.environment.name.CloudNetServerNameProvider;
-import net.wandoria.essentials.environment.name.DefaultServerNameProvider;
 import net.wandoria.essentials.environment.name.ServerNameProvider;
+import net.wandoria.essentials.listener.DeathListener;
 import net.wandoria.essentials.listener.JoinSpawnLocationListener;
 import net.wandoria.essentials.rce.RemoteCommandExecutor;
 import net.wandoria.essentials.user.back.BackManager;
-import net.wandoria.essentials.listener.DeathListener;
 import net.wandoria.essentials.user.home.HomeManager;
 import net.wandoria.essentials.util.ConfigWrapper;
+import net.wandoria.essentials.util.servername.InternalServerName;
 import net.wandoria.essentials.util.Text;
 import net.wandoria.essentials.world.PositionAccessor;
 import net.wandoria.essentials.world.TeleportExecutor;
@@ -120,6 +120,10 @@ public class EssentialsPlugin extends JavaPlugin {
         }));
     }
 
+    /**
+     *
+     * @return
+     */
     private @Nullable PluginEnvironment createEnvironment() {
         getSLF4JLogger().info("Determining server environment...");
         ServerNameProvider serverNameProvider;
@@ -128,7 +132,7 @@ public class EssentialsPlugin extends JavaPlugin {
             serverNameProvider = new CloudNetServerNameProvider();
         } else {
             getSLF4JLogger().info("CloudNet not detected, falling back to default server name provider");
-            serverNameProvider = new DefaultServerNameProvider();
+            serverNameProvider = InternalServerName.getProvider();
         }
         try {
             return new DefaultPluginEnvironment(this, serverNameProvider);

@@ -1,5 +1,6 @@
 package net.wandoria.essentials.world;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import io.lettuce.core.pubsub.RedisPubSubAdapter;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
@@ -8,15 +9,16 @@ import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.environment.PluginEnvironment;
-import net.wandoria.essentials.util.InternalServerName;
+import net.wandoria.essentials.util.servername.InternalServerName;
+import net.wandoria.essentials.util.MainThreadUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.LinkedList;
 import java.util.UUID;
@@ -35,7 +37,7 @@ import java.util.function.Consumer;
 @Slf4j
 public class TeleportExecutor implements Listener {
 
-    private static final String CHANNEL = "teleport-announce";
+    private static final String CHANNEL = "essentials:tp-announce";
     public static final long EXPIRY_MILLIS = 3000;
     private final Gson gson = new Gson();
     private final LinkedList<TeleportAnnounce> pendingTeleports = new LinkedList<>();
@@ -87,7 +89,7 @@ public class TeleportExecutor implements Listener {
 
 
     @EventHandler(priority = EventPriority.MONITOR)
-    private void executePendingTeleports(PlayerJoinEvent event) {
+    private void executePendingTeleports(PlayerSpawnLocationEvent event) {
         Player player = event.getPlayer();
         pendingTeleports.removeIf(teleportAnnounce -> {
             if (teleportAnnounce.isExpired()) return true;
@@ -152,7 +154,8 @@ public class TeleportExecutor implements Listener {
         }
         if (!Bukkit.isPrimaryThread()) {
             var future = new CompletableFuture<Boolean>();
-            Bukkit.getScheduler().runTask(EssentialsPlugin.instance(), () -> tpPlayerToPositionLocally(player, position).whenComplete((success, throwable) -> future.complete(success)));
+            MainThreadUtil.run(player, () -> tpPlayerToPositionLocally(player, position)
+                    .whenComplete((success, throwable) -> future.complete(success)));
             return future;
         }
         return player.teleportAsync(position.toLocation());
@@ -165,9 +168,10 @@ public class TeleportExecutor implements Listener {
      * @param player player
      * @param target destination
      */
+    @CanIgnoreReturnValue
     private boolean tpPlayerToPlayerLocally(@NotNull Player player, @NonNull UUID target) {
         if (!Bukkit.isPrimaryThread()) {
-            Bukkit.getScheduler().runTask(EssentialsPlugin.instance(), () -> tpPlayerToPlayerLocally(player, target));
+            MainThreadUtil.run(player, () -> tpPlayerToPlayerLocally(player, target));
             return true;
         }
         Player targetPlayer = Bukkit.getPlayer(target);

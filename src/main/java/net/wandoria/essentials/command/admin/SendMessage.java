@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import net.wandoria.essentials.user.EssentialsUser;
-import net.wandoria.essentials.user.WildcardEssentialUser;
 import net.wandoria.essentials.util.Text;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -16,7 +15,6 @@ import org.incendo.cloud.annotations.processing.CommandContainer;
 import org.incendo.cloud.paper.util.sender.Source;
 import org.incendo.cloud.type.Either;
 
-import java.text.BreakIterator;
 import java.util.HashSet;
 import java.util.Set;
 
