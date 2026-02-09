@@ -1,7 +1,6 @@
 package net.wandoria.essentials.environment;
 
 import net.wandoria.essentials.EssentialsPlugin;
-import net.wandoria.essentials.environment.name.ServerNameProvider;
 import net.wandoria.essentials.user.EssentialsOfflineUser;
 import net.wandoria.essentials.user.EssentialsUser;
 import org.bukkit.entity.Player;
@@ -16,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
  * Abstraction layer - Essentials might be hosted in different environments. (locally / cloudnet / pterodactyl)
  * Managed by {@link net.wandoria.essentials.EssentialsPlugin}
  */
-public interface PluginEnvironment extends ServerNameProvider {
+public interface PluginEnvironment {
 
     static PluginEnvironment getInstance() {
         return EssentialsPlugin.instance().getEnvironment();
@@ -74,4 +73,20 @@ public interface PluginEnvironment extends ServerNameProvider {
     CompletableFuture<Optional<EssentialsOfflineUser>> getOfflineUser(UUID uuid);
 
     CompletableFuture<Optional<EssentialsOfflineUser>> getOfflineUserByName(@NonNull String playerName);
+
+    /**
+     * Returns a list of player names that match the input.
+     * <p>
+     * The list is limited to 10 entries by default.
+     *
+     * @param input    the input string to match against player names
+     * @param querying the UUID of the player who is querying for suggestions, used to exclude their own name from the suggestions
+     * @return a CompletableFuture that will complete with a list of matching player names
+     */
+    default CompletableFuture<List<String>> suggestOfflinePlayerNames(String input, UUID querying) {
+        return suggestOfflinePlayerNames(input, querying, 10);
+    }
+
+
+    CompletableFuture<List<String>> suggestOfflinePlayerNames(String input, UUID querying, int limit);
 }
