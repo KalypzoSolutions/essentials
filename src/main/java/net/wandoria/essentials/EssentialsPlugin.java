@@ -11,15 +11,12 @@ import net.wandoria.essentials.chat.ChatSystem;
 import net.wandoria.essentials.command.CommandManager;
 import net.wandoria.essentials.environment.DefaultPluginEnvironment;
 import net.wandoria.essentials.environment.PluginEnvironment;
-import net.wandoria.essentials.environment.name.CloudNetServerNameProvider;
-import net.wandoria.essentials.environment.name.ServerNameProvider;
 import net.wandoria.essentials.listener.DeathListener;
 import net.wandoria.essentials.listener.JoinSpawnLocationListener;
 import net.wandoria.essentials.rce.RemoteCommandExecutor;
 import net.wandoria.essentials.user.back.BackManager;
 import net.wandoria.essentials.user.home.HomeManager;
 import net.wandoria.essentials.util.ConfigWrapper;
-import net.wandoria.essentials.util.servername.InternalServerName;
 import net.wandoria.essentials.util.Text;
 import net.wandoria.essentials.world.PositionAccessor;
 import net.wandoria.essentials.world.TeleportExecutor;
@@ -126,16 +123,9 @@ public class EssentialsPlugin extends JavaPlugin {
      */
     private @Nullable PluginEnvironment createEnvironment() {
         getSLF4JLogger().info("Determining server environment...");
-        ServerNameProvider serverNameProvider;
-        if (CloudNetServerNameProvider.isAvailable()) {
-            getSLF4JLogger().info("CloudNet detected, using CloudNetServerNameProvider");
-            serverNameProvider = new CloudNetServerNameProvider();
-        } else {
-            getSLF4JLogger().info("CloudNet not detected, falling back to default server name provider");
-            serverNameProvider = InternalServerName.getProvider();
-        }
+
         try {
-            return new DefaultPluginEnvironment(this, serverNameProvider);
+            return new DefaultPluginEnvironment(this);
         } catch (NoClassDefFoundError noClass) {
             getSLF4JLogger().error("The Environment could not be created because a class could not be found. Probably the player api has failed to load!");
         } catch (Exception ex) {
