@@ -4,7 +4,7 @@ plugins {
     id("java")
     id("xyz.jpenilla.run-paper") version "2.3.1"
     id("de.eldoria.plugin-yml.paper") version "0.7.1"
-    id("com.gradleup.shadow") version "9.2.2"
+    id("com.gradleup.shadow") version "9.3.1"
     id("me.qoomon.git-versioning") version "6.4.4"
 
 }
@@ -59,7 +59,7 @@ dependencies {
 
 
     paperLibrary("com.zaxxer:HikariCP:7.0.2")
-    paperLibrary("org.postgresql:postgresql:42.7.8")
+    paperLibrary("org.postgresql:postgresql:42.7.9")
     paperLibrary("org.flywaydb:flyway-database-postgresql:11.13.2")
 
     compileOnly("org.projectlombok:lombok:1.18.42")
@@ -76,11 +76,11 @@ dependencies {
     compileOnly("eu.cloudnetservice.cloudnet:bridge-api")
 
     // sucks when provided
-    implementation("io.lettuce:lettuce-core:6.8.1.RELEASE")
+    implementation("io.lettuce:lettuce-core:6.8.2.RELEASE")
     paperLibrary("org.incendo:cloud-core:2.0.0")
     paperLibrary("org.incendo:cloud-annotations:2.0.0")
     annotationProcessor("org.incendo:cloud-annotations:2.0.0")
-    paperLibrary("org.incendo:cloud-paper:2.0.0-beta.10")
+    paperLibrary("org.incendo:cloud-paper:2.0.0-beta.14")
 
 
 }
