@@ -26,9 +26,11 @@ import java.util.concurrent.CompletableFuture;
 public class DefaultPluginEnvironment implements PluginEnvironment {
     @Getter
     private final PlayerApi playerApi;
+    private final EssentialsPlugin plugin;
 
     public DefaultPluginEnvironment(EssentialsPlugin plugin) {
         this.playerApi = PlayerApiProvider.getInstance();
+        this.plugin = plugin;
     }
 
     @Override
@@ -43,10 +45,10 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
 
     @Override
     public CompletableFuture<Optional<EssentialsUser>> getUser(UUID uuid) {
-        return playerApi.getOnlinePlayer(uuid).thenApply((networkPlayer -> {
+        return playerApi.getOnlinePlayer(uuid).thenApplyAsync((networkPlayer -> {
             if (networkPlayer == null) return Optional.empty();
             return Optional.of(new NetworkEssentialsUser(networkPlayer));
-        }));
+        }), EssentialsPlugin.getExecutorService());
     }
 
     @Override
@@ -56,26 +58,27 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
 
     @Override
     public CompletableFuture<Optional<EssentialsUser>> getUserByName(String userName) {
-        return playerApi.getOnlinePlayer(userName).thenApply((networkPlayer -> {
+        return playerApi.getOnlinePlayer(userName).thenApplyAsync((networkPlayer -> {
             if (networkPlayer == null) return Optional.empty();
             return Optional.of(new NetworkEssentialsUser(networkPlayer));
-        }));
+        }), EssentialsPlugin.getExecutorService());
     }
 
     @Override
     public CompletableFuture<List<EssentialsUser>> getUsers() {
-        return playerApi.getOnlinePlayers().thenApply(players -> {
+        return playerApi.getOnlinePlayers().thenApplyAsync(players -> {
             List<EssentialsUser> users = new ArrayList<>();
             for (var player : players) {
                 users.add(new NetworkEssentialsUser(player));
             }
             return users;
-        });
+        }, EssentialsPlugin.getExecutorService());
     }
 
     @Override
     public CompletableFuture<Boolean> connectPlayerToServer(UUID player, String serverName) {
-        return playerApi.connectPlayer(player, serverName).thenApply(result -> result.equals(ServerConnectResult.SUCCESS))
+        return playerApi.connectPlayer(player, serverName)
+                .thenApply(result -> result.equals(ServerConnectResult.SUCCESS))
                 .exceptionally(ex -> {
                     EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player {} to server {}", player, serverName, ex);
                     throw new RuntimeException(ex);
