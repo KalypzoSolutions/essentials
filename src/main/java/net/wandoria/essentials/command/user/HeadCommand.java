@@ -5,8 +5,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.user.cooldown.RedisCooldownManager;
+import net.wandoria.essentials.util.MainThreadUtil;
 import net.wandoria.essentials.util.PermissionsRange;
-import net.wandoria.essentials.util.PlayerExecutorFactory;
 import net.wandoria.essentials.util.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -79,7 +79,7 @@ public class HeadCommand {
             String name = player.getName();
             meta.customName(Component.text(name != null ? name : "?", Text.HIGHLIGHT_COLOR));
             playerHead.setItemMeta(meta);
-        }, PlayerExecutorFactory.createExecutor(sender));
+        }, MainThreadUtil.createExecutor(sender));
     }
 
 

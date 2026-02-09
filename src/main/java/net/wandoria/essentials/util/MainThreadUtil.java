@@ -4,6 +4,8 @@ import net.wandoria.essentials.EssentialsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.Executor;
+
 /**
  *
  */
@@ -19,6 +21,16 @@ public class MainThreadUtil {
                 (s) -> task.run(),
                 null
         );
+    }
+
+    public static Executor createExecutor(Player player) {
+        return task -> {
+            player.getScheduler().run(EssentialsPlugin.instance(), (scheduler) -> {
+                task.run();
+            }, () -> {
+
+            });
+        };
     }
 
 }
