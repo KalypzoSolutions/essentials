@@ -1,0 +1,82 @@
+package de.kalypzo.essentials.command.admin;
+
+
+import de.kalypzo.essentials.command.CommandManager;
+import it.einjojo.economy.EconomyService;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.translation.Argument;
+import de.kalypzo.essentials.exception.TransactionException;
+import de.kalypzo.essentials.user.EssentialsOfflineUser;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.incendo.cloud.annotations.Command;
+import org.incendo.cloud.annotations.CommandDescription;
+import org.incendo.cloud.annotations.Permission;
+import org.incendo.cloud.annotations.processing.CommandContainer;
+import org.incendo.cloud.paper.util.sender.Source;
+
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ */
+@CommandContainer
+public class MoneyAdminCommand {
+    private final EconomyService economyService;
+
+    public MoneyAdminCommand() {
+        this.economyService = Objects.requireNonNull(Bukkit.getServicesManager().load(EconomyService.class));
+    }
+
+    @Command("money set <player> <amount>")
+    @CommandDescription("Setze den Kontostand eines Spielers")
+    @Permission("essentials.admin.money.set")
+    public CompletableFuture<Void> setMoney(Source source, EssentialsOfflineUser player, int amount) {
+        CommandSender sender = source.source();
+        return economyService.setBalance(player.getUniqueId(), amount, "ADMIN_CMD SET " + source.source().getName()).thenAccept((result) -> {
+            if (!result.isSuccess()) {
+                throw new TransactionException(result.status());
+            }
+            sender.sendMessage(Component.translatable("essentials.economy.admin.set",
+                    Argument.component("target", player),
+                    Argument.component("amount", Component.text(amount))
+            ));
+        });
+    }
+
+    @Command("money add <player> <amount>")
+    @CommandDescription("Ändere den Kontostand eines Spielers")
+    @Permission("essentials.admin.money.add")
+    public CompletableFuture<Void> addMoney(Source source, EssentialsOfflineUser player, int amount) {
+        CommandSender sender = source.source();
+        return economyService.deposit(player.getUniqueId(), amount, "ADMIN_CMD ADD " + source.source().getName()).thenAccept((result) -> {
+            if (!result.isSuccess()) {
+                throw new TransactionException(result.status());
+            }
+            sender.sendMessage(Component.translatable("essentials.economy.admin.add",
+                    Argument.component("target", player),
+                    Argument.numeric("delta", amount),
+                    Argument.numeric("amount", result.newBalance().orElse(-1D))
+            ));
+        });
+    }
+
+    @Command("money withdraw <player> <amount>")
+    @CommandDescription("Ändere den Kontostand eines Spielers")
+    @Permission("essentials.admin.money.add")
+    public CompletableFuture<Void> removeMoney(Source source, EssentialsOfflineUser player, int amount) {
+        CommandSender sender = source.source();
+        return economyService.withdraw(player.getUniqueId(), amount, "ADMIN_CMD SUB " + source.source().getName()).thenAccept((result) -> {
+            if (!result.isSuccess()) {
+                throw new TransactionException(result.status());
+            }
+            sender.sendMessage(Component.translatable("essentials.economy.admin.remove",
+                    Argument.component("target", player),
+                    Argument.numeric("delta", amount),
+                    Argument.numeric("amount", result.newBalance().orElse(-1D))
+            ));
+        });
+    }
+
+}
