@@ -85,7 +85,6 @@ public class LocaleLoader {
     private void saveDefaultLocaleFiles(File langDir) {
         String[] defaultLocaleFiles = {
                 "lang/messages_de_DE.properties",
-                "lang/messages_en_US.properties"
         };
 
         for (String resourcePath : defaultLocaleFiles) {
