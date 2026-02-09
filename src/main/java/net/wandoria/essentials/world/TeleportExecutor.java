@@ -38,7 +38,7 @@ import java.util.function.Consumer;
 public class TeleportExecutor implements Listener {
 
     private static final String CHANNEL = "essentials:tp-announce";
-    public static final long EXPIRY_MILLIS = 5000;
+    public static final long EXPIRY_MILLIS = 10_000;
     private final Gson gson = new Gson();
     private final LinkedList<TeleportAnnounce> pendingTeleports = new LinkedList<>();
     private final PluginEnvironment environment;
