@@ -27,7 +27,8 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v5
         with:
-          name: build-artifacts
+          name: essentials
           retention-days: 1
+
           path: |
-            build/libs/*.jar
+            build/libs/Essentials.jar
