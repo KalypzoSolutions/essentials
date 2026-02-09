@@ -9,8 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
 import net.wandoria.essentials.EssentialsPlugin;
 import net.wandoria.essentials.environment.PluginEnvironment;
-import net.wandoria.essentials.util.servername.InternalServerName;
 import net.wandoria.essentials.util.MainThreadUtil;
+import net.wandoria.essentials.util.servername.InternalServerName;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -88,7 +88,7 @@ public class TeleportExecutor implements Listener {
     }
 
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     private void executePendingTeleports(PlayerSpawnLocationEvent event) {
         Player player = event.getPlayer();
         pendingTeleports.removeIf(teleportAnnounce -> {
@@ -100,7 +100,7 @@ public class TeleportExecutor implements Listener {
                     position -> tpPlayerToPositionLocally(player, position),
                     target -> tpPlayerToPlayerLocally(player, target)
             );
-            log.info("Executed teleport announcement for {} ", player.getUniqueId());
+            log.info("Executed teleport announcement {} ", teleportAnnounce);
             return true;
         });
     }
@@ -124,7 +124,7 @@ public class TeleportExecutor implements Listener {
         String targetServerName = optTarget.get().getServerName();
         connection.async().publish(CHANNEL, gson.toJson(new TeleportAnnounce(player, targetServerName, null, target, System.currentTimeMillis() + EXPIRY_MILLIS)));
         environment.connectPlayerToServer(player, targetServerName);
-        log.info("Teleporting player {} to player {}", player, optTarget.get().getName());
+        log.info("Published Teleport Announcement to {}. {} to player {}", targetServerName, player, target);
 
     }
 
@@ -136,7 +136,7 @@ public class TeleportExecutor implements Listener {
         }
         connection.async().publish(CHANNEL, gson.toJson(new TeleportAnnounce(player, position.serverName(), position, null, System.currentTimeMillis() + EXPIRY_MILLIS)));
         environment.connectPlayerToServer(player, position.serverName());
-        log.info("Teleporting player {} to position {}", player, position);
+        log.info("Published Teleport Announcement to {}. Teleporting player {} to position {}", position.serverName(), player, position);
     }
 
     /**
