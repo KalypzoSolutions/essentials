@@ -4,6 +4,7 @@ import de.kalypzo.essentials.command.CommandManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.user.EssentialsUser;
+import de.kalypzo.essentials.util.Text;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
@@ -43,6 +44,7 @@ public class DebugCommand {
     @Permission("essentials.admin.debug.reload")
     public void reloadConfig(Source source, @Flag("printConfig") boolean printConfig) {
         EssentialsPlugin.instance().reloadConfig();
+        Text.loadBranding(EssentialsPlugin.instance());
         source.source().sendRichMessage("<#00d492>◆ <#b9f8cf>Configuration reloaded");
         if (printConfig) {
             FileConfiguration config = EssentialsPlugin.instance().getConfig();

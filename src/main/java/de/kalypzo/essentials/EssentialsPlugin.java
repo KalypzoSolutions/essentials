@@ -11,6 +11,7 @@ import de.kalypzo.essentials.listener.JoinSpawnLocationListener;
 import de.kalypzo.essentials.rce.RemoteCommandExecutor;
 import de.kalypzo.essentials.user.back.BackManager;
 import de.kalypzo.essentials.util.ConfigWrapper;
+import de.kalypzo.essentials.util.Text;
 import de.kalypzo.essentials.world.PositionAccessor;
 import de.kalypzo.essentials.world.TeleportExecutor;
 import de.kalypzo.essentials.world.warps.WarpManager;
@@ -57,6 +58,7 @@ public class EssentialsPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        Text.loadBranding(this);
         environment = createEnvironment();
         if (environment == null) {
             getServer().getPluginManager().disablePlugin(this);
