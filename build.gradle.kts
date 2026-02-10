@@ -86,10 +86,10 @@ dependencies {
 }
 
 paper {
-    name = "EssentialsW"
+    name = "Essentials"
     main = "de.kalypzo.essentials.EssentialsPlugin"
     foliaSupported = false
-    authors = listOf("EinJOJO")
+    authors = listOf("EinJOJO", "CrayonGamerHD")
     description = "Provides the economy- and basic commands, scoreboard, position management, etc."
     website = "https://einjojo.it"
     apiVersion = "1.20"
