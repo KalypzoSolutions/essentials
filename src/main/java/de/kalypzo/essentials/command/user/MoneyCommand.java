@@ -1,19 +1,19 @@
 package de.kalypzo.essentials.command.user;
 
 
-import de.kalypzo.essentials.command.CommandManager;
-import it.einjojo.economy.EconomyService;
-import it.einjojo.economy.db.AccountData;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.translation.Argument;
 import de.kalypzo.essentials.EssentialsPlugin;
+import de.kalypzo.essentials.command.CommandManager;
 import de.kalypzo.essentials.environment.PluginEnvironment;
 import de.kalypzo.essentials.exception.ComponentException;
 import de.kalypzo.essentials.exception.TransactionException;
 import de.kalypzo.essentials.user.EssentialsOfflineUser;
 import de.kalypzo.essentials.user.leaderboard.BalanceTopPostgresAccessor;
 import de.kalypzo.essentials.util.NumberFormatter;
+import it.einjojo.economy.EconomyService;
+import it.einjojo.economy.db.AccountData;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.Bukkit;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
@@ -38,7 +38,7 @@ public class MoneyCommand {
     public MoneyCommand() {
         this.environment = EssentialsPlugin.environment();
         this.economyService = Objects.requireNonNull(Bukkit.getServicesManager().load(EconomyService.class), "EconomyService not found in Bukkit Service Registry");
-        this.balanceTopAccessor = new BalanceTopPostgresAccessor(EssentialsPlugin.instance().getDataSource(), "economy_balances");
+        this.balanceTopAccessor = new BalanceTopPostgresAccessor(EssentialsPlugin.instance().getDataSource(), "economy_balances"); // <-- default table name
     }
 
     @Command("money|coins|balance")
@@ -102,7 +102,10 @@ public class MoneyCommand {
     public void showEco(PlayerSource sender) {
         boolean canRefresh = balanceTopAccessor.getLastUpdate().plusMillis(1000 * 30).isBefore(Instant.now());
         if (canRefresh) {
-            balanceTopAccessor.refreshTopTenAsync();
+            balanceTopAccessor.refreshTopTenAsync().thenRun(() -> {
+                showEco(sender);
+            });
+            return;
         }
 
         AccountData[] topTen = balanceTopAccessor.getTopTen();

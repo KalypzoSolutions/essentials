@@ -1,9 +1,9 @@
 package de.kalypzo.essentials.user.leaderboard;
 
+import de.kalypzo.essentials.EssentialsPlugin;
 import it.einjojo.economy.db.AccountData;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import de.kalypzo.essentials.EssentialsPlugin;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -35,14 +35,15 @@ public class BalanceTopPostgresAccessor {
         this.dataSource = dataSource;
     }
 
-    public void refreshTopTenAsync() {
+    public CompletableFuture<Void> refreshTopTenAsync() {
         if (isRefreshing()) {
-            return;
+            return updateFuture;
         }
         updateFuture = CompletableFuture.runAsync(() -> {
             topTen = getTopTenFromDB();
             lastUpdate = Instant.now();
         }, EssentialsPlugin.getExecutorService());
+        return updateFuture;
     }
 
     public boolean isRefreshing() {
