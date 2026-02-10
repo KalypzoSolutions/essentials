@@ -78,7 +78,7 @@ public class HeadCommand {
         PlayerProfile profile = player.getPlayerProfile();
         return profile.update().thenAcceptAsync(completedProfile -> {
             String name = player.getName();
-            meta.customName(Component.text(name != null ? name : "?", Text.HIGHLIGHT_COLOR));
+            meta.customName(Component.text(name != null ? name : "?", Text.getHighlightColor()));
             playerHead.setItemMeta(meta);
         }, MainThreadUtil.createExecutor(sender));
     }
