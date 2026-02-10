@@ -1,9 +1,5 @@
 package de.kalypzo.essentials.environment;
 
-import it.einjojo.playerapi.PlayerApi;
-import it.einjojo.playerapi.PlayerApiProvider;
-import it.einjojo.playerapi.ServerConnectResult;
-import lombok.Getter;
 import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.user.EssentialsOfflineUser;
 import de.kalypzo.essentials.user.EssentialsUser;
@@ -11,6 +7,10 @@ import de.kalypzo.essentials.user.NetworkEssentialsOfflineUser;
 import de.kalypzo.essentials.user.NetworkEssentialsUser;
 import de.kalypzo.essentials.util.FuzzySearch;
 import de.kalypzo.essentials.util.servername.InternalServerName;
+import it.einjojo.playerapi.PlayerApi;
+import it.einjojo.playerapi.PlayerApiProvider;
+import it.einjojo.playerapi.ServerConnectResult;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -103,18 +103,10 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
 
         // Collect all offline player names, excluding the querying player
         List<String> candidateNames;
-        if (querying == null) {
-            candidateNames = Arrays.stream(Bukkit.getOfflinePlayers())
-                    .map(org.bukkit.OfflinePlayer::getName)
-                    .filter(Objects::nonNull)
-                    .toList();
-        } else {
-            candidateNames = Arrays.stream(Bukkit.getOfflinePlayers())
-                    .filter(p -> !p.getUniqueId().equals(querying))
-                    .map(org.bukkit.OfflinePlayer::getName)
-                    .filter(Objects::nonNull)
-                    .toList();
-        }
+        candidateNames = Arrays.stream(Bukkit.getOfflinePlayers())
+                .map(org.bukkit.OfflinePlayer::getName)
+                .filter(Objects::nonNull)
+                .toList();
         if (input == null || input.trim().isEmpty() || limit <= 0) {
             return CompletableFuture.completedFuture(candidateNames.stream().limit(limit).toList());
         }

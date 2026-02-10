@@ -111,9 +111,6 @@ paper {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
             required = true
         }
-        register("packetevents") {
-            required = true
-        }
         register("EconomyProviderPlugin") {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
             required = true
@@ -140,7 +137,7 @@ tasks {
         downloadPlugins {
             hangar("PlaceholderAPI", "2.11.6")
             modrinth("luckperms", "OrIs0S6b")
-            url("https://cloud.einjojo.it/s/YK8WMIJgrPIycnH/download")  // economy provider 3.0.1
+            url("https://github.com/wandoriamc/economy-provider/releases/download/v1.3.2/EconomyProviderPlugin-1.3.2-all.jar")  // economy provider 3.0.1
             url("https://github.com/wandoriamc/player-service-api/releases/download/v1.5.2/playerapi-paper-1.5.2.jar")
         }
     }
