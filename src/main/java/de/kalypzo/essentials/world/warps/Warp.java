@@ -1,15 +1,15 @@
 package de.kalypzo.essentials.world.warps;
 
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.event.AsyncPlayerWarpTeleportEvent;
 import de.kalypzo.essentials.util.Text;
 import de.kalypzo.essentials.world.NetworkPosition;
 import de.kalypzo.essentials.world.TeleportExecutor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -46,7 +46,7 @@ public record Warp(@NotNull String name,
      * Will never be executed on the main thread. If called from the main thread, it will be scheduled asynchronously.
      *
      * @param player the player to teleport
-     * @deprecated use {@link #teleport(Player, Reason)}
+     * @deprecated use {@link #teleport(Player, Reason)} instead
      */
     @Deprecated
     public void teleport(Player player) {
@@ -108,6 +108,10 @@ public record Warp(@NotNull String name,
         /**
          * Whatever reason
          */
-        API
+        API,
+        /**
+         * After the player has died, they will be teleported to spawn.
+         */
+        DEATH
     }
 }

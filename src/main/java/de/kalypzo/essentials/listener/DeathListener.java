@@ -1,12 +1,13 @@
 package de.kalypzo.essentials.listener;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
-import lombok.extern.slf4j.Slf4j;
-import net.kyori.adventure.text.Component;
 import de.kalypzo.essentials.command.user.BackCommand;
 import de.kalypzo.essentials.user.back.BackManager;
 import de.kalypzo.essentials.world.NetworkPosition;
+import de.kalypzo.essentials.world.warps.Warp;
 import de.kalypzo.essentials.world.warps.WarpManager;
+import lombok.extern.slf4j.Slf4j;
+import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -33,6 +34,7 @@ public record DeathListener(BackManager backManager) implements Listener {
 
     @EventHandler
     public void handleRespawn(PlayerPostRespawnEvent event) {
-        WarpManager.getInstance().getWarp("spawn").ifPresent(warp -> warp.teleport(event.getPlayer()));
+        WarpManager.getInstance().getWarp("spawn")
+                .ifPresent(warp -> warp.teleport(event.getPlayer(), Warp.Reason.DEATH));
     }
 }
