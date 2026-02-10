@@ -3,6 +3,7 @@ package de.kalypzo.essentials;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import de.kalypzo.essentials.chat.ChatSystem;
+import de.kalypzo.essentials.broadcast.BroadcastManager;
 import de.kalypzo.essentials.command.CommandManager;
 import de.kalypzo.essentials.environment.DefaultPluginEnvironment;
 import de.kalypzo.essentials.environment.PluginEnvironment;
@@ -43,6 +44,8 @@ public class EssentialsPlugin extends JavaPlugin {
     @Getter
     private RedisClient redis;
     private DataSource dataSource;
+    @Getter
+    private BroadcastManager broadcastManager;
 
 
     @Override
@@ -59,6 +62,8 @@ public class EssentialsPlugin extends JavaPlugin {
     public void onEnable() {
         instance = this;
         Text.loadBranding(this);
+        broadcastManager = new BroadcastManager(this);
+        broadcastManager.start();
         environment = createEnvironment();
         if (environment == null) {
             getServer().getPluginManager().disablePlugin(this);
@@ -135,6 +140,9 @@ public class EssentialsPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (broadcastManager != null) {
+            broadcastManager.stop();
+        }
         if (dataSource != null) {
             getSLF4JLogger().info("Closing database connection...");
             ((HikariDataSource) dataSource).close();
@@ -173,5 +181,11 @@ public class EssentialsPlugin extends JavaPlugin {
             throw new IllegalStateException("DataSource is not initialized yet");
         }
         return dataSource;
+    }
+
+    public void reloadBroadcasts() {
+        if (broadcastManager != null) {
+            broadcastManager.reload();
+        }
     }
 }

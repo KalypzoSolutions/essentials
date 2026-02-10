@@ -45,6 +45,7 @@ public class DebugCommand {
     public void reloadConfig(Source source, @Flag("printConfig") boolean printConfig) {
         EssentialsPlugin.instance().reloadConfig();
         Text.loadBranding(EssentialsPlugin.instance());
+        EssentialsPlugin.instance().reloadBroadcasts();
         source.source().sendRichMessage("<#00d492>◆ <#b9f8cf>Configuration reloaded");
         if (printConfig) {
             FileConfiguration config = EssentialsPlugin.instance().getConfig();
@@ -92,3 +93,4 @@ public class DebugCommand {
     }
 
 }
+

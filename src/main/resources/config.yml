@@ -15,3 +15,16 @@ plots-cmd-proxy:
 info-message: |
   <prefix> <p>Feli hat die config.yml von Essentials nicht angepasst.  
   <prefix> <gray>Viel Spaß beim Spielen!
+broadcast:
+  broadcasts:
+    broadcast1:
+      enabled: true
+      interval-seconds: 120
+      messages:
+        - "<prefix> <p>Willkommen auf dem Server!"
+        - "<prefix> <p>Besuche unseren Discord: <hl>discord.example</hl>"
+    broadcast2:
+      enabled: true
+      interval-seconds: 300
+      messages:
+        - "<prefix> <p>Regeln: /rules"
