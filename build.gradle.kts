@@ -146,6 +146,10 @@ tasks {
         relocate("io.netty", "net.wandoria.essentials.libs.netty")
         archiveFileName.set("Essentials.jar")
     }
+
+    generatePaperPluginDescription {
+        useGoogleMavenCentralProxy()
+    }
 }
 tasks.test {
     useJUnitPlatform()
