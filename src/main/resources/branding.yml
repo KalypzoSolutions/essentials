@@ -1,0 +1,12 @@
+prefix: "<color:#F16D34>Essentials</color> <color:#52525c>»</color><color:#d4d4d4>"
+chat-prefix: "<color:#7c86ff>ChatSystem</color> <color:#52525c>»</color><color:#cad5e2>"
+colors:
+  blue: "#00bcff"
+  green: "#7bf1a8"
+  red: "#ff6467"
+  h1: "#ffedd5"
+  h2: "#fdba74"
+  highlight: "#fb923c"
+  text: "#d4d4d4"
+  error: "#f87171"
+  success: "#05df72"
