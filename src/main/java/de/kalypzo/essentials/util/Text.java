@@ -3,9 +3,7 @@ package de.kalypzo.essentials.util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -41,31 +39,7 @@ import java.time.Duration;
  */
 public class Text {
     private static final String BRANDING_FILE_NAME = "branding.yml";
-    private static final String DEFAULT_PREFIX_RAW = "<color:#F16D34>Essentials</color> <color:#52525c>»</color><color:#d4d4d4>";
-    private static final String DEFAULT_CHAT_PREFIX_RAW = "<color:#7c86ff>ChatSystem</color> <color:#52525c>»</color><color:#cad5e2>";
-
-    private static final TextColor DEFAULT_BLUE = TextColor.color(0x00bcff);
-    private static final TextColor DEFAULT_GREEN = TextColor.color(0x7bf1a8);
-    private static final TextColor DEFAULT_RED = TextColor.color(0xff6467);
-    private static final TextColor DEFAULT_H1 = TextColor.color(0xffedd5); // orange-100
-    private static final TextColor DEFAULT_H2 = TextColor.color(0xfdba74); // orange-300
-    private static final TextColor DEFAULT_HIGHLIGHT_COLOR = TextColor.color(0xfb923c); // orange-400
-    private static final TextColor DEFAULT_TEXT_COLOR = TextColor.color(0xd4d4d4); // neutral-300
-    private static final TextColor DEFAULT_ERROR_COLOR = TextColor.color(0xf87171); // red-400
-    private static final TextColor DEFAULT_SUCCESS_COLOR = TextColor.color(0x05df72); // green-400
-
-    public static volatile Component PREFIX = MiniMessage.miniMessage().deserialize(DEFAULT_PREFIX_RAW);
-    public static volatile Component CHAT_PREFIX = MiniMessage.miniMessage().deserialize(DEFAULT_CHAT_PREFIX_RAW);
-    public static volatile TextColor BLUE = DEFAULT_BLUE;
-    public static volatile TextColor GREEN = DEFAULT_GREEN;
-    public static volatile TextColor RED = DEFAULT_RED;
-    public static volatile TextColor H1 = DEFAULT_H1;
-    public static volatile TextColor H2 = DEFAULT_H2;
-    public static volatile TextColor HIGHLIGHT_COLOR = DEFAULT_HIGHLIGHT_COLOR;
-    public static volatile TextColor TEXT_COLOR = DEFAULT_TEXT_COLOR;
-    public static volatile TextColor ERROR_COLOR = DEFAULT_ERROR_COLOR;
-    public static volatile TextColor SUCCESS_COLOR = DEFAULT_SUCCESS_COLOR;
-    public static volatile MiniMessage MINI_MESSAGE = buildMiniMessage();
+    private static BrandConfiguration brandConfiguration = new BrandConfiguration();
 
     public static void loadBranding(JavaPlugin plugin) {
         File brandingFile = new File(plugin.getDataFolder(), BRANDING_FILE_NAME);
@@ -73,84 +47,69 @@ public class Text {
             plugin.saveResource(BRANDING_FILE_NAME, false);
         }
         FileConfiguration config = YamlConfiguration.loadConfiguration(brandingFile);
-
-        String prefixRaw = config.getString("prefix", DEFAULT_PREFIX_RAW);
-        String chatPrefixRaw = config.getString("chat-prefix", DEFAULT_CHAT_PREFIX_RAW);
-        PREFIX = MiniMessage.miniMessage().deserialize(prefixRaw);
-        CHAT_PREFIX = MiniMessage.miniMessage().deserialize(chatPrefixRaw);
-
-        BLUE = parseColor(config, "colors.blue", DEFAULT_BLUE, plugin);
-        GREEN = parseColor(config, "colors.green", DEFAULT_GREEN, plugin);
-        RED = parseColor(config, "colors.red", DEFAULT_RED, plugin);
-        H1 = parseColor(config, "colors.h1", DEFAULT_H1, plugin);
-        H2 = parseColor(config, "colors.h2", DEFAULT_H2, plugin);
-        HIGHLIGHT_COLOR = parseColor(config, "colors.highlight", DEFAULT_HIGHLIGHT_COLOR, plugin);
-        TEXT_COLOR = parseColor(config, "colors.text", DEFAULT_TEXT_COLOR, plugin);
-        ERROR_COLOR = parseColor(config, "colors.error", DEFAULT_ERROR_COLOR, plugin);
-        SUCCESS_COLOR = parseColor(config, "colors.success", DEFAULT_SUCCESS_COLOR, plugin);
-
-        MINI_MESSAGE = buildMiniMessage();
+        brandConfiguration = new BrandConfiguration(config, plugin.getSLF4JLogger());
     }
 
-    private static MiniMessage buildMiniMessage() {
-        return MiniMessage.builder()
-                .editTags(builder -> {
-                    builder.tag("prefix", Tag.inserting(PREFIX));
-                    builder.tag("chat", Tag.inserting(CHAT_PREFIX));
-                    builder.tag("bl", Tag.styling(style -> style.color(BLUE)));
-                    builder.tag("gr", Tag.styling(style -> style.color(GREEN)));
-                    builder.tag("re", Tag.styling(style -> style.color(RED)));
-                    builder.tag("hl", Tag.styling(style -> style.color(HIGHLIGHT_COLOR)));
-                    builder.tag("h1", Tag.styling(style -> style.color(H1).decorationIfAbsent(TextDecoration.BOLD, TextDecoration.State.TRUE)));
-                    builder.tag("h2", Tag.styling(style -> style.color(H2)));
-                    builder.tag("text", Tag.styling(style -> style.color(TEXT_COLOR).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)));
-                    builder.tag("p", Tag.styling(style -> style.color(TEXT_COLOR).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)));
-                    builder.tag("gray", Tag.styling(style -> style.color(TEXT_COLOR)));
-                    builder.tag("ex", Tag.styling(style -> style.color(ERROR_COLOR)));
-                    builder.tag("ss", Tag.styling(style -> style.color(SUCCESS_COLOR)));
-                })
-                .build();
+    public static Component getPrefix() {
+        return brandConfiguration.getPrefix();
     }
 
-    private static TextColor parseColor(FileConfiguration config, String path, TextColor fallback, JavaPlugin plugin) {
-        String raw = config.getString(path);
-        if (raw == null || raw.isBlank()) {
-            return fallback;
-        }
-        String normalized = raw.trim();
-        if (normalized.startsWith("#")) {
-            normalized = normalized.substring(1);
-        } else if (normalized.startsWith("0x") || normalized.startsWith("0X")) {
-            normalized = normalized.substring(2);
-        }
-        if (normalized.length() != 6) {
-            plugin.getSLF4JLogger().warn("Invalid color for {} in {}: {}. Using default.", path, BRANDING_FILE_NAME, raw);
-            return fallback;
-        }
-        for (int i = 0; i < normalized.length(); i++) {
-            char c = normalized.charAt(i);
-            boolean isHex = (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
-            if (!isHex) {
-                plugin.getSLF4JLogger().warn("Invalid color for {} in {}: {}. Using default.", path, BRANDING_FILE_NAME, raw);
-                return fallback;
-            }
-        }
-        int rgb = Integer.parseInt(normalized, 16);
-        return TextColor.color(rgb);
+    public static Component getChatPrefix() {
+        return brandConfiguration.getChatPrefix();
+    }
+
+    public static TextColor getBlue() {
+        return brandConfiguration.getBlue();
+    }
+
+    public static TextColor getGreen() {
+        return brandConfiguration.getGreen();
+    }
+
+    public static TextColor getRed() {
+        return brandConfiguration.getRed();
+    }
+
+    public static TextColor getH1() {
+        return brandConfiguration.getH1();
+    }
+
+    public static TextColor getH2() {
+        return brandConfiguration.getH2();
+    }
+
+    public static TextColor getHighlightColor() {
+        return brandConfiguration.getHighlightColor();
+    }
+
+    public static TextColor getTextColor() {
+        return brandConfiguration.getTextColor();
+    }
+
+    public static TextColor getErrorColor() {
+        return brandConfiguration.getErrorColor();
+    }
+
+    public static TextColor getSuccessColor() {
+        return brandConfiguration.getSuccessColor();
+    }
+
+    public static MiniMessage getMiniMessage() {
+        return brandConfiguration.getMiniMessage();
     }
 
     public static @NotNull Component deserialize(String s, TagResolver... resolvers) {
         if (s == null || s.isEmpty()) {
             return Component.empty();
         }
-        return MINI_MESSAGE.deserialize(s, resolvers);
+        return brandConfiguration.getMiniMessage().deserialize(s, resolvers);
     }
 
     public static @NotNull Component smallCaps(String singleMiniMessage, TagResolver... resolvers) {
         if (singleMiniMessage == null || singleMiniMessage.isEmpty()) {
             return Component.empty();
         }
-        return MINI_MESSAGE.deserialize(asTinyCaps(singleMiniMessage), resolvers);
+        return brandConfiguration.getMiniMessage().deserialize(asTinyCaps(singleMiniMessage), resolvers);
 
     }
 
@@ -241,28 +200,28 @@ public class Text {
         }
         TextComponent.Builder builder = Component.text();
         if (duration.toDaysPart() > 0) {
-            builder.append(Component.text(duration.toDaysPart(), TEXT_COLOR));
+            builder.append(Component.text(duration.toDaysPart(), brandConfiguration.getTextColor()));
         }
         if (duration.toHoursPart() > 0) {
             if (duration.toDaysPart() > 0) {
                 builder.append(Component.space());
             }
-            builder.append(Component.text(duration.toHoursPart(), TEXT_COLOR));
-            builder.append(Component.text("h", TEXT_COLOR));
+            builder.append(Component.text(duration.toHoursPart(), brandConfiguration.getTextColor()));
+            builder.append(Component.text("h", brandConfiguration.getTextColor()));
         }
         if (duration.toMinutesPart() > 0) {
             if (duration.toHoursPart() > 0) {
                 builder.append(Component.space());
             }
-            builder.append(Component.text(duration.toMinutesPart(), TEXT_COLOR));
-            builder.append(Component.text("m", TEXT_COLOR));
+            builder.append(Component.text(duration.toMinutesPart(), brandConfiguration.getTextColor()));
+            builder.append(Component.text("m", brandConfiguration.getTextColor()));
         }
         if (duration.toSecondsPart() > 0) {
             if (duration.toMinutesPart() > 0) {
                 builder.append(Component.space());
             }
-            builder.append(Component.text(duration.toSecondsPart(), TEXT_COLOR));
-            builder.append(Component.text("s", TEXT_COLOR));
+            builder.append(Component.text(duration.toSecondsPart(), brandConfiguration.getTextColor()));
+            builder.append(Component.text("s", brandConfiguration.getTextColor()));
         }
         return builder.build();
     }

@@ -36,7 +36,7 @@ public class LabyModDebugCommand {
                 }
                 source.source().sendMessage(Text.deserialize("     <h2>Addons:"));
                 for (var addon : addons) {
-                    Component disableButton = addon.isEnabled() ? Component.text("[X]", Text.ERROR_COLOR)
+                    Component disableButton = addon.isEnabled() ? Component.text("[X]", Text.getErrorColor())
                             .clickEvent(ClickEvent.runCommand("/essentials labymod disableaddon " + player.getPlayer().getName() + " " + addon.getNamespace()))
                             : Component.empty();
                     source.source().sendMessage(Text.deserialize("     <gray>- <active> <hl><namespace></hl> <dark_gray>(Version: <hl><version></hl>)</dark_gray> <button>",
