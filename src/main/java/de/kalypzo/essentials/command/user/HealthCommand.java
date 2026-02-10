@@ -2,12 +2,12 @@ package de.kalypzo.essentials.command.user;
 
 
 import de.kalypzo.essentials.command.CommandManager;
-import io.lettuce.core.api.StatefulRedisConnection;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.translation.Argument;
 import de.kalypzo.essentials.EssentialsPlugin;
-import de.kalypzo.essentials.user.cooldown.CooldownManager;
+import de.kalypzo.essentials.user.cooldown.RedisCooldownManager;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -37,9 +37,9 @@ public class HealthCommand {
     @CommandDescription("Fülle deinen Hunger")
     @Permission("essentials.command.feed")
     public void feed(PlayerSource source) {
-        Long expiryMillis = FeedCooldown.INSTANCE.getExpiryTimestamp(source.source().getUniqueId());
-        if (expiryMillis != null) {
-            source.source().sendMessage(Component.translatable("essentials.feed.cooldown", cooldownArgument(expiryMillis)));
+        Duration remaining = FeedCooldown.INSTANCE.getCooldown(source.source().getUniqueId());
+        if (remaining != null) {
+            source.source().sendMessage(Component.translatable("essentials.feed.cooldown", cooldownArgument(remaining)));
             return;
         }
         Player player = source.source();
@@ -68,9 +68,9 @@ public class HealthCommand {
     @CommandDescription("Heile dich")
     @Permission("essentials.command.heal")
     public void heal(PlayerSource source) {
-        Long expiryMillis = HealCooldown.INSTANCE.getExpiryTimestamp(source.source().getUniqueId());
-        if (expiryMillis != null) {
-            source.source().sendMessage(Component.translatable("essentials.heal.cooldown", cooldownArgument(expiryMillis)));
+        Duration remaining = HealCooldown.INSTANCE.getCooldown(source.source().getUniqueId());
+        if (remaining != null) {
+            source.source().sendMessage(Component.translatable("essentials.heal.cooldown", cooldownArgument(remaining)));
             return;
         }
         if (!source.source().hasPermission(Permissions.HEAL_BYPASS.permission)) {
@@ -116,8 +116,8 @@ public class HealthCommand {
         }
     }
 
-    private ComponentLike cooldownArgument(long expiryTimestampMillis) {
-        long delta = expiryTimestampMillis - System.currentTimeMillis(); // remaining millis
+    private ComponentLike cooldownArgument(Duration remaining) {
+        long delta = Math.max(remaining.toMillis(), 0); // remaining millis
         return Argument.component("cooldown", Component.text(DurationFormatUtils.formatDuration(delta, "mm'm' ss's'")));
     }
 
@@ -125,22 +125,16 @@ public class HealthCommand {
      * Lazy instance
      */
     private static final class FeedCooldown {
-        private static final CooldownManager INSTANCE = new CooldownManager("feed", LazyCooldownConnection.INSTANCE);
+        private static final RedisCooldownManager INSTANCE = new RedisCooldownManager(EssentialsPlugin.instance().getRedis().connect(), "feed");
     }
 
     /**
      * Lazy instance
      */
     private static final class HealCooldown {
-        private static final CooldownManager INSTANCE = new CooldownManager("heal", LazyCooldownConnection.INSTANCE);
+        private static final RedisCooldownManager INSTANCE = new RedisCooldownManager(EssentialsPlugin.instance().getRedis().connect(), "heal");
     }
-
-    /**
-     * Lazy instance
-     */
-    private static final class LazyCooldownConnection {
-        private static final StatefulRedisConnection<String, String> INSTANCE = EssentialsPlugin.instance().getRedis().connect();
-    }
-
 
 }
+
+

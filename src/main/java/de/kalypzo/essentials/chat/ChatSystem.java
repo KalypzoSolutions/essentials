@@ -158,7 +158,7 @@ public class ChatSystem implements Listener {
                 Component pingedMessage = chatMessage.getContent()
                         // Highlights the receiver name in a message via replacement
                         .replaceText(builder -> builder.match("@" + recipient.getName()).replaceInsideHoverEvents(false)
-                                .replacement(Component.text("@" + recipient.getName()).color(Text.HIGHLIGHT_COLOR)));
+                                .replacement(Component.text("@" + recipient.getName()).color(Text.getHighlightColor())));
                 recipient.sendMessage(pingedMessage);
                 if (!UserSettings.of(recipient.getUniqueId()).disabledPingSound()) {
                     playPingSound(recipient);

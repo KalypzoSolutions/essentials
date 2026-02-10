@@ -1,8 +1,8 @@
 package de.kalypzo.essentials;
 
+import de.kalypzo.essentials.util.Text;
 import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslationStore;
 import net.kyori.adventure.translation.GlobalTranslator;
-import de.kalypzo.essentials.util.Text;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -45,7 +45,7 @@ public class LocaleLoader {
         // 3. Load locale files from the plugin directory
         MiniMessageTranslationStore translationStore = MiniMessageTranslationStore.create(
                 new NamespacedKey(plugin, "messages"),
-                Text.MINI_MESSAGE
+                Text.getMiniMessage()
         );
 
         // 4. Discover and load all locale files dynamically

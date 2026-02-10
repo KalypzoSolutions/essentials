@@ -3,6 +3,7 @@ package de.kalypzo.essentials;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import de.kalypzo.essentials.chat.ChatSystem;
+import de.kalypzo.essentials.broadcast.BroadcastManager;
 import de.kalypzo.essentials.command.CommandManager;
 import de.kalypzo.essentials.environment.DefaultPluginEnvironment;
 import de.kalypzo.essentials.environment.PluginEnvironment;
@@ -11,6 +12,7 @@ import de.kalypzo.essentials.listener.JoinSpawnLocationListener;
 import de.kalypzo.essentials.rce.RemoteCommandExecutor;
 import de.kalypzo.essentials.user.back.BackManager;
 import de.kalypzo.essentials.util.ConfigWrapper;
+import de.kalypzo.essentials.util.Text;
 import de.kalypzo.essentials.world.PositionAccessor;
 import de.kalypzo.essentials.world.TeleportExecutor;
 import de.kalypzo.essentials.world.warps.WarpManager;
@@ -42,6 +44,8 @@ public class EssentialsPlugin extends JavaPlugin {
     @Getter
     private RedisClient redis;
     private DataSource dataSource;
+    @Getter
+    private BroadcastManager broadcastManager;
 
 
     @Override
@@ -57,6 +61,7 @@ public class EssentialsPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        Text.loadBranding(this);
         environment = createEnvironment();
         if (environment == null) {
             getServer().getPluginManager().disablePlugin(this);
@@ -74,6 +79,8 @@ public class EssentialsPlugin extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        broadcastManager = new BroadcastManager(this);
+        broadcastManager.start();
         // database stuff
         HikariConfig config = connectionConfiguration.getPostgres().createHikariConfig();
         config.setSchema("public");
@@ -133,6 +140,9 @@ public class EssentialsPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (broadcastManager != null) {
+            broadcastManager.stop();
+        }
         if (dataSource != null) {
             getSLF4JLogger().info("Closing database connection...");
             ((HikariDataSource) dataSource).close();
@@ -171,5 +181,11 @@ public class EssentialsPlugin extends JavaPlugin {
             throw new IllegalStateException("DataSource is not initialized yet");
         }
         return dataSource;
+    }
+
+    public void reloadBroadcasts() {
+        if (broadcastManager != null) {
+            broadcastManager.reload();
+        }
     }
 }
