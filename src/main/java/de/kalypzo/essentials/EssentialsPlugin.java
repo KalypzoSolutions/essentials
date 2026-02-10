@@ -79,7 +79,7 @@ public class EssentialsPlugin extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        broadcastManager = new BroadcastManager(this, pubSub);
+        broadcastManager = new BroadcastManager(this);
         broadcastManager.start();
         // database stuff
         HikariConfig config = connectionConfiguration.getPostgres().createHikariConfig();
