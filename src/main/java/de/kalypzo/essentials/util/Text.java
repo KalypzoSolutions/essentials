@@ -41,7 +41,7 @@ public class Text {
     private static final String BRANDING_FILE_NAME = "branding.yml";
     private static volatile BrandConfiguration brandConfiguration = new BrandConfiguration();
 
-    public static void loadBranding(JavaPlugin plugin) {
+    public static synchronized void loadBranding(JavaPlugin plugin) {
         File brandingFile = new File(plugin.getDataFolder(), BRANDING_FILE_NAME);
         if (!brandingFile.exists()) {
             plugin.saveResource(BRANDING_FILE_NAME, false);
