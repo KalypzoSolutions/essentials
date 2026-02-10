@@ -1,11 +1,13 @@
 package de.kalypzo.essentials.command.parser;
 
 
+import com.mojang.brigadier.LiteralMessage;
 import de.kalypzo.essentials.environment.PluginEnvironment;
 import de.kalypzo.essentials.exception.ComponentException;
 import de.kalypzo.essentials.user.EssentialsOfflineUser;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.bukkit.BukkitCommandContextKeys;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
@@ -78,7 +80,9 @@ public class EssentialsOfflineUserParser implements ArgumentParser.FutureArgumen
     public CompletableFuture<? extends Iterable<? extends Suggestion>> suggestionsFuture(CommandContext<Source> context, CommandInput input) {
         CommandSender sender = context.get(BukkitCommandContextKeys.BUKKIT_COMMAND_SENDER);
         if (sender instanceof Player player) {
-            return environment.suggestOfflinePlayerNames(input.peekString(), player.getUniqueId()).thenApply(list -> list.stream().map(Suggestion::suggestion).toList());
+            return environment.suggestOfflinePlayerNames(input.peekString(), player.getUniqueId()).thenApply(list -> list.stream().map(s -> {
+                return TooltipSuggestion.suggestion(s, new LiteralMessage("tooltip: " + s));
+            }).toList());
         }
         return environment.suggestOfflinePlayerNames(input.peekString(), null).thenApply(list -> list.stream().map(Suggestion::suggestion).toList());
     }
