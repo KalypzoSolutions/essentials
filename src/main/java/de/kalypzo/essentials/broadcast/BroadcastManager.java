@@ -1,6 +1,8 @@
 package de.kalypzo.essentials.broadcast;
 
 import de.kalypzo.essentials.util.Text;
+import io.lettuce.core.pubsub.RedisPubSubAdapter;
+import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,11 +12,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 public class BroadcastManager {
+    private static final String CHANNEL = "broadcast";
     private final JavaPlugin plugin;
     private final List<BukkitTask> tasks = new ArrayList<>();
+    private final StatefulRedisPubSubConnection<String, String> pubSubConnection;
 
-    public BroadcastManager(JavaPlugin plugin) {
+    public BroadcastManager(JavaPlugin plugin, StatefulRedisPubSubConnection<String, String> pubSubConnection) {
         this.plugin = plugin;
+        this.pubSubConnection = pubSubConnection;
+        if (pubSubConnection != null) {
+            pubSubConnection.addListener(new RedisPubSubAdapter<>() {
+                @Override
+                public void message(String channel, String message) {
+                    if (CHANNEL.equals(channel)) {
+                        Bukkit.getScheduler().runTask(plugin, () -> broadcast(message));
+                    }
+                }
+            });
+            pubSubConnection.sync().subscribe(CHANNEL);
+        }
     }
 
     public void start() {
@@ -42,6 +58,17 @@ public class BroadcastManager {
                 Bukkit.broadcast(Text.deserialize(line));
             }
         }
+    }
+
+    public void broadcastNetwork(String message) {
+        if (message == null || message.isBlank()) {
+            return;
+        }
+        if (pubSubConnection == null) {
+            broadcast(message);
+            return;
+        }
+        pubSubConnection.async().publish(CHANNEL, message);
     }
 
     private void scheduleFromConfig() {

@@ -62,8 +62,6 @@ public class EssentialsPlugin extends JavaPlugin {
     public void onEnable() {
         instance = this;
         Text.loadBranding(this);
-        broadcastManager = new BroadcastManager(this);
-        broadcastManager.start();
         environment = createEnvironment();
         if (environment == null) {
             getServer().getPluginManager().disablePlugin(this);
@@ -81,6 +79,8 @@ public class EssentialsPlugin extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        broadcastManager = new BroadcastManager(this, pubSub);
+        broadcastManager.start();
         // database stuff
         HikariConfig config = connectionConfiguration.getPostgres().createHikariConfig();
         config.setSchema("public");

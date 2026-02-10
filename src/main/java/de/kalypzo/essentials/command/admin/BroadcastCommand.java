@@ -20,6 +20,6 @@ public class BroadcastCommand {
     @Permission("essentials.command.broadcast")
     @CommandDescription("Broadcasts a message to the server")
     public void broadcast(Source source, @Greedy String message) {
-        EssentialsPlugin.instance().getBroadcastManager().broadcast(message);
+        EssentialsPlugin.instance().getBroadcastManager().broadcastNetwork(message);
     }
 }
