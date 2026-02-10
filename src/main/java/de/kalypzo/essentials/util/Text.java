@@ -39,7 +39,7 @@ import java.time.Duration;
  */
 public class Text {
     private static final String BRANDING_FILE_NAME = "branding.yml";
-    private static BrandConfiguration brandConfiguration = new BrandConfiguration();
+    private static volatile BrandConfiguration brandConfiguration = new BrandConfiguration();
 
     public static void loadBranding(JavaPlugin plugin) {
         File brandingFile = new File(plugin.getDataFolder(), BRANDING_FILE_NAME);
