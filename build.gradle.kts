@@ -70,7 +70,7 @@ dependencies {
     // compileOnly("com.github.retrooper:packetevents-spigot:2.11.1")
 
     //cloudnet
-    implementation(platform("eu.cloudnetservice.cloudnet:bom:4.0.0-RC14"))
+    implementation(platform("eu.cloudnetservice.cloudnet:bom:4.0.0-RC17-SNAPSHOT"))
     compileOnly("eu.cloudnetservice.cloudnet:driver-api")
     compileOnly("eu.cloudnetservice.cloudnet:wrapper-jvm-api")
     compileOnly("eu.cloudnetservice.cloudnet:bridge-api")
