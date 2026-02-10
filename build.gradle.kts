@@ -86,7 +86,7 @@ dependencies {
 }
 
 paper {
-    name = "Essentials"
+    name = "EssentialsK"
     main = "de.kalypzo.essentials.EssentialsPlugin"
     foliaSupported = false
     authors = listOf("EinJOJO", "CrayonGamerHD")
