@@ -60,7 +60,7 @@ dependencies {
 
     paperLibrary("com.zaxxer:HikariCP:7.0.2")
     paperLibrary("org.postgresql:postgresql:42.7.9")
-    paperLibrary("org.flywaydb:flyway-database-postgresql:12.0.0")
+    paperLibrary("org.flywaydb:flyway-database-postgresql:12.0.1")
 
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
