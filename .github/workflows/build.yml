@@ -51,7 +51,7 @@ jobs:
 
       - name: Upload build artifacts
         if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: essentials-build
           retention-days: 1
