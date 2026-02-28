@@ -47,7 +47,7 @@ public class MoneyCommand {
         UUID player = sender.source().getUniqueId();
         return economyService.getBalance(player).thenAccept((balance) -> {
             sender.source().sendMessage(Component.translatable("essentials.money.balance.own",
-                    Argument.component("amount", Component.text(NumberFormatter.doubleToHumanReadable(balance)))
+                    Argument.numeric("amount", balance)
             ));
         });
     }
@@ -71,7 +71,7 @@ public class MoneyCommand {
                             .thenAccept((success) -> {
                                 sender.source().sendMessage(Component.translatable("essentials.money.pay.sent",
                                         Argument.component("target", Component.text(player.getName())),
-                                        Argument.component("amount", Component.text(NumberFormatter.doubleToHumanReadable(amount)))
+                                        Argument.numeric("amount", amount)
                                 ));
                                 notifyPaymentReceive(player.getUniqueId(), sender.source().displayName(), amount);
                             });
@@ -90,7 +90,7 @@ public class MoneyCommand {
             optional.ifPresent((user) -> {
                 user.sendMessage(Component.translatable("essentials.money.pay.received",
                         Argument.component("sender", sender),
-                        Argument.component("amount", Component.text(NumberFormatter.doubleToHumanReadable(amount)))
+                        Argument.numeric("amount", amount)
                 ));
             });
         });

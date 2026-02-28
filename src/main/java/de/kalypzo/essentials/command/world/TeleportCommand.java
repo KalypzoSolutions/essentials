@@ -45,7 +45,8 @@ public class TeleportCommand {
             server = environment.getServerName();
         }
         if (server.equals(environment.getServerName()) && Bukkit.getWorld(world) == null) {
-            source.source().sendMessage(Component.translatable("essentials.teleport.world-not-found", Component.text(world)));
+            source.source().sendMessage(Component.translatable("essentials.teleport.world-not-found",
+                    Argument.component("world", Component.text(world))));
             return;
         }
         Location current = source.source().getLocation();
@@ -74,7 +75,7 @@ public class TeleportCommand {
         }
         UUID targetUuid = target.getUniqueId();
         source.source().sendMessage(Component.translatable("essentials.teleport.success",
-                Argument.component("target", target)
+                Argument.component("target", Component.text(target.getName()))
         ));
         getTeleportExecutor().teleportPlayerToPlayer(playerSource.source().getUniqueId(), targetUuid);
     }

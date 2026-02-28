@@ -3,6 +3,7 @@ package de.kalypzo.essentials.command.chat;
 
 import de.kalypzo.essentials.command.CommandManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.chat.ChatSystem;
 import de.kalypzo.essentials.chat.PrivateMessageResult;
@@ -80,7 +81,8 @@ public class MsgCommand {
         switch (result) {
             case SUCCESS -> future.complete(null);
             case RECEIVER_DISABLED_PRIVATE_MESSAGES ->
-                    future.completeExceptionally(ComponentException.translatable("essentials.chat.msg-disabled", receiverName));
+                    future.completeExceptionally(ComponentException.translatable("essentials.chat.msg-disabled",
+                            Argument.component("player", Component.text(receiverName))));
             case RECEIVER_IS_OFFLINE ->
                     future.completeExceptionally(ComponentException.translatable("essentials.user.offline"));
             case SENDER_MUST_NOT_BE_RECEIVER ->
