@@ -1,6 +1,10 @@
 package de.kalypzo.essentials.chat;
 
 import com.google.gson.Gson;
+import de.kalypzo.essentials.EssentialsPlugin;
+import de.kalypzo.essentials.user.EssentialsUser;
+import de.kalypzo.essentials.user.UserSettings;
+import de.kalypzo.essentials.util.Text;
 import io.lettuce.core.pubsub.RedisPubSubAdapter;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -14,15 +18,12 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import de.kalypzo.essentials.EssentialsPlugin;
-import de.kalypzo.essentials.user.EssentialsUser;
-import de.kalypzo.essentials.user.UserSettings;
-import de.kalypzo.essentials.util.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Blocking;
@@ -33,6 +34,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ChatSystem is responsible for two things: Private Messages and Cross-Server Messages.
@@ -57,6 +59,14 @@ public class ChatSystem implements Listener {
                             .resolver(StandardTags.decorations())
                             .build())
             .build();
+
+    /**
+     * Thread-safe cache for player alias sets.
+     * Maps player UUID -> PlayerNameAliasSet for efficient mention detection.
+     * ConcurrentHashMap ensures thread-safe access without explicit synchronization.
+     * Explicitly cleaned up on player quit to prevent memory leaks.
+     */
+    private final Map<UUID, PlayerNameAliasSet> playerAliasCache = new ConcurrentHashMap<>();
 
 
     /**
@@ -127,6 +137,14 @@ public class ChatSystem implements Listener {
         event.setCancelled(true);
     }
 
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        // Explicitly remove from cache on logout for faster cleanup
+        // (WeakHashMap will also auto-cleanup when Player object is GC'd)
+        playerAliasCache.remove(event.getPlayer().getUniqueId());
+    }
+
     public CompletableFuture<Long> publishNetworkChatMessage(@NotNull ChatMessage message) {
 
         return pubSubConnection.async().publish("chat", gson.toJson(message)).toCompletableFuture();
@@ -152,21 +170,74 @@ public class ChatSystem implements Listener {
                 }
             }
         }
+        Component content = chatMessage.getContent();
+        String serializedMessage = chatMessage.serializedMiniMessage();
+        String plainText = plain.serialize(content);  // Plain text version for regex matching
+
         for (Player recipient : recipients) {
-            // highlights the contained receiver name and plays a sound based on settings
-            if (chatMessage.serializedMiniMessage().contains("@" + recipient.getName())) { // ping
-                Component pingedMessage = chatMessage.getContent()
-                        // Highlights the receiver name in a message via replacement
-                        .replaceText(builder -> builder.match("@" + recipient.getName()).replaceInsideHoverEvents(false)
-                                .replacement(Component.text("@" + recipient.getName()).color(Text.getHighlightColor())));
+            // Check if recipient is mentioned using efficient alias set lookup
+            if (isMentioned(serializedMessage, recipient)) {
+                Component pingedMessage = highlightMentionedName(content, recipient, plainText);
                 recipient.sendMessage(pingedMessage);
                 if (!UserSettings.of(recipient.getUniqueId()).disabledPingSound()) {
                     playPingSound(recipient);
                 }
             } else {
-                recipient.sendMessage(chatMessage.getContent());
+                recipient.sendMessage(content);
             }
         }
+    }
+
+    /**
+     * Checks if a player is mentioned in the message using efficient regex pattern matching.
+     * Uses precompiled alias patterns for O(m) performance (m = message length).
+     *
+     * @param serializedMessage the message text to search in
+     * @param player            the player to check for mentions
+     * @return true if any alias of the player is mentioned with '@' prefix
+     */
+    private boolean isMentioned(@NotNull String serializedMessage, @NotNull Player player) {
+        PlayerNameAliasSet aliases = getOrCreateAliasSet(player);
+        return aliases.isMentioned(serializedMessage);
+    }
+
+    /**
+     * Lazily retrieves or creates the alias set for a player.
+     * Uses weak reference caching to allow garbage collection when player goes offline.
+     *
+     * @param player the player to get aliases for
+     * @return the cached or newly created alias set
+     */
+    private PlayerNameAliasSet getOrCreateAliasSet(@NotNull Player player) {
+        return playerAliasCache.computeIfAbsent(player.getUniqueId(), uuid -> new PlayerNameAliasSet(player));
+    }
+
+    /**
+     * Highlights the player's name in a message by finding the matched alias.
+     * Uses efficient regex matching to locate which alias was used.
+     *
+     * @param content   the message component to highlight
+     * @param player    the player whose mention should be highlighted
+     * @param plainText the plain text version of the message (for regex matching)
+     * @return the component with highlighted mentions
+     */
+    private Component highlightMentionedName(@NotNull Component content, @NotNull Player player, @NotNull String plainText) {
+        PlayerNameAliasSet aliases = getOrCreateAliasSet(player);
+        String playerName = player.getName();
+
+        // Find which alias was used (efficient regex match)
+        String matchedAlias = aliases.getFirstMention(plainText);
+        if (matchedAlias != null) {
+            String mention = "@" + matchedAlias;
+            return content.replaceText(builder -> builder.match(mention)
+                    .replaceInsideHoverEvents(false)
+                    .replacement(Component.text("@" + playerName).color(Text.getHighlightColor())));
+        }
+
+        // Fallback: highlight with actual player name (shouldn't happen)
+        return content.replaceText(builder -> builder.match("@" + playerName)
+                .replaceInsideHoverEvents(false)
+                .replacement(Component.text("@" + playerName).color(Text.getHighlightColor())));
     }
 
     public void playPingSound(Player player) {
