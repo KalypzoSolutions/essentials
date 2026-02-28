@@ -40,7 +40,7 @@ public class MoneyAdminCommand {
             }
             sender.sendMessage(Component.translatable("essentials.economy.admin.set",
                     Argument.component("target", player),
-                    Argument.component("amount", Component.text(amount))
+                    Argument.numeric("amount", amount)
             ));
         });
     }

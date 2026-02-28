@@ -6,6 +6,7 @@ import de.kalypzo.essentials.event.PlayerSetHomeEvent;
 import de.kalypzo.essentials.user.home.Home;
 import de.kalypzo.essentials.user.home.HomeManager;
 import de.kalypzo.essentials.world.NetworkPosition;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
@@ -27,7 +28,8 @@ public class HomeCommand {
     @Permission("essentials.command.homes.tp")
     @CommandDescription("Teleportiert den Spieler zu seinem Home")
     public void teleportHome(PlayerSource player, Home home) {
-        player.source().sendMessage(Component.translatable("essentials.homes.teleport", Component.text(home.name())));
+        player.source().sendMessage(Component.translatable("essentials.homes.teleport",
+                Argument.component("name", Component.text(home.name()))));
         home.teleport(player.source());
     }
 
@@ -43,13 +45,15 @@ public class HomeCommand {
         }
         final int maxHomes = HomeManager.getInstance().getMaxHomes(player);
         if (maxHomes < 1) {
-            player.sendMessage(Component.translatable("essentials.homes.set.max-reached", Component.text(maxHomes)));
+            player.sendMessage(Component.translatable("essentials.homes.set.max-reached",
+                    Argument.numeric("amount", maxHomes)));
             return CompletableFuture.completedFuture(null);
         }
         return HomeManager.getInstance().getHomes(player.getUniqueId()).thenCompose((homes -> HomeManager.getInstance().getHome(player.getUniqueId(), name)
                 .thenCompose(existing -> {
                     if (homes.size() >= maxHomes && existing.isEmpty()) {
-                        player.sendMessage(Component.translatable("essentials.homes.set.max-reached", Component.text(maxHomes)));
+                        player.sendMessage(Component.translatable("essentials.homes.set.max-reached",
+                                Argument.numeric("amount", maxHomes)));
                         return CompletableFuture.completedFuture(null);
                     }
                     return HomeManager.getInstance().saveHome(new Home(
@@ -57,7 +61,8 @@ public class HomeCommand {
                                     name,
                                     NetworkPosition.createByLocation(player.getLocation())))
                             .thenAccept(_void -> {
-                                player.sendMessage(Component.translatable("essentials.homes.set.success", Component.text(name)));
+                                player.sendMessage(Component.translatable("essentials.homes.set.success",
+                                        Argument.component("name", Component.text(name))));
                             });
                 })));
     }
@@ -69,7 +74,8 @@ public class HomeCommand {
     @CommandDescription("Löscht ein Home")
     public CompletableFuture<Void> deleteHome(PlayerSource player, Home home) {
         return HomeManager.getInstance().deleteHome(home).thenAccept(_void -> {
-            player.source().sendMessage(Component.translatable("essentials.homes.delete.success", Component.text(home.name())));
+            player.source().sendMessage(Component.translatable("essentials.homes.delete.success",
+                    Argument.component("name", Component.text(home.name()))));
         });
     }
 
