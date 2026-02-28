@@ -44,6 +44,16 @@ repositories {
         name = "labymod"
         url = uri("https://dist.labymod.net/api/v1/maven/release/")
     }
+    maven {
+        name = "CodeMC"
+        url = uri(
+            "https://repo.codemc.io/repository/maven-releases/"
+        )
+    }
+    maven {
+        name = "xenondevs"
+        url = uri("https://repo.xenondevs.xyz/releases")
+    }
     maven("https://repo.einjojo.it/releases")
     // maven("https://maven.pvphub.me/tofaa") not used
 }
@@ -67,7 +77,7 @@ dependencies {
 
     // head preview
     // paperLibrary("io.github.tofaa2:spigot:3.0.3-SNAPSHOT") not used yet. TODO: add packet events dep.
-    // compileOnly("com.github.retrooper:packetevents-spigot:2.11.1")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
 
     //cloudnet
     implementation(platform("eu.cloudnetservice.cloudnet:bom:4.0.0-RC17-SNAPSHOT"))
@@ -116,6 +126,9 @@ paper {
             required = true
         }
         register("LabyModServerAPI") {
+            required = false
+        }
+        register("packetevents") {
             required = false
         }
     }
