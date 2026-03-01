@@ -1,22 +1,23 @@
 package de.kalypzo.essentials.command.user;
 
 
-import de.kalypzo.essentials.command.CommandManager;
-import it.einjojo.economy.EconomyService;
-import it.einjojo.economy.db.AccountData;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.translation.Argument;
 import de.kalypzo.essentials.EssentialsPlugin;
+import de.kalypzo.essentials.command.CommandManager;
 import de.kalypzo.essentials.environment.PluginEnvironment;
 import de.kalypzo.essentials.exception.ComponentException;
 import de.kalypzo.essentials.exception.TransactionException;
 import de.kalypzo.essentials.user.EssentialsOfflineUser;
 import de.kalypzo.essentials.user.leaderboard.BalanceTopPostgresAccessor;
 import de.kalypzo.essentials.util.NumberFormatter;
+import it.einjojo.economy.EconomyService;
+import it.einjojo.economy.db.AccountData;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.Bukkit;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
+import org.incendo.cloud.annotations.Permission;
 import org.incendo.cloud.annotations.processing.CommandContainer;
 import org.incendo.cloud.paper.util.sender.PlayerSource;
 
@@ -47,6 +48,18 @@ public class MoneyCommand {
         UUID player = sender.source().getUniqueId();
         return economyService.getBalance(player).thenAccept((balance) -> {
             sender.source().sendMessage(Component.translatable("essentials.money.balance.own",
+                    Argument.numeric("amount", balance)
+            ));
+        });
+    }
+
+    @Command("money|coins|balance <player>")
+    @CommandDescription("Zeigt den Kontostand eines anderen Spielers an")
+    @Permission("essentials.command.money.others")
+    public CompletableFuture<Void> showOtherMoney(PlayerSource sender, EssentialsOfflineUser player) {
+        return economyService.getBalance(player.getUniqueId()).thenAccept((balance) -> {
+            sender.source().sendMessage(Component.translatable("essentials.money.balance.other",
+                    Argument.component("target", Component.text(player.getName())),
                     Argument.numeric("amount", balance)
             ));
         });
