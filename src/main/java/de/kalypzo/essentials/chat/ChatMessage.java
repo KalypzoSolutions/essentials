@@ -1,8 +1,8 @@
 package de.kalypzo.essentials.chat;
 
+import de.kalypzo.essentials.EssentialsPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import de.kalypzo.essentials.EssentialsPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,17 +15,40 @@ import java.util.UUID;
  *
  * @param recipients            null, wenn alle Spieler erreicht werden sollen oder eine Liste von UUIDs, die die Empfänger darstellen
  * @param serializedMiniMessage der Inhalt der Nachricht als serialisierter MiniMessage String
+ * @param sender                UUID des Spielers, der die Nachricht gesendet hat (nullable für System-Nachrichten)
+ * @param originatingServer     Name des Servers, von dem die Nachricht stammt (nullable für Abwärtskompatibilität)
  */
-public record ChatMessage(@Nullable List<UUID> recipients, @NotNull String serializedMiniMessage) {
+public record ChatMessage(@Nullable List<UUID> recipients, @NotNull String serializedMiniMessage,
+                          @Nullable UUID sender, @Nullable String originatingServer) {
+
+    public ChatMessage(@Nullable List<UUID> recipients, @NotNull String serializedMiniMessage) {
+        this(recipients, serializedMiniMessage, null, null);
+    }
+
+    public ChatMessage(@Nullable List<UUID> recipients, @NotNull String serializedMiniMessage, @Nullable UUID sender) {
+        this(recipients, serializedMiniMessage, sender, null);
+    }
 
     private static final MiniMessage SERIALIZER = MiniMessage.miniMessage();
 
     public static ChatMessage create(@NotNull Component component) {
-        return new ChatMessage(null, SERIALIZER.serialize(component));
+        return new ChatMessage(null, SERIALIZER.serialize(component), null, null);
+    }
+
+    public static ChatMessage create(@NotNull Component component, UUID sender) {
+        return new ChatMessage(null, SERIALIZER.serialize(component), sender, null);
+    }
+
+    public static ChatMessage create(@NotNull Component component, UUID sender, String originatingServer) {
+        return new ChatMessage(null, SERIALIZER.serialize(component), sender, originatingServer);
     }
 
     public static ChatMessage create(@NotNull Component component, @Nullable List<UUID> recipients) {
-        return new ChatMessage(recipients, SERIALIZER.serialize(component));
+        return new ChatMessage(recipients, SERIALIZER.serialize(component), null, null);
+    }
+
+    public static ChatMessage create(@NotNull Component component, @Nullable List<UUID> recipients, UUID sender, String originatingServer) {
+        return new ChatMessage(recipients, SERIALIZER.serialize(component), sender, originatingServer);
     }
 
     /**
@@ -36,7 +59,7 @@ public record ChatMessage(@Nullable List<UUID> recipients, @NotNull String seria
      */
     @NotNull
     public ChatMessage recipients(List<UUID> recipients) {
-        return new ChatMessage(recipients, serializedMiniMessage);
+        return new ChatMessage(recipients, serializedMiniMessage, sender, originatingServer);
     }
 
     /**
