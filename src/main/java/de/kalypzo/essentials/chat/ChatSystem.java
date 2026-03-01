@@ -120,14 +120,14 @@ public class ChatSystem implements Listener {
             String chatFormat = chatConfiguration.getChatFormat();
             chatFormat = PlaceholderAPI.setPlaceholders(event.getPlayer(), chatFormat);
             if (event.getPlayer().hasPermission(COLORED_CHAT_PERMISSION)) {
-                event.message(COLOR_ONLY.deserialize(plain.serialize(event.message())));
+                event.message(COLOR_ONLY.deserialize(Text.replaceLegacyColorCodesWithMiniMessage(plain.serialize(event.message()))));
             }
             Component formattedMessage = miniMessage.deserialize(chatFormat,
                     Placeholder.component("message", event.message()),
                     Placeholder.unparsed("server", serverName),
                     Placeholder.unparsed("time", LocalTime.now().format(TIME_FORMATTER))
             );
-            publishNetworkChatMessage(ChatMessage.create(formattedMessage)).exceptionally((ex) -> {
+            publishNetworkChatMessage(ChatMessage.create(formattedMessage, event.getPlayer().getUniqueId(), serverName)).exceptionally((ex) -> {
                 handleChatException(event, ex);
                 return null;
             });
@@ -140,13 +140,10 @@ public class ChatSystem implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        // Explicitly remove from cache on logout for faster cleanup
-        // (WeakHashMap will also auto-cleanup when Player object is GC'd)
         playerAliasCache.remove(event.getPlayer().getUniqueId());
     }
 
     public CompletableFuture<Long> publishNetworkChatMessage(@NotNull ChatMessage message) {
-
         return pubSubConnection.async().publish("chat", gson.toJson(message)).toCompletableFuture();
     }
 
@@ -173,8 +170,36 @@ public class ChatSystem implements Listener {
         Component content = chatMessage.getContent();
         String serializedMessage = chatMessage.serializedMiniMessage();
         String plainText = plain.serialize(content);  // Plain text version for regex matching
+        UUID senderUuid = chatMessage.sender();
+        String originatingServer = chatMessage.originatingServer();
+
+        // Check if any player is mentioned and prepare highlighted message
+        Component highlightedMessage = null;
 
         for (Player recipient : recipients) {
+            if (isMentioned(serializedMessage, recipient)) {
+                highlightedMessage = highlightMentionedName(content, recipient, plainText);
+                break;
+            }
+        }
+
+        // Handle sender separately - only on the originating server
+        // This prevents duplicate messages when message is broadcast to all servers
+        if (senderUuid != null && serverName.equals(originatingServer)) {
+            Player sender = Bukkit.getPlayer(senderUuid);
+            if (sender != null) {
+                // Sender sees highlighted version if someone is mentioned, otherwise normal message
+                // No ping sound for sender (they initiated the message)
+                sender.sendMessage(highlightedMessage != null ? highlightedMessage : content);
+            }
+        }
+
+        for (Player recipient : recipients) {
+            // Skip sender in global chat rendering (they already received their message above)
+            if (senderUuid != null && recipient.getUniqueId().equals(senderUuid)) {
+                continue;
+            }
+
             // Check if recipient is mentioned using efficient alias set lookup
             if (isMentioned(serializedMessage, recipient)) {
                 Component pingedMessage = highlightMentionedName(content, recipient, plainText);

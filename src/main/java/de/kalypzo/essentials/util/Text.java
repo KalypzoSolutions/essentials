@@ -225,4 +225,43 @@ public class Text {
         }
         return builder.build();
     }
+
+    public static String replaceLegacyColorCodesWithMiniMessage(String input) {
+        if (input == null) {
+            return null;
+        }
+        StringBuilder output = new StringBuilder();
+        boolean isColorCode = false;
+        for (char c : input.toCharArray()) {
+            if (isColorCode) {
+                String tag = switch (c) {
+                    case '0' -> "black";
+                    case '1' -> "dark_blue";
+                    case '2' -> "dark_green";
+                    case '3' -> "dark_aqua";
+                    case '4' -> "dark_red";
+                    case '5' -> "dark_purple";
+                    case '6' -> "gold";
+                    case '7' -> "gray";
+                    case '8' -> "dark_gray";
+                    case '9' -> "blue";
+                    case 'a', 'A' -> "green";
+                    case 'b', 'B' -> "aqua";
+                    case 'c', 'C' -> "red";
+                    case 'd', 'D' -> "light_purple";
+                    case 'e', 'E' -> "yellow";
+                    case 'f', 'F' -> "white";
+                    case 'r', 'R' -> "reset"; // Reset code, closes all open tags
+                    default -> "p";
+                };
+                output.append('<').append(tag).append('>');
+                isColorCode = false;
+            } else if (c == '&') {
+                isColorCode = true;
+            } else {
+                output.append(c);
+            }
+        }
+        return output.toString();
+    }
 }
