@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
  *   <li><strong>Consolidated Duplicates:</strong> Reduce consecutive duplicate characters (3+ occurrences) to 2. Example: {@code SHEEEEEEPMAN → sheepman}</li>
  *   <li><strong>Without Numbers:</strong> Strip trailing digits and convert to lowercase (if resulting length >= 3). Example: {@code Fireking1410 → fireking}</li>
  *   <li><strong>Word Initials:</strong> Extract first letter of each CamelCase word (if name has no underscores and length > 4). Example: {@code BigMelonMasters → bmm}</li>
+ *   <li><strong>Without Trailing Single Letter:</strong> Remove underscore and trailing single letter (if present). Example: {@code Frishmister_L → frishmister}</li>
  * </ol>
  *
  * <h2>Unsuitable Names (not aliased)</h2>
@@ -79,6 +80,15 @@ public final class PlayerNameAliasSet {
         if (!playerName.contains("_") && playerName.length() > 4 && hasMultipleWords(playerName)) {
             String initials = extractWordInitials(playerName);
             addIfValid(computed, initials);
+        }
+
+        // Rule 6: Remove trailing single letter after underscore
+        // Example: Frishmister_L → frishmister
+        if (playerName.contains("_")) {
+            String withoutTrailingSingleLetter = stripTrailingSingleLetter(playerName);
+            if (withoutTrailingSingleLetter != null) {
+                addIfValid(computed, withoutTrailingSingleLetter);
+            }
         }
 
         // Store as immutable set
@@ -277,5 +287,36 @@ public final class PlayerNameAliasSet {
         }
 
         return initials.length() >= MIN_ALIAS_LENGTH ? initials.toString() : null;
+    }
+
+    /**
+     * Removes trailing single letter after underscore.
+     * Example: "Frishmister_L" → "frishmister"
+     * Only removes if the letter is preceded by underscore and result is >= MIN_ALIAS_LENGTH.
+     *
+     * @param name the player name
+     * @return the name without trailing single letter, or null if not applicable
+     */
+    private String stripTrailingSingleLetter(String name) {
+        if (name == null || name.length() < 3) {
+            return null;
+        }
+
+        // Check if name has underscore and ends with exactly one letter
+        int underscoreIndex = name.lastIndexOf('_');
+        if (underscoreIndex < 0 || underscoreIndex >= name.length() - 2) {
+            // No underscore found, or underscore is not followed by exactly one character
+            return null;
+        }
+
+        // Check if the part after underscore is exactly one letter
+        String afterUnderscore = name.substring(underscoreIndex + 1);
+        if (afterUnderscore.length() == 1 && Character.isLetter(afterUnderscore.charAt(0))) {
+            // Remove the underscore and the single letter
+            String stripped = name.substring(0, underscoreIndex).toLowerCase();
+            return stripped.length() >= MIN_ALIAS_LENGTH ? stripped : null;
+        }
+
+        return null;
     }
 }
