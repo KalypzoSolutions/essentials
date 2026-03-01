@@ -101,9 +101,7 @@ public class MoneyCommand {
     private void notifyPaymentReceive(UUID target, Component sender, int amount) {
         environment.getUser(target).thenAccept((optional) -> {
             optional.ifPresent((user) -> {
-                user.sendMessage(Component.translatable("essentials.money.pay.received",
-                        Argument.component("sender", sender),
-                        Argument.numeric("amount", amount)
+                user.sendMessage(Component.translatable("essentials.money.pay.received", Argument.component("sender", sender), Argument.numeric("amount", amount)
                 ));
             });
         });

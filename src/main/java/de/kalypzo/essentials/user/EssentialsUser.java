@@ -2,18 +2,19 @@ package de.kalypzo.essentials.user;
 
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import de.kalypzo.essentials.environment.PluginEnvironment;
-import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.chat.ChatMessage;
+import de.kalypzo.essentials.environment.PluginEnvironment;
 import de.kalypzo.essentials.util.TagResolvers;
 import de.kalypzo.essentials.world.NetworkPosition;
 import de.kalypzo.essentials.world.PositionAccessor;
 import de.kalypzo.essentials.world.TeleportExecutor;
 import de.kalypzo.essentials.world.TeleportResult;
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.translation.GlobalTranslator;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -102,7 +104,8 @@ public abstract class EssentialsUser implements EssentialsOfflineUser, Component
             player.sendMessage(component);
             return;
         }
-        ChatMessage.create(component, List.of(uuid)).deliver(plugin.getChatSystem());
+        //TODO fix multi language: We have to render before serializing and delivering cross server because the translation parameters get lost on the way.
+        ChatMessage.create(GlobalTranslator.render(component, Locale.GERMAN), List.of(uuid)).deliver(plugin.getChatSystem());
     }
 
     public TeleportExecutor getTeleportExecutor() {
