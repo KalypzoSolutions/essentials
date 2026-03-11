@@ -72,8 +72,8 @@ dependencies {
     paperLibrary("org.postgresql:postgresql:42.7.10")
     paperLibrary("org.flywaydb:flyway-database-postgresql:12.0.2")
 
-    compileOnly("org.projectlombok:lombok:1.18.42")
-    annotationProcessor("org.projectlombok:lombok:1.18.42")
+    compileOnly("org.projectlombok:lombok:1.18.44")
+    annotationProcessor("org.projectlombok:lombok:1.18.44")
 
     // head preview
     // paperLibrary("io.github.tofaa2:spigot:3.0.3-SNAPSHOT") not used yet. TODO: add packet events dep.
