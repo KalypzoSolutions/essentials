@@ -59,7 +59,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("net.labymod.serverapi:server-bukkit:1.0.9")
+    compileOnly("net.labymod.serverapi:server-bukkit:1.0.10")
 
     compileOnly("it.einjojo.playerapi:api:1.5")
     compileOnly("it.einjojo:economy:2.0.1")
