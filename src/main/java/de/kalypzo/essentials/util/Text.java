@@ -9,9 +9,13 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;
+import xyz.xenondevs.inventoryaccess.component.ComponentWrapper;
 
 import java.io.File;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Text Utilities when working with mini-messages.
@@ -263,5 +267,46 @@ public class Text {
             }
         }
         return output.toString();
+    }
+
+    public static List<ComponentWrapper> guiLore(List<String> lore, TagResolver... tagResolver) {
+        if (lore == null || lore.isEmpty()) {
+            return List.of();
+        }
+        List<ComponentWrapper> wrappedLore = new ArrayList<>(lore.size());
+        for (String line : lore) {
+            if (line == null || line.isBlank()) {
+                wrappedLore.add(AdventureComponentWrapper.EMPTY);
+            } else {
+                wrappedLore.add(new AdventureComponentWrapper(getMiniMessage().deserialize(line, tagResolver)));
+            }
+        }
+        return wrappedLore;
+    }
+
+    public static List<ComponentWrapper> guiLore(String multiLineMiniMessage, TagResolver... deserializeArgs) {
+        if (multiLineMiniMessage == null || multiLineMiniMessage.isEmpty()) {
+            return List.of();
+        }
+        if (multiLineMiniMessage.contains("\n")) {
+            String[] lines = multiLineMiniMessage.split("\n");
+            List<ComponentWrapper> lore = new ArrayList<>(lines.length);
+            for (String line : lines) {
+                if (line == null || line.isBlank()) {
+                    lore.add(AdventureComponentWrapper.EMPTY);
+                } else {
+                    lore.add(new AdventureComponentWrapper(getMiniMessage().deserialize(line, deserializeArgs)));
+                }
+            }
+            return lore;
+        }
+        return List.of(new AdventureComponentWrapper(getMiniMessage().deserialize(multiLineMiniMessage)));
+    }
+
+    public static ComponentWrapper gui(String singleMiniMessage, TagResolver... deserializeArgs) {
+        if (singleMiniMessage == null || singleMiniMessage.isEmpty()) {
+            return AdventureComponentWrapper.EMPTY;
+        }
+        return new AdventureComponentWrapper(getMiniMessage().deserialize(singleMiniMessage, deserializeArgs));
     }
 }

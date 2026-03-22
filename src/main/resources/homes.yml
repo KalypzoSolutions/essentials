@@ -1,0 +1,63 @@
+max-homes: 16 # two rows
+gui:
+  # Layout:
+  # 1: A Home slot
+  # 0: Empty slot
+  # i: Information item
+  title: '<h2>Homes'
+  layout:
+    - '000000000'
+    - '010101010'
+    - '010101010'
+    - '000000000'
+    - '0000i0000'
+  items:
+    info:
+      material: PLAYER_HEAD
+      skull_texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzAyMzlhNmRhYWZhYzg1NDE5MzYzMGNmOWNhOGEwMTgxZGIyMmNjOGZkODhlZjI3ZTZhN2JhNWMwNTZlMzg4NSJ9fX0='
+      name: '<h2>Homes'
+      lore:
+        - ''
+        - '<p>Hier kannst du deine Homes verwalten.'
+        - '<p>Du kannst bis zu <hl><max-homes></hl> Homes setzen.'
+        - ''
+        - '<yellow>Tipp: <p>Das Limit kann mit einem Rang erhöht werden.'
+    home:
+      material: LIME_DYE
+      name: '<h2><name>'
+      lore:
+        - ''
+        - '<p>Position: <hl><x> <y> <z></hl>'
+        - '<p>Welt: <hl><world></hl>'
+        - ''
+        - '<bl>Linksklick: <p>Teleportieren'
+        - '<bl>Rechtsklick: <p>Home löschen'
+        - ''
+    home_delete_confirm:
+      material: RED_DYE
+      name: '<ex><name>'
+      lore:
+        - ''
+        - '<p>Position: <hl><x> <y> <z></hl>'
+        - '<p>Welt: <hl><world></hl>'
+        - ''
+        - '<ex>⚠ Klicke erneut zum Löschen!'
+        - '<bl>Linksklick: <p>Abbrechen'
+        - ''
+    # No location defined – slot is unlocked but empty
+    home_undefined:
+      material: GRAY_DYE
+      name: '<p>Leer'
+      lore:
+        - ''
+        - '<p>Hier ist noch kein Home gesetzt.'
+        - ''
+    # Player has not enough capacity to allow more homes
+    home_locked:
+      material: RED_STAINED_GLASS_PANE
+      name: '<ex>Gesperrt'
+      lore:
+        - ''
+        - '<p>Du hast nicht genug Kapazität.'
+        - '<p>Erhöhe dein Rang, um mehr Homes zu setzen.'
+        - ''

@@ -67,11 +67,13 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.12.2")
     compileOnly("net.luckperms:api:5.5")
 
+    paperLibrary("xyz.xenondevs.invui:invui-core:1.49")
+    paperLibrary("xyz.xenondevs.invui:inventory-access-r22:1.49")
+    paperLibrary("xyz.xenondevs.invui:inventory-access-r26:1.49")
 
     paperLibrary("com.zaxxer:HikariCP:7.0.2")
     paperLibrary("org.postgresql:postgresql:42.7.10")
     paperLibrary("org.flywaydb:flyway-database-postgresql:12.0.2")
-
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
 

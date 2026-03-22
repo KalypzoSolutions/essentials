@@ -22,15 +22,34 @@ import java.util.concurrent.CompletableFuture;
 
 @NullMarked
 public class HomeManager {
-    private static final int MAX_HOME_COUNT = 20;
+
+    private static volatile HomeManager INSTANCE;
+
+    private HomeConfiguration config;
     private final DataSource dataSource;
     private final Logger log = EssentialsPlugin.instance().getSLF4JLogger();
 
-    private HomeManager(DataSource dataSource) {
+    private HomeManager(DataSource dataSource, HomeConfiguration config) {
         this.dataSource = dataSource;
-        for (int i = 0; i < MAX_HOME_COUNT; i++) {
+        this.config = config;
+        for (int i = 0; i < 30; i++) {
             Bukkit.getPluginManager().addPermission(new Permission("essentials.homes.max." + i, "Allows to set up " + i + " homes"));
         }
+    }
+
+    public static void init(DataSource dataSource, HomeConfiguration config) {
+        INSTANCE = new HomeManager(dataSource, config);
+    }
+
+    public static HomeManager getInstance() {
+        if (INSTANCE == null) {
+            throw new IllegalStateException("HomeManager has not been initialized yet");
+        }
+        return INSTANCE;
+    }
+
+    public HomeConfiguration config() {
+        return config;
     }
 
     public CompletableFuture<Void> deleteHome(Home home) {
@@ -47,21 +66,12 @@ public class HomeManager {
         }, EssentialsPlugin.getExecutorService());
     }
 
-    private static class OnDemand {
-        private final static HomeManager INSTANCE = new HomeManager(EssentialsPlugin.instance().getDataSource());
-    }
-
-    public static HomeManager getInstance() {
-        return OnDemand.INSTANCE;
-    }
-
-
     public CompletableFuture<Optional<Home>> getHome(UUID owner, String name) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT location FROM essentials_player_homes WHERE name = ? AND owner = ?")) {
                 statement.setString(1, name);
                 statement.setObject(2, owner);
-                try (var resultSet = statement.executeQuery();) {
+                try (var resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
                         String location = resultSet.getString("location");
                         return Optional.of(new Home(owner, name, NetworkPosition.deserialize(location)));
@@ -117,9 +127,7 @@ public class HomeManager {
     }
 
     public int getMaxHomes(Player player) {
-        if (player.hasPermission("essentials.homes.max.*")) return Integer.MAX_VALUE;
-        return PermissionsRange.max(player, "essentials.homes.max");
-
+        if (player.hasPermission("essentials.homes.max.*")) return config.maxHomeCount();
+        return Math.min(config.maxHomeCount(), PermissionsRange.max(player, "essentials.homes.max"));
     }
-
 }

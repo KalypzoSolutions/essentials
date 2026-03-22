@@ -1,11 +1,14 @@
 package de.kalypzo.essentials.command.world;
 
+import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.command.CommandManager;
-import net.kyori.adventure.text.Component;
 import de.kalypzo.essentials.event.PlayerSetHomeEvent;
+import de.kalypzo.essentials.exception.BadConfigurationException;
+import de.kalypzo.essentials.gui.home.GuiHomes;
 import de.kalypzo.essentials.user.home.Home;
 import de.kalypzo.essentials.user.home.HomeManager;
 import de.kalypzo.essentials.world.NetworkPosition;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.annotations.Command;
@@ -23,6 +26,17 @@ import java.util.concurrent.CompletableFuture;
  */
 @CommandContainer
 public class HomeCommand {
+
+    @Command("home|homes")
+    @Permission("essentials.command.homes")
+    public void openHomeGui(PlayerSource playerSource) {
+        try {
+            new GuiHomes(playerSource.source(), HomeManager.getInstance()).open();
+        } catch (BadConfigurationException e) {
+            EssentialsPlugin.instance().getSLF4JLogger().error("Failed to open home GUI for player {}", playerSource.source().getName(), e);
+            playerSource.source().sendMessage(Component.translatable("essentials.homes.gui.config-error"));
+        }
+    }
 
     @Command("home|homes <home>")
     @Permission("essentials.command.homes.tp")
