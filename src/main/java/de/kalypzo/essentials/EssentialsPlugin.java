@@ -2,8 +2,8 @@ package de.kalypzo.essentials;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import de.kalypzo.essentials.chat.ChatSystem;
 import de.kalypzo.essentials.broadcast.BroadcastManager;
+import de.kalypzo.essentials.chat.ChatSystem;
 import de.kalypzo.essentials.command.CommandManager;
 import de.kalypzo.essentials.environment.DefaultPluginEnvironment;
 import de.kalypzo.essentials.environment.PluginEnvironment;
@@ -11,6 +11,8 @@ import de.kalypzo.essentials.listener.DeathListener;
 import de.kalypzo.essentials.listener.JoinSpawnLocationListener;
 import de.kalypzo.essentials.rce.RemoteCommandExecutor;
 import de.kalypzo.essentials.user.back.BackManager;
+import de.kalypzo.essentials.user.home.HomeConfigurationImpl;
+import de.kalypzo.essentials.user.home.HomeManager;
 import de.kalypzo.essentials.util.ConfigWrapper;
 import de.kalypzo.essentials.util.Text;
 import de.kalypzo.essentials.world.PositionAccessor;
@@ -22,6 +24,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.flywaydb.core.Flyway;
 import org.jetbrains.annotations.Nullable;
+import xyz.xenondevs.invui.InvUI;
 
 import javax.sql.DataSource;
 import java.util.concurrent.ExecutorService;
@@ -46,6 +49,7 @@ public class EssentialsPlugin extends JavaPlugin {
     private DataSource dataSource;
     @Getter
     private BroadcastManager broadcastManager;
+    private HomeConfigurationImpl homesConfig;
 
 
     @Override
@@ -60,7 +64,17 @@ public class EssentialsPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (!SupportedVersion.isSupported(this)) {
+            getSLF4JLogger().error(
+                    "Unsupported Minecraft version '{}'. Supported versions: {}. Disabling SimpleShops.",
+                    getServer().getMinecraftVersion(),
+                    SupportedVersion.supportedValues()
+            );
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         instance = this;
+        InvUI.getInstance().setPlugin(this);
         Text.loadBranding(this);
         environment = createEnvironment();
         if (environment == null) {
@@ -102,6 +116,8 @@ public class EssentialsPlugin extends JavaPlugin {
         }
 
         // Init section
+        homesConfig = HomeConfigurationImpl.load(this);
+        HomeManager.init(dataSource, homesConfig);
         chatSystem = new ChatSystem(pubSub, this, new ConfigWrapper(this), environment.getServerName());
         TeleportExecutor.getInstance().init(pubSub);
         PositionAccessor.getInstance().init(pubSub);
@@ -186,6 +202,12 @@ public class EssentialsPlugin extends JavaPlugin {
     public void reloadBroadcasts() {
         if (broadcastManager != null) {
             broadcastManager.reload();
+        }
+    }
+
+    public void reloadHomesConfig() {
+        if (homesConfig != null) {
+            homesConfig.reload(this);
         }
     }
 }
