@@ -2,8 +2,8 @@ package de.kalypzo.essentials;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import de.kalypzo.essentials.chat.ChatSystem;
 import de.kalypzo.essentials.broadcast.BroadcastManager;
+import de.kalypzo.essentials.chat.ChatSystem;
 import de.kalypzo.essentials.command.CommandManager;
 import de.kalypzo.essentials.environment.DefaultPluginEnvironment;
 import de.kalypzo.essentials.environment.PluginEnvironment;
@@ -24,6 +24,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.flywaydb.core.Flyway;
 import org.jetbrains.annotations.Nullable;
+import xyz.xenondevs.invui.InvUI;
 
 import javax.sql.DataSource;
 import java.util.concurrent.ExecutorService;
@@ -73,6 +74,7 @@ public class EssentialsPlugin extends JavaPlugin {
             return;
         }
         instance = this;
+        InvUI.getInstance().setPlugin(this);
         Text.loadBranding(this);
         environment = createEnvironment();
         if (environment == null) {

@@ -4,7 +4,6 @@ import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.gui.ItemBuilderConfigReader;
 import de.kalypzo.essentials.user.home.Home;
 import de.kalypzo.essentials.user.home.HomeConfiguration;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;

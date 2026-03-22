@@ -1,5 +1,6 @@
 package de.kalypzo.essentials.gui.home;
 
+import com.destroystokyo.paper.profile.ProfileProperty;
 import de.kalypzo.essentials.gui.ItemBuilderConfigReader;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
@@ -25,6 +26,13 @@ class ItemHomeInfo extends AbstractItem {
     @Override
     public ItemProvider getItemProvider(Player viewer) {
         int maxHomes = homes.homeManager().getMaxHomes(viewer);
-        return new ItemBuilderConfigReader().parse(homes.homeManager().config().guiItemInfo(), Placeholder.unparsed("max-homes", String.valueOf(maxHomes)));
+        var reader = new ItemBuilderConfigReader();
+        String texture = viewer.getPlayerProfile().getProperties().stream()
+                .filter(prop -> prop.getName().equals("textures"))
+                .findFirst()
+                .map(ProfileProperty::getValue)
+                .orElse(null);
+        reader.setSkullTexture(texture);
+        return reader.parse(homes.homeManager().config().guiItemInfo(), Placeholder.unparsed("max-homes", String.valueOf(maxHomes)));
     }
 }

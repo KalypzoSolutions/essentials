@@ -60,18 +60,18 @@ public record Home(UUID owner, String name, NetworkPosition location) implements
     @Override
     public @Nullable Tag resolve(String name, ArgumentQueue arguments, Context ctx) throws ParsingException {
         return switch (name.toLowerCase()) {
-            case "name" -> Tag.inserting(Component.text(name));
-            case "x" -> Tag.inserting(Component.text((int) location.x()));
-            case "y" -> Tag.inserting(Component.text((int) location.y()));
-            case "z" -> Tag.inserting(Component.text((int) location.z()));
-            case "world" -> Tag.inserting(Component.text(location.worldName()));
-            case "server" -> Tag.inserting(Component.text(location.serverName()));
+            case "home" -> Tag.selfClosingInserting(Component.text(name()));
+            case "x" -> Tag.selfClosingInserting(Component.text((int) location.x()));
+            case "y" -> Tag.selfClosingInserting(Component.text((int) location.y()));
+            case "z" -> Tag.selfClosingInserting(Component.text((int) location.z()));
+            case "world" -> Tag.selfClosingInserting(Component.text(location.worldName()));
+            case "server" -> Tag.selfClosingInserting(Component.text(location.serverName()));
             default -> null;
         };
     }
 
     @Override
     public boolean has(String name) {
-        return "name".equals(name) || "x".equals(name) || "y".equals(name) || "z".equals(name) || "world".equals(name) || "server".equals(name);
+        return "home".equals(name) || "x".equals(name) || "y".equals(name) || "z".equals(name) || "world".equals(name) || "server".equals(name);
     }
 }

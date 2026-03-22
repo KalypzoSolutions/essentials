@@ -14,7 +14,6 @@ gui:
   items:
     info:
       material: PLAYER_HEAD
-      skull_texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzAyMzlhNmRhYWZhYzg1NDE5MzYzMGNmOWNhOGEwMTgxZGIyMmNjOGZkODhlZjI3ZTZhN2JhNWMwNTZlMzg4NSJ9fX0='
       name: '<h2>Homes'
       lore:
         - ''
@@ -24,7 +23,7 @@ gui:
         - '<yellow>Tipp: <p>Das Limit kann mit einem Rang erhöht werden.'
     home:
       material: LIME_DYE
-      name: '<h2><name>'
+      name: '<h2><home>'
       lore:
         - ''
         - '<p>Position: <hl><x> <y> <z></hl>'
@@ -35,7 +34,7 @@ gui:
         - ''
     home_delete_confirm:
       material: RED_DYE
-      name: '<ex><name>'
+      name: '<ex><home>'
       lore:
         - ''
         - '<p>Position: <hl><x> <y> <z></hl>'
@@ -54,7 +53,7 @@ gui:
         - ''
     # Player has not enough capacity to allow more homes
     home_locked:
-      material: RED_STAINED_GLASS_PANE
+      material: BARRIER
       name: '<ex>Gesperrt'
       lore:
         - ''
