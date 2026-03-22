@@ -47,6 +47,7 @@ public class DebugCommand {
         Text.loadBranding(EssentialsPlugin.instance());
         EssentialsPlugin.instance().reloadBroadcasts();
         EssentialsPlugin.instance().reloadHomesConfig();
+        EssentialsPlugin.instance().reloadWarpsConfig();
         source.source().sendRichMessage("<#00d492>◆ <#b9f8cf>Configuration reloaded");
         if (printConfig) {
             FileConfiguration config = EssentialsPlugin.instance().getConfig();

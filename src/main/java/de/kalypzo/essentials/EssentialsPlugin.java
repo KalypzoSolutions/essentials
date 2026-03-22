@@ -11,6 +11,7 @@ import de.kalypzo.essentials.listener.DeathListener;
 import de.kalypzo.essentials.listener.JoinSpawnLocationListener;
 import de.kalypzo.essentials.rce.RemoteCommandExecutor;
 import de.kalypzo.essentials.user.back.BackManager;
+import de.kalypzo.essentials.gui.warps.WarpConfigurationImpl;
 import de.kalypzo.essentials.user.home.HomeConfigurationImpl;
 import de.kalypzo.essentials.user.home.HomeManager;
 import de.kalypzo.essentials.util.ConfigWrapper;
@@ -50,6 +51,8 @@ public class EssentialsPlugin extends JavaPlugin {
     @Getter
     private BroadcastManager broadcastManager;
     private HomeConfigurationImpl homesConfig;
+    @Getter
+    private WarpConfigurationImpl warpsConfig;
 
 
     @Override
@@ -117,6 +120,7 @@ public class EssentialsPlugin extends JavaPlugin {
 
         // Init section
         homesConfig = HomeConfigurationImpl.load(this);
+        warpsConfig = WarpConfigurationImpl.load(this);
         HomeManager.init(dataSource, homesConfig);
         chatSystem = new ChatSystem(pubSub, this, new ConfigWrapper(this), environment.getServerName());
         TeleportExecutor.getInstance().init(pubSub);
@@ -208,6 +212,12 @@ public class EssentialsPlugin extends JavaPlugin {
     public void reloadHomesConfig() {
         if (homesConfig != null) {
             homesConfig.reload(this);
+        }
+    }
+
+    public void reloadWarpsConfig() {
+        if (warpsConfig != null) {
+            warpsConfig.reload(this);
         }
     }
 }

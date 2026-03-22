@@ -1,0 +1,92 @@
+gui:
+  title: '<h2>Warps'
+  # Layout:
+  # 1-8: Warp slots (matched by position to items list below)
+  # 0:   Empty slot
+  layout:
+    - '000000000'
+    - '001020300'
+    - '004050600'
+    - '000070800'
+    - '000000000'
+  items:
+    1:
+      destination: spawn
+      material: BEACON
+      name: '<h2>Spawn'
+      lore:
+        - ''
+        - '<p>Teleportiere dich zum Spawn.'
+        - ''
+        - '<bl>Linksklick: <p>Teleportieren'
+        - ''
+    2:
+      destination: nether
+      material: NETHERRACK
+      name: '<h2>Nether'
+      lore:
+        - ''
+        - '<p>Teleportiere dich zum Nether-Spawn.'
+        - ''
+        - '<bl>Linksklick: <p>Teleportieren'
+        - ''
+    3:
+      destination: magier
+      material: AMETHYST_SHARD
+      name: '<h2>Magier'
+      lore:
+        - ''
+        - '<p>Teleportiere dich zur Magier-Welt.'
+        - ''
+        - '<bl>Linksklick: <p>Teleportieren'
+        - ''
+    4:
+      destination: natur
+      material: OAK_SAPLING
+      name: '<h2>Natur'
+      lore:
+        - ''
+        - '<p>Teleportiere dich zur Natur-Welt.'
+        - ''
+        - '<bl>Linksklick: <p>Teleportieren'
+        - ''
+    5:
+      destination: holz
+      material: OAK_LOG
+      name: '<h2>Holz'
+      lore:
+        - ''
+        - '<p>Teleportiere dich zur Holzfarm.'
+        - ''
+        - '<bl>Linksklick: <p>Teleportieren'
+        - ''
+    6:
+      destination: farmwelt
+      material: WHEAT
+      name: '<h2>Farmwelt'
+      lore:
+        - ''
+        - '<p>Teleportiere dich zur Farmwelt.'
+        - ''
+        - '<bl>Linksklick: <p>Teleportieren'
+        - ''
+    7:
+      destination: builder
+      material: BRICKS
+      name: '<h2>Builder'
+      lore:
+        - ''
+        - '<p>Teleportiere dich zur Builder-Welt.'
+        - ''
+        - '<bl>Linksklick: <p>Teleportieren'
+        - ''
+    8:
+      destination: hunter
+      material: BOW
+      name: '<h2>Hunter'
+      lore:
+        - ''
+        - '<p>Teleportiere dich zur Hunter-Welt.'
+        - ''
+        - '<bl>Linksklick: <p>Teleportieren'
+        - ''
