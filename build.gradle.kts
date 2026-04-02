@@ -88,7 +88,7 @@ dependencies {
     compileOnly("eu.cloudnetservice.cloudnet:bridge-api")
 
     // sucks when provided
-    implementation("io.lettuce:lettuce-core:7.5.0.RELEASE")
+    implementation("io.lettuce:lettuce-core:7.5.1.RELEASE")
     paperLibrary("org.incendo:cloud-core:2.0.0")
     paperLibrary("org.incendo:cloud-annotations:2.0.0")
     annotationProcessor("org.incendo:cloud-annotations:2.0.0")
