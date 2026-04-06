@@ -79,7 +79,7 @@ dependencies {
 
     // head preview
     // paperLibrary("io.github.tofaa2:spigot:3.0.3-SNAPSHOT") not used yet. TODO: add packet events dep.
-    compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.12.0")
 
     //cloudnet
     implementation(platform("eu.cloudnetservice.cloudnet:bom:4.0.0-RC17-SNAPSHOT"))
