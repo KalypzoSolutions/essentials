@@ -2,12 +2,12 @@ package de.kalypzo.essentials.command.world;
 
 
 import de.kalypzo.essentials.command.CommandLoader;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import de.kalypzo.essentials.world.NetworkPosition;
 import de.kalypzo.essentials.world.warps.Warp;
 import de.kalypzo.essentials.world.warps.WarpManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.Flag;
 import org.incendo.cloud.annotations.Permission;
@@ -25,6 +25,7 @@ import java.util.concurrent.CompletableFuture;
 @CommandContainer
 public class WarpCommand {
     public static final String SET_PERMISSION = "essentials.command.warp.set";
+    public static final String DELETE_PERMISSION = "essentials.command.warp.delete";
 
     @Command("warps")
     @Command("warps list")
@@ -65,8 +66,17 @@ public class WarpCommand {
         return WarpManager.getInstance().saveWarp(warp).thenAccept((_void) -> {
             source.source().sendMessage(Component.translatable("essentials.warp.set", warp));
         });
-
     }
+
+    @Command("warps delete <warp>")
+    @Permission(DELETE_PERMISSION)
+    public CompletableFuture<Void> delete(PlayerSource source, Warp warp) {
+        return WarpManager.getInstance().deleteWarp(warp).thenAccept(_v -> {
+            source.source().sendMessage(Component.translatable("essentials.warp.deleted", warp));
+
+        });
+    }
+
 
     @Command("spawn|hub|l")
     public void spawn(PlayerSource source) {

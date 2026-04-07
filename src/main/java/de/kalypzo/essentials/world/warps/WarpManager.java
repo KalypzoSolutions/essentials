@@ -1,9 +1,9 @@
 package de.kalypzo.essentials.world.warps;
 
-import lombok.NonNull;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.world.NetworkPosition;
+import lombok.NonNull;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.slf4j.Logger;
 
 import javax.sql.DataSource;
@@ -31,6 +31,7 @@ public class WarpManager {
     public Collection<Warp> getWarps() {
         return warps.values();
     }
+
 
     private static class OnDemand {
         private final static WarpManager INSTANCE = new WarpManager(EssentialsPlugin.instance().getDataSource());
@@ -117,5 +118,19 @@ public class WarpManager {
         }, EssentialsPlugin.getExecutorService());
     }
 
+    public CompletableFuture<Void> deleteWarp(Warp warp) {
+        warps.remove(warp.name().toLowerCase());
+        return CompletableFuture.runAsync(() -> {
+            try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(
+                    "DELETE FROM essentials_server_warps WHERE name = ?")) {
+                statement.setString(1, warp.name());
+                statement.executeUpdate();
+                warps.remove(warp.name().toLowerCase());
+            } catch (SQLException e) {
+                log.error("Could not delete {}", warp, e);
+                throw new RuntimeException(e);
+            }
+        }, EssentialsPlugin.getExecutorService());
+    }
 
 }
