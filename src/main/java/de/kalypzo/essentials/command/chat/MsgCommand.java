@@ -1,7 +1,7 @@
 package de.kalypzo.essentials.command.chat;
 
 
-import de.kalypzo.essentials.command.CommandManager;
+import de.kalypzo.essentials.command.CommandLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.translation.Argument;
 import de.kalypzo.essentials.EssentialsPlugin;
@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * <p>Provides all commands related to private messages / reply </p>
- * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  */
 @CommandContainer
 public class MsgCommand {

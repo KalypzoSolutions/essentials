@@ -2,7 +2,7 @@ package de.kalypzo.essentials.command.user;
 
 
 import de.kalypzo.essentials.EssentialsPlugin;
-import de.kalypzo.essentials.command.CommandManager;
+import de.kalypzo.essentials.command.CommandLoader;
 import de.kalypzo.essentials.environment.PluginEnvironment;
 import de.kalypzo.essentials.exception.ComponentException;
 import de.kalypzo.essentials.exception.TransactionException;
@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * <p>Provides all commands related to user money </p>
- * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  */
 @CommandContainer
 public class MoneyCommand {

@@ -1,6 +1,6 @@
 package de.kalypzo.essentials.command.user;
 
-import de.kalypzo.essentials.command.CommandManager;
+import de.kalypzo.essentials.command.CommandLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.translation.Argument;
 import de.kalypzo.essentials.EssentialsPlugin;
@@ -17,7 +17,7 @@ import org.incendo.cloud.paper.util.sender.Source;
 /**
  *
  * <p>Change gamemode</p>
- * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  */
 
 @CommandContainer

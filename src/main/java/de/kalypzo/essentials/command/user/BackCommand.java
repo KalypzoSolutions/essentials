@@ -1,7 +1,7 @@
 package de.kalypzo.essentials.command.user;
 
 
-import de.kalypzo.essentials.command.CommandManager;
+import de.kalypzo.essentials.command.CommandLoader;
 import net.kyori.adventure.text.Component;
 import de.kalypzo.essentials.user.back.BackManager;
 import org.incendo.cloud.annotations.Command;
@@ -12,7 +12,7 @@ import org.incendo.cloud.paper.util.sender.PlayerSource;
 
 /**
  * When a player dies he gets teleported he can teleport back to his last death location
- * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  */
 @CommandContainer
 public class BackCommand {

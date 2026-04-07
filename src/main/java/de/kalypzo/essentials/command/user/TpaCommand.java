@@ -1,6 +1,6 @@
 package de.kalypzo.essentials.command.user;
 
-import de.kalypzo.essentials.command.CommandManager;
+import de.kalypzo.essentials.command.CommandLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * <p>Workbench, Anvil</p>
- * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  */
 @CommandContainer
 public class TpaCommand {

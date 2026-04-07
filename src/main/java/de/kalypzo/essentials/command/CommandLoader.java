@@ -32,10 +32,10 @@ import org.jspecify.annotations.NullMarked;
 import java.util.Locale;
 
 @NullMarked
-public class CommandManager {
+public class CommandLoader {
     private final EssentialsPlugin plugin;
 
-    public CommandManager(EssentialsPlugin plugin) {
+    public CommandLoader(EssentialsPlugin plugin) {
         this.plugin = plugin;
         PaperCommandManager<Source> commandManager = PaperCommandManager.builder(PaperSimpleSenderMapper.simpleSenderMapper())
                 .executionCoordinator(ExecutionCoordinator.coordinatorFor(ExecutionCoordinator.nonSchedulingExecutor()))
@@ -62,8 +62,6 @@ public class CommandManager {
             parser.parse(new LabyModDebugCommand());
             plugin.getComponentLogger().info(Text.deserialize("<ss>Registered Labymod-Debug command"));
         }
-
-
     }
 
     private void registerExceptionControllers(PaperCommandManager<Source> commandManager) {

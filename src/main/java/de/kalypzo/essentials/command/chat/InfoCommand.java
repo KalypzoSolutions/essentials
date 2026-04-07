@@ -1,6 +1,6 @@
 package de.kalypzo.essentials.command.chat;
 
-import de.kalypzo.essentials.command.CommandManager;
+import de.kalypzo.essentials.command.CommandLoader;
 import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.util.Text;
 import org.incendo.cloud.annotations.Command;
@@ -9,7 +9,7 @@ import org.incendo.cloud.paper.util.sender.Source;
 
 /**
  * <p>Provides all commands related to private messages / reply </p>
- * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  */
 @CommandContainer
 public class InfoCommand {

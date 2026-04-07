@@ -1,6 +1,6 @@
 package de.kalypzo.essentials.command.user;
 
-import de.kalypzo.essentials.command.CommandManager;
+import de.kalypzo.essentials.command.CommandLoader;
 import net.kyori.adventure.text.Component;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
@@ -9,7 +9,7 @@ import org.incendo.cloud.annotations.processing.CommandContainer;
 import org.incendo.cloud.paper.util.sender.PlayerSource;
 
 /**
- * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  */
 @CommandContainer
 public class FlyCommand {

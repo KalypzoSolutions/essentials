@@ -1,7 +1,7 @@
 package de.kalypzo.essentials.command.admin;
 
 
-import de.kalypzo.essentials.command.CommandManager;
+import de.kalypzo.essentials.command.CommandLoader;
 import it.einjojo.economy.EconomyService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.translation.Argument;
@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  */
 @CommandContainer
 public class MoneyAdminCommand {

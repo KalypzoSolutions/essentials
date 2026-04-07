@@ -1,7 +1,7 @@
 package de.kalypzo.essentials.command.world;
 
 import de.kalypzo.essentials.EssentialsPlugin;
-import de.kalypzo.essentials.command.CommandManager;
+import de.kalypzo.essentials.command.CommandLoader;
 import de.kalypzo.essentials.event.PlayerSetHomeEvent;
 import de.kalypzo.essentials.exception.BadConfigurationException;
 import de.kalypzo.essentials.gui.home.GuiHomes;
@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Set home and teleport to it.
- * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  *
  */
 @CommandContainer

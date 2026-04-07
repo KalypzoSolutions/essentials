@@ -1,6 +1,6 @@
 package de.kalypzo.essentials.command.admin;
 
-import de.kalypzo.essentials.command.CommandManager;
+import de.kalypzo.essentials.command.CommandLoader;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.user.EssentialsUser;
@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * <p>/debug </p>
- * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  */
 @CommandContainer
 public class DebugCommand {

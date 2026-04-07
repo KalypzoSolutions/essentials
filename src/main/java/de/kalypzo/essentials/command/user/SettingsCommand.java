@@ -1,6 +1,6 @@
 package de.kalypzo.essentials.command.user;
 
-import de.kalypzo.essentials.command.CommandManager;
+import de.kalypzo.essentials.command.CommandLoader;
 import net.kyori.adventure.text.Component;
 import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.user.UserSettings;
@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  *
- * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  */
 @CommandContainer
 public class SettingsCommand {

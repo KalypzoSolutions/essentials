@@ -1,6 +1,6 @@
 package de.kalypzo.essentials.command.user;
 
-import de.kalypzo.essentials.command.CommandManager;
+import de.kalypzo.essentials.command.CommandLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.incendo.cloud.annotations.Command;
@@ -12,7 +12,7 @@ import org.incendo.cloud.paper.util.sender.PlayerSource;
 /**
  * Set flight or normal walking speed for the player.
  * <p>Speed range: 0 to 10 (normalized to 0.0-1.0 for Minecraft)</p>
- * <p>Because of @CommandContainer it gets instantiated by {@link CommandManager}</p>
+ * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  */
 @CommandContainer
 public class SpeedCommand {
