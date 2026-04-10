@@ -3,7 +3,7 @@ import net.minecrell.pluginyml.paper.PaperPluginDescription
 plugins {
     id("java")
     id("xyz.jpenilla.run-paper") version "3.0.2"
-    id("de.eldoria.plugin-yml.paper") version "0.8.0"
+    id("de.eldoria.plugin-yml.paper") version "0.9.0"
     id("com.gradleup.shadow") version "9.4.1"
     id("me.qoomon.git-versioning") version "6.4.4"
 
