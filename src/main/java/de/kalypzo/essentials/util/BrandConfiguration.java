@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 public class BrandConfiguration {
     private static final String DEFAULT_PREFIX_RAW = "<color:#F16D34>Essentials</color> <color:#52525c>»</color><color:#d4d4d4>";
     private static final String DEFAULT_CHAT_PREFIX_RAW = "<color:#7c86ff>ChatSystem</color> <color:#52525c>»</color><color:#cad5e2>";
+    private static final String TEAM_CHAT = "<color:#7c86ff>Team</color> <color:#52525c>»</color><color:#cad5e2>";
 
     private static final TextColor DEFAULT_BLUE = TextColor.color(0x00bcff);
     private static final TextColor DEFAULT_GREEN = TextColor.color(0x7bf1a8);

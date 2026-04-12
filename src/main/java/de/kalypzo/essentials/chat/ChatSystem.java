@@ -155,8 +155,15 @@ public class ChatSystem implements Listener {
 
     public void handleMessage(@NotNull ChatMessage chatMessage) {
         List<Player> recipients;
-        if (chatMessage.recipients() == null) {
+        if (chatMessage.recipients() == null && chatMessage.permissionScope() == null) {
             recipients = new ArrayList<>(Bukkit.getOnlinePlayers());
+        } else if (chatMessage.recipients() == null) { // permission Scope is given
+            recipients = new LinkedList<>();
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (player.hasPermission(chatMessage.permissionScope())) {
+                    recipients.add(player);
+                }
+            }
         } else {
             recipients = new LinkedList<>();
             for (UUID target : chatMessage.recipients()) {
@@ -167,7 +174,7 @@ public class ChatSystem implements Listener {
             }
         }
         Component content = chatMessage.getContent();
-        String serializedMessage = chatMessage.serializedMiniMessage();
+        String serializedMessage = chatMessage.serializedMessage();
         String plainText = plain.serialize(content);  // Plain text version for regex matching
         UUID senderUuid = chatMessage.sender();
         String originatingServer = chatMessage.originatingServer();
