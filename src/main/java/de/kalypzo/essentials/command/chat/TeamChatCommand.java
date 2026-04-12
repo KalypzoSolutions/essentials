@@ -31,7 +31,7 @@ public class TeamChatCommand {
     @Permission("essentials.command.teamchat")
     public CompletableFuture<Void> reply(PlayerSource sender, @Greedy String message) {
         CompletableFuture<Void> future = new CompletableFuture<>();
-        Component output = Text.deserialize(PlaceholderAPI.setPlaceholders(sender.source(), "<#bdb2ff><b>ᴛᴄ</b> <white>%luckperms_prefix% %player_name%</white> <#f4f1de>→ <#ffd6a5><message>"),
+        Component output = Text.deserialize(PlaceholderAPI.setPlaceholders(sender.source(), "<#a855f7>[<b>ᴛᴄ</b>] <white>%luckperms_prefix% %player_name%</white> <#f4f1de>→ <#a855f7><message>"),
                 Placeholder.component("message", Component.text(message))
         );
         ChatMessage.createPermissionScoped(output, SCOPE).deliver();
