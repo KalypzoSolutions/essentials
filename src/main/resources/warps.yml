@@ -36,17 +36,17 @@ gui:
       name: '<h2>Magier'
       lore:
         - ''
-        - '<p>Teleportiere dich zur Magier-Welt.'
+        - '<p>Teleportiere dich zum Magier.'
         - ''
         - '<bl>Linksklick: <p>Teleportieren'
         - ''
     4:
       destination: natur
       material: OAK_SAPLING
-      name: '<h2>Natur'
+      name: '<h2>Blumenhändlerin'
       lore:
         - ''
-        - '<p>Teleportiere dich zur Natur-Welt.'
+        - '<p>Teleportiere dich zur Blumenhändlerin.'
         - ''
         - '<bl>Linksklick: <p>Teleportieren'
         - ''
@@ -56,7 +56,7 @@ gui:
       name: '<h2>Holz'
       lore:
         - ''
-        - '<p>Teleportiere dich zur Holzfarm.'
+        - '<p>Teleportiere dich zum Holzfäller.'
         - ''
         - '<bl>Linksklick: <p>Teleportieren'
         - ''
@@ -76,7 +76,7 @@ gui:
       name: '<h2>Builder'
       lore:
         - ''
-        - '<p>Teleportiere dich zur Builder-Welt.'
+        - '<p>Teleportiere dich zur Handwerker.'
         - ''
         - '<bl>Linksklick: <p>Teleportieren'
         - ''
@@ -86,7 +86,7 @@ gui:
       name: '<h2>Hunter'
       lore:
         - ''
-        - '<p>Teleportiere dich zur Hunter-Welt.'
+        - '<p>Teleportiere dich zum Jäger.'
         - ''
         - '<bl>Linksklick: <p>Teleportieren'
         - ''
