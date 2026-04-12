@@ -1,9 +1,9 @@
 package de.kalypzo.essentials.user.leaderboard;
 
+import de.kalypzo.essentials.EssentialsPlugin;
 import it.einjojo.economy.db.AccountData;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import de.kalypzo.essentials.EssentialsPlugin;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -26,6 +26,7 @@ public class BalanceTopPostgresAccessor {
     private Instant lastUpdate = Instant.MIN;
     @Getter
     private AccountData[] topTen = new AccountData[10];
+    @Getter
     private CompletableFuture<Void> updateFuture;
 
     public BalanceTopPostgresAccessor(DataSource dataSource, String economyTableName) {

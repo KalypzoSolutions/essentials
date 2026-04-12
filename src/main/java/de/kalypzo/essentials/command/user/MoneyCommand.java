@@ -20,6 +20,7 @@ import org.incendo.cloud.annotations.CommandDescription;
 import org.incendo.cloud.annotations.Permission;
 import org.incendo.cloud.annotations.processing.CommandContainer;
 import org.incendo.cloud.paper.util.sender.PlayerSource;
+import org.incendo.cloud.paper.util.sender.Source;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -110,24 +111,64 @@ public class MoneyCommand {
 
     @Command("money|coins|balance top")
     @CommandDescription("Zeige die Top 10 reichsten Spieler an.")
-    public void showEco(PlayerSource sender) {
+    public CompletableFuture<Void> showEco(PlayerSource sender) {
         boolean canRefresh = balanceTopAccessor.getLastUpdate().plusMillis(1000 * 30).isBefore(Instant.now());
         if (canRefresh) {
             balanceTopAccessor.refreshTopTenAsync();
         }
+        if (balanceTopAccessor.getUpdateFuture().isDone()) {
+            return showBaltop(sender);
 
+        } else {
+            return balanceTopAccessor.getUpdateFuture().thenCompose(v -> {
+                return showBaltop(sender);
+            });
+        }
+    }
+
+    public CompletableFuture<Void> showBaltop(Source sender) {
         AccountData[] topTen = balanceTopAccessor.getTopTen();
         sender.source().sendRichMessage("<gray>Die 10 reichsten Spieler sind");
+
+        // Resolve all offline users concurrently
+        @SuppressWarnings("unchecked")
+        CompletableFuture<String[]>[] lineFutures = new CompletableFuture[topTen.length];
+
         for (int i = 0; i < topTen.length; i++) {
-            var data = topTen[i];
-            String money = (data == null ? "?" : NumberFormatter.doubleToHumanReadable(data.balance()));
-            String name = (data == null ? "?" : Bukkit.getOfflinePlayer(data.uuid()).getName());
-            sender.source().sendRichMessage("<dark_gray>◆ <gray><pos> <#b9f8cf><name> <yellow><money> ",
-                    Placeholder.unparsed("pos", i + 1 + ""),
-                    Placeholder.unparsed("money", money),
-                    Placeholder.unparsed("name", name == null ? "unknown" : name)
-            );
+            final int pos = i;
+            AccountData data = topTen[i];
+
+            if (data == null) {
+                lineFutures[pos] = CompletableFuture.completedFuture(
+                        new String[]{String.valueOf(pos + 1), "-", "-"}
+                );
+                continue;
+            }
+
+            lineFutures[pos] = EssentialsPlugin.environment()
+                    .getOfflineUser(data.uuid())
+                    .thenApply(optUser -> {
+                        String name = optUser
+                                .map(EssentialsOfflineUser::getName)
+                                .orElse(data.uuid().toString());
+                        String money = NumberFormatter.doubleToHumanReadable(data.balance());
+                        return new String[]{String.valueOf(pos + 1), name, money};
+                    });
         }
+
+        // Wait for all lookups, then send in-order
+        return CompletableFuture.allOf(lineFutures)
+                .thenRun(() -> {
+                    for (CompletableFuture<String[]> future : lineFutures) {
+                        String[] line = future.join(); // safe — allOf guarantees completion
+                        sender.source().sendRichMessage(
+                                "<dark_gray>◆ <gray><pos> <#b9f8cf><name> <yellow><money>",
+                                Placeholder.unparsed("pos", line[0]),
+                                Placeholder.unparsed("name", line[1]),
+                                Placeholder.unparsed("money", line[2])
+                        );
+                    }
+                });
     }
 
 }
