@@ -1,9 +1,10 @@
 package de.kalypzo.essentials.util;
 
+import de.kalypzo.essentials.user.EssentialsUser;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import de.kalypzo.essentials.user.EssentialsUser;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 /**
  * Factory class for tag resolvers.
@@ -24,8 +25,11 @@ public class TagResolvers {
      *
      * @return <pre>&lt;player&gt; resolver</pre>
      */
-    public static TagResolver player(Player player) {
-        return TagResolver.resolver("player", Tag.inserting(player.name()));
+    public static TagResolver player(OfflinePlayer player) {
+        String name = player.getName() == null ? "?" : player.getName();
+        Component component = Component.text(name)
+                .hoverEvent(Component.text(player.getUniqueId().toString(), Text.getTextColor()));
+        return TagResolver.resolver("player", Tag.selfClosingInserting(component));
     }
 
 

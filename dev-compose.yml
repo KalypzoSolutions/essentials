@@ -72,7 +72,7 @@ services:
         6245
       PLUGINS: |-
         https://github.com/wandoriamc/player-service-api/releases/download/v1.5.2/playerapi-paper-1.5.2.jar
-        https://cloud.einjojo.it/s/YK8WMIJgrPIycnH/download
+        https://github.com/TotorixGames/economy/releases/download/v2.2.0/economy-plugin-2.2.0-SNAPSHOT-all.jar
 
 volumes:
   postgres_data:

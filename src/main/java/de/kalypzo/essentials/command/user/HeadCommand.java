@@ -6,8 +6,11 @@ import de.kalypzo.essentials.command.CommandLoader;
 import de.kalypzo.essentials.user.cooldown.RedisCooldownManager;
 import de.kalypzo.essentials.util.MainThreadUtil;
 import de.kalypzo.essentials.util.PermissionsRange;
+import de.kalypzo.essentials.util.TagResolvers;
 import de.kalypzo.essentials.util.Text;
+import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -28,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
  * <p>Skull with x-delay</p>
  * <p>Because of @CommandContainer it gets instantiated by {@link CommandLoader}</p>
  */
+@Slf4j
 @CommandContainer
 public class HeadCommand {
 
@@ -80,6 +84,7 @@ public class HeadCommand {
         if (!sender.hasPermission("essentials.cooldown.head.bypass")) {
             return CompletableFuture.supplyAsync(() -> {
                 Duration duration = LAZY.INSTANCE.getCooldown(sender.getUniqueId());
+                log.info("HeadCooldown check resulted in {} | senderName={} | sender={}", duration, sender.getName(), sender.getUniqueId());
                 if (duration != null) {
                     sender.sendMessage(Text.deserialize("<prefix> <p>Du kannst in <duration> einen weiteren Kopf holen!",
                             Placeholder.component("duration", Text.durationComponent(duration))));
@@ -98,14 +103,26 @@ public class HeadCommand {
     }
 
     private CompletableFuture<Void> giveHeadInternal(Player sender, OfflinePlayer player) {
-        ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
-        final SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
         PlayerProfile profile = player.getPlayerProfile();
+        sender.sendActionBar(Component.text("Lade Kopf-Daten...", Text.getTextColor()));
         return profile.update().thenAcceptAsync(completedProfile -> {
+            ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
+            final SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
             String name = player.getName();
-            meta.customName(Component.text(name != null ? name : "?", Text.getHighlightColor()));
+            meta.setPlayerProfile(completedProfile);
+            meta.customName(Component.text(name != null ? name : "?", Text.getHighlightColor()).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
             playerHead.setItemMeta(meta);
-        }, MainThreadUtil.createExecutor(sender));
+            sender.getInventory().addItem(playerHead);
+            if (sender.getUniqueId().equals(player.getUniqueId())) {
+                sender.sendMessage(Text.deserialize("<prefix> <p>Du hast dir deinen Kopf geholt!"));
+            } else {
+                sender.sendMessage(Text.deserialize("<prefix> <p>Du hast dir den Kopf von <hl><player></hl> geholt", TagResolvers.player(player)));
+            }
+
+        }, MainThreadUtil.createExecutor(sender)).exceptionally(ex -> {
+            log.error("Player {}({}) could not be gathered!", player.getName(), player.getUniqueId(), ex);
+            throw new RuntimeException(ex);
+        });
     }
 
 
