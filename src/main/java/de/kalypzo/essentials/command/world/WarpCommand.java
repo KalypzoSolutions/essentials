@@ -2,7 +2,6 @@ package de.kalypzo.essentials.command.world;
 
 
 import de.kalypzo.essentials.EssentialsPlugin;
-import de.kalypzo.essentials.command.CommandManager;
 import de.kalypzo.essentials.gui.warps.GuiWarps;
 import de.kalypzo.essentials.world.NetworkPosition;
 import de.kalypzo.essentials.world.warps.Warp;
