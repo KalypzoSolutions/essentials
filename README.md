@@ -4,6 +4,9 @@ cross-server essential-functionality |
 Iteration. 2 | 2025
 
 ---
+Team Chat gets toggled with permission `essentialsmeta.teamchat.toggled`. 
+
+---
 
 ## Setup
 
