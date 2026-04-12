@@ -2,7 +2,8 @@ package de.kalypzo.essentials.chat;
 
 import de.kalypzo.essentials.EssentialsPlugin;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.ComponentSerializer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +30,7 @@ public record ChatMessage(@Nullable List<UUID> recipients, @NotNull String seria
         this(recipients, serializedMiniMessage, sender, null);
     }
 
-    private static final MiniMessage SERIALIZER = MiniMessage.miniMessage();
+    private static final ComponentSerializer<Component, Component, String> SERIALIZER = GsonComponentSerializer.gson();
 
     public static ChatMessage create(@NotNull Component component) {
         return new ChatMessage(null, SERIALIZER.serialize(component), null, null);

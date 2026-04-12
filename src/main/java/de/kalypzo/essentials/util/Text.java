@@ -256,9 +256,13 @@ public class Text {
                     case 'e', 'E' -> "yellow";
                     case 'f', 'F' -> "white";
                     case 'r', 'R' -> "reset"; // Reset code, closes all open tags
-                    default -> "p";
+                    default -> null;
                 };
-                output.append('<').append(tag).append('>');
+                if (tag == null) {
+                    output.append('&');
+                } else {
+                    output.append('<').append(tag).append('>');
+                }
                 isColorCode = false;
             } else if (c == '&') {
                 isColorCode = true;
