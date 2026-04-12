@@ -1,7 +1,8 @@
 package de.kalypzo.essentials.command.world;
 
 
-import de.kalypzo.essentials.command.CommandLoader;
+import de.kalypzo.essentials.EssentialsPlugin;
+import de.kalypzo.essentials.gui.warps.GuiWarps;
 import de.kalypzo.essentials.world.NetworkPosition;
 import de.kalypzo.essentials.world.warps.Warp;
 import de.kalypzo.essentials.world.warps.WarpManager;
@@ -29,14 +30,12 @@ public class WarpCommand {
 
     @Command("warps")
     @Command("warps list")
-    public void list(Source source) {
-        var warps = WarpManager.getInstance().getWarps();
-        if (warps.isEmpty()) {
-            source.source().sendMessage(Component.translatable("essentials.warp.warps-empty"));
-            return;
-        }
-        for (Warp warp : warps) {
-            source.source().sendMessage(warp);
+    public void list(PlayerSource source) {
+        try {
+            new GuiWarps(source.source(), WarpManager.getInstance(), EssentialsPlugin.instance().getWarpsConfig()).open();
+        } catch (Exception e) {
+            EssentialsPlugin.instance().getSLF4JLogger().error("Failed to open warps GUI for player {}: {}", source.source().getName(), e.getMessage());
+            source.source().sendMessage(Component.translatable("essentials.warp.gui-load-failed"));
         }
     }
 
@@ -76,7 +75,6 @@ public class WarpCommand {
 
         });
     }
-
 
     @Command("spawn|hub|l")
     public void spawn(PlayerSource source) {
