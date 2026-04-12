@@ -116,7 +116,6 @@ public class ChatSystem implements Listener {
             return;
         }
         try {
-
             String chatFormat = chatConfiguration.getChatFormat();
             chatFormat = PlaceholderAPI.setPlaceholders(event.getPlayer(), chatFormat);
             if (event.getPlayer().hasPermission(COLORED_CHAT_PERMISSION)) {
