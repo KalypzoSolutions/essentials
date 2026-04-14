@@ -31,9 +31,10 @@ public class GuiWarps {
         Structure structure;
         try {
             structure = new Structure(layout.toArray(new String[0]));
-            for (int i = 0; i < items.size(); i++) {
-                char key = (char) ('1' + i);
-                ConfigurationSection section = items.get(i);
+            for (ConfigurationSection section : items) {
+                var keyString = section.getCurrentPath();
+                if (keyString == null) continue;
+                char key = keyString.charAt(keyString.length() - 1);
                 structure.addIngredient(key, new ItemWarp(section, warpManager));
             }
         } catch (Exception ex) {
