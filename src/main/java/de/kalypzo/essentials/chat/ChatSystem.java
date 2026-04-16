@@ -2,6 +2,7 @@ package de.kalypzo.essentials.chat;
 
 import com.google.gson.Gson;
 import de.kalypzo.essentials.EssentialsPlugin;
+import de.kalypzo.essentials.command.chat.TeamChatCommand;
 import de.kalypzo.essentials.user.EssentialsUser;
 import de.kalypzo.essentials.user.UserSettings;
 import de.kalypzo.essentials.util.Text;
@@ -19,6 +20,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -199,13 +201,15 @@ public class ChatSystem implements Listener {
                 sender.sendMessage(highlightedMessage != null ? highlightedMessage : content);
             }
         }
-
+        boolean isTeamChat = TeamChatCommand.SCOPE.equalsIgnoreCase(chatMessage.permissionScope());
         for (Player recipient : recipients) {
             // Skip sender in global chat rendering (they already received their message above)
             if (senderUuid != null && recipient.getUniqueId().equals(senderUuid)) {
                 continue;
             }
-
+            if (isTeamChat) {
+                recipient.playSound(recipient, Sound.UI_TOAST_IN, 1, 1.85f);
+            }
             // Check if recipient is mentioned using efficient alias set lookup
             if (isMentioned(serializedMessage, recipient)) {
                 Component pingedMessage = highlightMentionedName(content, recipient, plainText);
