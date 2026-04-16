@@ -1,10 +1,10 @@
 package de.kalypzo.essentials.command.plot;
 
-import net.kyori.adventure.text.Component;
 import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.environment.PluginEnvironment;
 import de.kalypzo.essentials.rce.RemoteCommandCall;
 import de.kalypzo.essentials.user.EssentialsOfflineUser;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.context.CommandContext;
@@ -50,10 +50,7 @@ public class ProxiedPlotCommand {
 
     private CompletableFuture<Void> proxyCommand(UUID playerId, String command, CommandSender sender) {
         return environment.connectPlayerToServer(playerId, serverName).thenAccept((success) -> {
-            if (!success) {
-                sender.sendMessage(Component.translatable("essentials.plot.connect.failed"));
-                return;
-            }
+            sender.sendActionBar(Component.translatable("essentials.plot.connect.failed"));
             RemoteCommandCall.player(playerId, serverName, command).executeNow();
         });
     }

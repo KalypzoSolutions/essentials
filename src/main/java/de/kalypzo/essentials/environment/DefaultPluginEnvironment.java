@@ -78,7 +78,14 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
     @Override
     public CompletableFuture<Boolean> connectPlayerToServer(UUID player, String serverName) {
         return playerApi.connectPlayer(player, serverName)
-                .thenApply(result -> result.equals(ServerConnectResult.SUCCESS))
+                .thenApply(result -> {
+                    if (result.equals(ServerConnectResult.SUCCESS)) {
+                        return true;
+                    } else {
+                        EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player {} to server {}: {}", player, serverName, result);
+                        return false;
+                    }
+                })
                 .exceptionally(ex -> {
                     EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player {} to server {}", player, serverName, ex);
                     throw new RuntimeException(ex);
@@ -93,6 +100,7 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
     }
 
     @Override
+
     public CompletableFuture<Optional<EssentialsOfflineUser>> getOfflineUserByName(@NonNull String playerName) {
         return playerApi.getOfflinePlayer(playerName).thenApply((player) ->
                 Optional.ofNullable(player).map(NetworkEssentialsOfflineUser::new));

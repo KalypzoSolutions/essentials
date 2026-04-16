@@ -6,16 +6,14 @@ import net.kyori.adventure.translation.GlobalTranslator;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Locale;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
  * 1. Stores the locale files from the resources into the plugin directory if they not exist.
- * 2. Loads the locale files from the plugins directory and registers them in the {@link GlobalTranslator}.
+ * 2. Syncs missing keys from bundled resources into existing on-disk locale files.
+ * 3. Loads the locale files from the plugins directory and registers them in the {@link GlobalTranslator}.
  */
 public class LocaleLoader {
     private final JavaPlugin plugin;
@@ -39,7 +37,7 @@ public class LocaleLoader {
             }
         }
 
-        // 2. Save default locale files from resources to plugin directory
+        // 2. Save default locale files from resources to plugin directory (and sync missing keys)
         saveDefaultLocaleFiles(langDir);
 
         // 3. Load locale files from the plugin directory
@@ -78,7 +76,7 @@ public class LocaleLoader {
 
     /**
      * Saves default locale files from the plugin's resources to the plugin directory.
-     * Only saves if the files don't already exist (preserves user customizations).
+     * If a file already exists, missing keys from the bundled resource are appended to it.
      *
      * @param langDir the lang directory in the plugin's data folder
      */
@@ -98,8 +96,95 @@ public class LocaleLoader {
                 } catch (IllegalArgumentException e) {
                     plugin.getSLF4JLogger().warn("Could not find resource: {}", resourcePath, e);
                 }
+            } else {
+                syncMissingKeys(resourcePath, targetFile);
             }
         }
+    }
+
+    /**
+     * Reads the bundled resource properties and appends any keys that are absent in the
+     * on-disk file, preserving all existing user-customized values.
+     *
+     * @param resourcePath path inside the jar (e.g. {@code "lang/messages_de_DE.properties"})
+     * @param targetFile   the existing on-disk file to sync into
+     */
+    private void syncMissingKeys(String resourcePath, File targetFile) {
+        InputStream resourceStream = plugin.getResource(resourcePath);
+        if (resourceStream == null) {
+            plugin.getSLF4JLogger().warn("Bundled resource not found, cannot sync: {}", resourcePath);
+            return;
+        }
+
+        // Load bundled keys in order (Properties loses order, so we parse manually)
+        List<String> bundledLines;
+        Properties bundledProps = new Properties();
+        try (InputStreamReader reader = new InputStreamReader(resourceStream, StandardCharsets.UTF_8)) {
+            bundledLines = readLines(reader);
+            bundledProps.load(new StringReader(String.join("\n", bundledLines)));
+        } catch (IOException e) {
+            plugin.getSLF4JLogger().warn("Could not read bundled resource: {}", resourcePath, e);
+            return;
+        }
+
+        // Load existing on-disk keys
+        Properties existingProps = new Properties();
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(targetFile), StandardCharsets.UTF_8)) {
+            existingProps.load(reader);
+        } catch (IOException e) {
+            plugin.getSLF4JLogger().warn("Could not read locale file for sync: {}", targetFile.getName(), e);
+            return;
+        }
+
+        // Collect missing keys (maintaining bundled order)
+        List<String> missingLines = new ArrayList<>();
+        for (String line : bundledLines) {
+            String trimmed = line.trim();
+            if (trimmed.isEmpty() || trimmed.startsWith("#")) {
+                continue;
+            }
+            int eqIdx = trimmed.indexOf('=');
+            if (eqIdx < 0) continue;
+            String key = trimmed.substring(0, eqIdx).trim();
+            if (!existingProps.containsKey(key)) {
+                missingLines.add(line);
+            }
+        }
+
+        if (missingLines.isEmpty()) {
+            return;
+        }
+
+        // Append missing keys to the on-disk file
+        try (BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(targetFile, true), StandardCharsets.UTF_8))) {
+            writer.newLine();
+            writer.write("# --- Keys added automatically by plugin update ---");
+            writer.newLine();
+            for (String line : missingLines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            plugin.getSLF4JLogger().warn("Could not write missing keys to: {}", targetFile.getName(), e);
+            return;
+        }
+
+        plugin.getSLF4JLogger().info("Synced {} missing translation key(s) into {}", missingLines.size(), targetFile.getName());
+    }
+
+    /**
+     * Reads all lines from a Reader into a list, preserving order.
+     */
+    private List<String> readLines(Reader reader) throws IOException {
+        List<String> lines = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(reader)) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                lines.add(line);
+            }
+        }
+        return lines;
     }
 
     /**
