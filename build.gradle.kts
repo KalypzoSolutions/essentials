@@ -72,7 +72,7 @@ dependencies {
     paperLibrary("xyz.xenondevs.invui:inventory-access-r26:1.49")
 
     paperLibrary("com.zaxxer:HikariCP:7.0.2")
-    paperLibrary("org.postgresql:postgresql:42.7.10")
+    paperLibrary("org.postgresql:postgresql:42.7.11")
     paperLibrary("org.flywaydb:flyway-database-postgresql:12.0.2")
     compileOnly("org.projectlombok:lombok:1.18.44")
     annotationProcessor("org.projectlombok:lombok:1.18.44")
