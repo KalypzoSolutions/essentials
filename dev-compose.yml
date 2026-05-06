@@ -68,11 +68,13 @@ services:
       INTERNAL_SERVER_NAME: "paper"
       OPS: |-
         Ein_Jojo
+        CrayonGamerHD
       SPIGET_RESOURCES: |-
         6245
       PLUGINS: |-
         https://github.com/wandoriamc/player-service-api/releases/download/v1.5.2/playerapi-paper-1.5.2.jar
         https://github.com/TotorixGames/economy/releases/download/v2.2.0/economy-plugin-2.2.0-SNAPSHOT-all.jar
+        https://download.luckperms.net/1631/bukkit/loader/LuckPerms-Bukkit-5.5.42.jar
 
 volumes:
   postgres_data:
