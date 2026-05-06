@@ -10,6 +10,6 @@ public class DiscordCommand {
 
     @Execute
     public void discord(BukkitCommandSource source) {
-        source.origin().sendMessage(Text.deserialize("<newline><prefix> <hl>https://totorix.shop<newline>"));
+        source.origin().sendMessage(Text.deserialize("<newline><prefix> <hl>https://discord.gg/totorix<newline>"));
     }
 }

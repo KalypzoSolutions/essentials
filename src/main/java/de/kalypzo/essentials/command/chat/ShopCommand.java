@@ -10,6 +10,6 @@ public class ShopCommand {
 
     @Execute
     public void shop(BukkitCommandSource source) {
-        source.origin().sendMessage(Text.deserialize("<newline><prefix> <hl>https://discord.gg/totorix<newline>"));
+        source.origin().sendMessage(Text.deserialize("<newline><prefix> <hl>https://totorix.shop<newline>"));
     }
 }
