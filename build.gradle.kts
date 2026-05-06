@@ -74,7 +74,7 @@ dependencies {
     paperLibrary("studio.mevera:imperat-bukkit:3.6.0")
 
     paperLibrary("com.zaxxer:HikariCP:7.0.2")
-    paperLibrary("org.postgresql:postgresql:42.7.10")
+    paperLibrary("org.postgresql:postgresql:42.7.11")
     paperLibrary("org.flywaydb:flyway-database-postgresql:12.5.0")
     compileOnly("org.projectlombok:lombok:1.18.46")
     annotationProcessor("org.projectlombok:lombok:1.18.46")
