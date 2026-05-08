@@ -15,6 +15,12 @@ plots-cmd-proxy:
 info-message: |
   <prefix> <p>Feli hat die config.yml von Essentials nicht angepasst.  
   <prefix> <gray>Viel Spaß beim Spielen!
+# Back stores the location when the player dies for 12 hours.
+# Players can use /back to teleport to that location. Costs 500 in-game currency.
+back:
+  enabled: true
+  cost: 500
+
 broadcast:
   broadcasts:
     broadcast1:
