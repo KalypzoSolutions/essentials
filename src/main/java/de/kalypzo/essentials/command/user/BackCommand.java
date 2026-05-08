@@ -2,8 +2,8 @@ package de.kalypzo.essentials.command.user;
 
 import de.kalypzo.essentials.EssentialsPlugin;
 import de.kalypzo.essentials.user.back.BackManager;
-import de.kalypzo.essentials.util.PermissionsRange;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.entity.Player;
 import studio.mevera.imperat.annotations.types.Description;
 import studio.mevera.imperat.annotations.types.Execute;
@@ -23,14 +23,16 @@ public class BackCommand {
             source.sendMessage(Component.translatable("essentials.back.no-location"));
         }
         if (!source.hasPermission(COST_BYPASS_PERMISSION)) {
-            EssentialsPlugin.instance().economyService().withdraw(source.getUniqueId(), 50, "back command").thenAccept(result -> {
+            EssentialsPlugin.instance().economyService().withdraw(source.getUniqueId(), EssentialsPlugin.instance().getConfig().getDouble("back.cost", 500), "ESSENTIALS BACK").thenAccept(result -> {
                 if (!result.isSuccess()) {
                     source.sendMessage(Component.translatable("essentials.back.cost-failed"));
                     return;
                 }
+                source.sendMessage(Component.translatable("essentials.back.cost-success", Argument.numeric("cost", result.change())));
                 BackManager.getInstance().teleportBack(source);
             });
             return;
+
         }
         BackManager.getInstance().teleportBack(source);
     }
