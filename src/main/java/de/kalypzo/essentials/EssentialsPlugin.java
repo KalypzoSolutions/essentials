@@ -59,10 +59,7 @@ public class EssentialsPlugin extends JavaPlugin {
     @Override
     public void onLoad() {
         saveDefaultConfig();
-        int configVersion = getConfig().getInt("config-version", 1);
-        if (configVersion < LATEST_CONFIG_VERSION) {
-            new ConfigUpdater(this).updateConfig();
-        }
+        new ConfigUpdater(this, LATEST_CONFIG_VERSION).updateConfig();
 
     }
 
