@@ -21,6 +21,7 @@ public class BackCommand {
     public void teleportBack(Player source) {
         if (!BackManager.getInstance().hasBackLocation(source.getUniqueId())) {
             source.sendMessage(Component.translatable("essentials.back.no-location"));
+            return;
         }
         if (!source.hasPermission(COST_BYPASS_PERMISSION)) {
             EssentialsPlugin.instance().economyService().withdraw(source.getUniqueId(), EssentialsPlugin.instance().getConfig().getDouble("back.cost", 500), "ESSENTIALS BACK").thenAccept(result -> {
