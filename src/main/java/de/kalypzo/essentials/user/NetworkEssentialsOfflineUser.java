@@ -13,13 +13,17 @@ import java.util.UUID;
 public class NetworkEssentialsOfflineUser implements EssentialsOfflineUser {
     private final OfflineNetworkPlayer offlineNetworkPlayer;
 
+
     public NetworkEssentialsOfflineUser(OfflineNetworkPlayer offlineNetworkPlayer) {
         this.offlineNetworkPlayer = offlineNetworkPlayer;
     }
 
     @Override
     public Duration getPlayTime() {
-        return Duration.ofMillis(offlineNetworkPlayer.getPlaytime());
+        if (offlineNetworkPlayer.isOnline()) {
+            return Duration.ofMillis(offlineNetworkPlayer.getPlaytime() + System.currentTimeMillis() - offlineNetworkPlayer.getLastPlayed() - offlineNetworkPlayer.getAfkDuration());
+        }
+        return Duration.ofMillis(offlineNetworkPlayer.getPlaytime() - offlineNetworkPlayer.getAfkDuration());
     }
 
     @Override
