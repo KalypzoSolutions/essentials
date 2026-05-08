@@ -70,8 +70,8 @@ dependencies {
     paperLibrary("xyz.xenondevs.invui:inventory-access-r22:1.49")
     paperLibrary("xyz.xenondevs.invui:invui-core:1.49")
     paperLibrary("xyz.xenondevs.invui:inventory-access-r26:1.49")
-    paperLibrary("studio.mevera:imperat-core:3.6.0")
-    paperLibrary("studio.mevera:imperat-bukkit:3.6.0")
+    paperLibrary("net.totorix:imperat-core:3.8.0")
+    paperLibrary("net.totorix:imperat-bukkit:3.8.0")
 
     paperLibrary("com.zaxxer:HikariCP:7.0.2")
     paperLibrary("org.postgresql:postgresql:42.7.11")

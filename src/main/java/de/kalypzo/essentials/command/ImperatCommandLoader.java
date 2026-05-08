@@ -25,6 +25,7 @@ import it.einjojo.economy.exception.EconomyException;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import studio.mevera.imperat.BukkitImperat;
+import studio.mevera.imperat.command.suggestions.NativeAutoCompleterFactory;
 import studio.mevera.imperat.exception.InvalidSyntaxException;
 import studio.mevera.imperat.util.UsageFormatting;
 
@@ -40,7 +41,9 @@ public class ImperatCommandLoader {
 
     public ImperatCommandLoader(EssentialsPlugin plugin) {
         this.plugin = plugin;
-        imperat = BukkitImperat.builder(plugin, false).build();
+        imperat = BukkitImperat.builder(plugin, false)
+                .autoCompleterFactory(new NativeAutoCompleterFactory<>(true))
+                .build();
     }
 
     public void load() {

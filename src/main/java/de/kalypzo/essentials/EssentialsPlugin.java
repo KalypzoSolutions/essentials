@@ -7,11 +7,11 @@ import de.kalypzo.essentials.chat.ChatSystem;
 import de.kalypzo.essentials.command.ImperatCommandLoader;
 import de.kalypzo.essentials.environment.DefaultPluginEnvironment;
 import de.kalypzo.essentials.environment.PluginEnvironment;
+import de.kalypzo.essentials.gui.warps.WarpConfigurationImpl;
 import de.kalypzo.essentials.listener.DeathListener;
 import de.kalypzo.essentials.listener.JoinSpawnLocationListener;
 import de.kalypzo.essentials.rce.RemoteCommandExecutor;
 import de.kalypzo.essentials.user.back.BackManager;
-import de.kalypzo.essentials.gui.warps.WarpConfigurationImpl;
 import de.kalypzo.essentials.user.home.HomeConfigurationImpl;
 import de.kalypzo.essentials.user.home.HomeManager;
 import de.kalypzo.essentials.util.ConfigWrapper;
@@ -20,6 +20,7 @@ import de.kalypzo.essentials.world.PositionAccessor;
 import de.kalypzo.essentials.world.TeleportExecutor;
 import de.kalypzo.essentials.world.warps.WarpManager;
 import io.lettuce.core.RedisClient;
+import it.einjojo.economy.EconomyService;
 import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -219,5 +220,9 @@ public class EssentialsPlugin extends JavaPlugin {
         if (warpsConfig != null) {
             warpsConfig.reload(this);
         }
+    }
+
+    public EconomyService economyService() {
+        return getServer().getServicesManager().load(EconomyService.class);
     }
 }
