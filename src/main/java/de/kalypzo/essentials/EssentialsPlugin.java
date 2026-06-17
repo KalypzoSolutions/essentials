@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import de.kalypzo.essentials.broadcast.BroadcastManager;
 import de.kalypzo.essentials.chat.ChatSystem;
 import de.kalypzo.essentials.command.ImperatCommandLoader;
+import de.kalypzo.essentials.command.chat.TeamChatCommand;
 import de.kalypzo.essentials.environment.DefaultPluginEnvironment;
 import de.kalypzo.essentials.environment.PluginEnvironment;
 import de.kalypzo.essentials.gui.warps.WarpConfigurationImpl;
@@ -121,6 +122,7 @@ public class EssentialsPlugin extends JavaPlugin {
         warpsConfig = WarpConfigurationImpl.load(this);
         HomeManager.init(dataSource, homesConfig);
         chatSystem = new ChatSystem(pubSub, this, new ConfigWrapper(this), environment.getServerName());
+        TeamChatCommand.setTeamChatService(chatSystem.getTeamChatService());
         TeleportExecutor.getInstance().init(pubSub);
         PositionAccessor.getInstance().init(pubSub);
         RemoteCommandExecutor.getInstance().init(pubSub);

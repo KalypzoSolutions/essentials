@@ -58,6 +58,11 @@ public record ChatMessage(@Nullable List<UUID> recipients, @NotNull String seria
         return new ChatMessage(null, SERIALIZER.serialize(component), null, null, permissionScope);
     }
 
+    public static ChatMessage create(@NotNull Component component, UUID sender,
+                                     String originatingServer, @Nullable String permissionScope) {
+        return new ChatMessage(null, SERIALIZER.serialize(component), sender, originatingServer, permissionScope);
+    }
+
     /**
      * Erstellt eine neue Instanz von GlobalMessage mit den gegebenen Empfängern.
      *

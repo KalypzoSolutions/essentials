@@ -32,4 +32,9 @@ public record ConfigWrapper(JavaPlugin plugin) implements ChatConfiguration {
     public Sound getPingSound() {
         return Sound.BLOCK_AMETHYST_BLOCK_RESONATE;
     }
+
+    @Override
+    public String getTeamChatFormat() {
+        return "";
+    }
 }

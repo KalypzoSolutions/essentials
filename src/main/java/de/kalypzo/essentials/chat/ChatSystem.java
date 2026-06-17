@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,10 +38,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * ChatSystem is responsible for two things: Private Messages and Cross-Server Messages.
- * <p>Redis pub sub is used for cross-server messages, and the last private message sender is stored in redis with  </p>
- */
 @Getter
 @Slf4j
 public class ChatSystem implements Listener {
@@ -61,26 +58,10 @@ public class ChatSystem implements Listener {
                             .build())
             .build();
 
-    /**
-     * Thread-safe cache for player alias sets.
-     * Maps player UUID -> PlayerNameAliasSet for efficient mention detection.
-     * ConcurrentHashMap ensures thread-safe access without explicit synchronization.
-     * Explicitly cleaned up on player quit to prevent memory leaks.
-     */
     private final Map<UUID, PlayerNameAliasSet> playerAliasCache = new ConcurrentHashMap<>();
 
+    private final TeamChatService teamChatService;
 
-    /**
-     * <p>Create a instance of the ChatSystem.</p>
-     * <p>Will subscribe to the redis-pubsub 'chat' channel.</p>
-     * <p>Will register a chat listener</p>
-     * <p>The PlaceholderAPI is required to be loaded</p>
-     *
-     * @param pubSubConnection  redis pubsub connection
-     * @param plugin            plugin for event registration
-     * @param chatConfiguration chat configuration
-     * @param serverName        the server name where the chat system is running
-     */
     public ChatSystem(@NotNull StatefulRedisPubSubConnection<String, String> pubSubConnection,
                       @NotNull JavaPlugin plugin,
                       @NotNull ChatConfiguration chatConfiguration,
@@ -92,6 +73,9 @@ public class ChatSystem implements Listener {
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") == null) {
             throw new IllegalStateException("PlaceholderAPI is not provided! ChatSystem cannot work without it");
         }
+
+        this.teamChatService = new TeamChatService(pubSubConnection.sync());
+
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         pubSubConnection.addListener(new RedisPubSubAdapter<>() {
             @Override
@@ -105,21 +89,31 @@ public class ChatSystem implements Listener {
         plugin.getSLF4JLogger().info("ChatSystem initialized and listening to channel 'chat'");
     }
 
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        teamChatService.loadPlayer(event.getPlayer().getUniqueId());
+    }
 
-    /**
-     * Cancels every message which has not been canceled before and will publish the message to redis.
-     *
-     * @param event the event which is being canceled.
-     */
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+
+        playerAliasCache.remove(uuid);
+        teamChatService.unloadPlayer(uuid);
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncChatEvent event) {
         if (event.isCancelled()) {
             return;
         }
+        Player player = event.getPlayer();
         try {
-            String chatFormat = chatConfiguration.getChatFormat();
-            chatFormat = PlaceholderAPI.setPlaceholders(event.getPlayer(), chatFormat);
-            if (event.getPlayer().hasPermission(COLORED_CHAT_PERMISSION)) {
+            boolean isTeamChat = teamChatService.isToggled(player.getUniqueId());
+            String chatFormat = isTeamChat ? chatConfiguration.getTeamChatFormat() : chatConfiguration.getChatFormat();
+
+            chatFormat = PlaceholderAPI.setPlaceholders(player, chatFormat);
+            if (player.hasPermission(COLORED_CHAT_PERMISSION)) {
                 event.message(COLOR_ONLY.deserialize(Text.replaceLegacyColorCodesWithMiniMessage(plain.serialize(event.message()))));
             }
             Component formattedMessage = miniMessage.deserialize(chatFormat,
@@ -127,7 +121,11 @@ public class ChatSystem implements Listener {
                     Placeholder.unparsed("server", serverName),
                     Placeholder.unparsed("time", LocalTime.now().format(TIME_FORMATTER))
             );
-            publishNetworkChatMessage(ChatMessage.create(formattedMessage, event.getPlayer().getUniqueId(), serverName)).exceptionally((ex) -> {
+
+            String scope = isTeamChat ? TeamChatCommand.SCOPE : null;
+            publishNetworkChatMessage(
+                    ChatMessage.create(formattedMessage, player.getUniqueId(), serverName, scope)
+            ).exceptionally((ex) -> {
                 handleChatException(event, ex);
                 return null;
             });
@@ -135,12 +133,6 @@ public class ChatSystem implements Listener {
             handleChatException(event, ex);
         }
         event.setCancelled(true);
-    }
-
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        playerAliasCache.remove(event.getPlayer().getUniqueId());
     }
 
     public CompletableFuture<Long> publishNetworkChatMessage(@NotNull ChatMessage message) {
@@ -153,12 +145,11 @@ public class ChatSystem implements Listener {
         event.getPlayer().sendMessage(Component.translatable("essentials.chat.error"));
     }
 
-
     public void handleMessage(@NotNull ChatMessage chatMessage) {
         List<Player> recipients;
         if (chatMessage.recipients() == null && chatMessage.permissionScope() == null) {
             recipients = new ArrayList<>(Bukkit.getOnlinePlayers());
-        } else if (chatMessage.recipients() == null) { // permission Scope is given
+        } else if (chatMessage.recipients() == null) {
             recipients = new LinkedList<>();
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasPermission(chatMessage.permissionScope())) {
@@ -174,15 +165,24 @@ public class ChatSystem implements Listener {
                 }
             }
         }
+
+        boolean isTeamChat =
+                TeamChatCommand.SCOPE.equalsIgnoreCase(
+                        chatMessage.permissionScope());
+
+        if (isTeamChat) {
+            recipients.removeIf(recipient ->
+                    !recipient.getUniqueId().equals(chatMessage.sender())
+                            && teamChatService.isSilent(recipient.getUniqueId()));
+        }
+
         Component content = chatMessage.getContent();
         String serializedMessage = chatMessage.serializedMessage();
-        String plainText = plain.serialize(content);  // Plain text version for regex matching
+        String plainText = plain.serialize(content);
         UUID senderUuid = chatMessage.sender();
         String originatingServer = chatMessage.originatingServer();
 
-        // Check if any player is mentioned and prepare highlighted message
         Component highlightedMessage = null;
-
         for (Player recipient : recipients) {
             if (isMentioned(serializedMessage, recipient)) {
                 highlightedMessage = highlightMentionedName(content, recipient, plainText);
@@ -190,26 +190,20 @@ public class ChatSystem implements Listener {
             }
         }
 
-        // Handle sender separately - only on the originating server
-        // This prevents duplicate messages when message is broadcast to all servers
         if (senderUuid != null && serverName.equals(originatingServer)) {
             Player sender = Bukkit.getPlayer(senderUuid);
             if (sender != null) {
-                // Sender sees highlighted version if someone is mentioned, otherwise normal message
-                // No ping sound for sender (they initiated the message)
                 sender.sendMessage(highlightedMessage != null ? highlightedMessage : content);
             }
         }
-        boolean isTeamChat = TeamChatCommand.SCOPE.equalsIgnoreCase(chatMessage.permissionScope());
+
         for (Player recipient : recipients) {
-            // Skip sender in global chat rendering (they already received their message above)
             if (senderUuid != null && recipient.getUniqueId().equals(senderUuid)) {
                 continue;
             }
             if (isTeamChat) {
                 recipient.playSound(recipient, Sound.UI_TOAST_IN, 1, 1.85f);
             }
-            // Check if recipient is mentioned using efficient alias set lookup
             if (isMentioned(serializedMessage, recipient)) {
                 Component pingedMessage = highlightMentionedName(content, recipient, plainText);
                 recipient.sendMessage(pingedMessage);
