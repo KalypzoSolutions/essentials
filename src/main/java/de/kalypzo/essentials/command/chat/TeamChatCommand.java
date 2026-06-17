@@ -48,7 +48,7 @@ public class TeamChatCommand {
 
         sender.sendMessage(Text.deserialize(
                 state
-                        ? "<prefix> <#bdb2ff>TeamChat aktiviert."
+                        ? "<prefix> <gray>TeamChat aktiviert."
                         : "<prefix> Öffentlicher Chat aktiviert."
         ));
     }
@@ -64,8 +64,8 @@ public class TeamChatCommand {
 
         sender.sendMessage(Text.deserialize(
                 state
-                        ? "<prefix> <red>Du hast den Teamchat stummgeschaltet."
-                        : "<prefix> <green>Du siehst nun wieder Teamchat-Nachrichten."
+                        ? "<prefix> <gray>Du hast den Teamchat stummgeschaltet."
+                        : "<prefix> <gray>Du siehst nun wieder Teamchat-Nachrichten."
         ));
     }
 }
