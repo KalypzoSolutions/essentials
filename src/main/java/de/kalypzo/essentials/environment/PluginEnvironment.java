@@ -70,6 +70,10 @@ public interface PluginEnvironment {
 
     CompletableFuture<Boolean> connectPlayerToServer(UUID player, String serverName);
 
+    CompletableFuture<Boolean> deletePlayerConnection(UUID player);
+
+    CompletableFuture<ConnectionRefreshResult> refreshPlayerConnections();
+
     CompletableFuture<Optional<EssentialsOfflineUser>> getOfflineUser(UUID uuid);
 
     CompletableFuture<Optional<EssentialsOfflineUser>> getOfflineUserByName(@NonNull String playerName);
@@ -95,4 +99,7 @@ public interface PluginEnvironment {
     }
 
     CompletableFuture<List<String>> suggestOnlinePlayerNames(String input, UUID querying, int limit);
+
+    record ConnectionRefreshResult(int checked, int deleted, int failed) {
+    }
 }
