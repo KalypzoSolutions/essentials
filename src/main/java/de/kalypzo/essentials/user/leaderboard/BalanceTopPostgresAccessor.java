@@ -21,17 +21,23 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class BalanceTopPostgresAccessor {
     private final String selectTop10Query;
+    private final String selectTotalQuery;
     private final DataSource dataSource;
     @Getter
     private Instant lastUpdate = Instant.MIN;
     @Getter
     private AccountData[] topTen = new AccountData[10];
     @Getter
+    private double totalBalance;
+    @Getter
     private CompletableFuture<Void> updateFuture;
 
     public BalanceTopPostgresAccessor(DataSource dataSource, String economyTableName) {
         this.selectTop10Query = """
                 SELECT uuid, balance, version FROM %s ORDER BY balance DESC LIMIT 10;
+                """.formatted(economyTableName);
+        this.selectTotalQuery = """
+                SELECT COALESCE(SUM(balance), 0) AS total FROM %s;
                 """.formatted(economyTableName);
         this.dataSource = dataSource;
     }
@@ -42,6 +48,7 @@ public class BalanceTopPostgresAccessor {
         }
         updateFuture = CompletableFuture.runAsync(() -> {
             topTen = getTopTenFromDB();
+            totalBalance = getTotalBalanceFromDB();
             lastUpdate = Instant.now();
         }, EssentialsPlugin.getExecutorService());
     }
@@ -71,5 +78,17 @@ public class BalanceTopPostgresAccessor {
         return fetched;
     }
 
+    private double getTotalBalanceFromDB() {
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(selectTotalQuery)) {
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            log.error("Could not fetch total balance", e);
+        }
+        return 0;
+    }
 
 }

@@ -6,6 +6,7 @@ import de.kalypzo.essentials.exception.TransactionException;
 import de.kalypzo.essentials.user.EssentialsOfflineUser;
 import de.kalypzo.essentials.user.leaderboard.BalanceTopPostgresAccessor;
 import de.kalypzo.essentials.util.NumberFormatter;
+import de.kalypzo.essentials.util.Text;
 import it.einjojo.economy.EconomyService;
 import it.einjojo.economy.db.AccountData;
 import net.kyori.adventure.text.Component;
@@ -64,14 +65,22 @@ public class BalanceCommand {
     @SubCommand("top")
     @Description("Zeige die Top 10 reichsten Spieler an.")
     public CompletableFuture<Void> showEco(Player sender) {
-        boolean canRefresh = balanceTopAccessor.getLastUpdate().plusMillis(1000 * 30).isBefore(Instant.now());
-        if (canRefresh) {
-            balanceTopAccessor.refreshTopTenAsync();
-        }
-        if (balanceTopAccessor.getUpdateFuture().isDone()) {
+        refreshBalanceStatsIfNeeded();
+        if (balanceTopAccessor.getUpdateFuture() == null || balanceTopAccessor.getUpdateFuture().isDone()) {
             return showBaltop(sender);
         } else {
             return balanceTopAccessor.getUpdateFuture().thenCompose(v -> showBaltop(sender));
+        }
+    }
+
+    @SubCommand("total")
+    @Description("Zeigt das gesamte Geld aller Spieler an.")
+    public CompletableFuture<Void> showTotal(BukkitCommandSource source) {
+        refreshBalanceStatsIfNeeded();
+        if (balanceTopAccessor.getUpdateFuture() == null || balanceTopAccessor.getUpdateFuture().isDone()) {
+            return showBalanceTotal(source);
+        } else {
+            return balanceTopAccessor.getUpdateFuture().thenCompose(v -> showBalanceTotal(source));
         }
     }
 
@@ -171,6 +180,20 @@ public class BalanceCommand {
                         );
                     }
                 });
+    }
+
+    private void refreshBalanceStatsIfNeeded() {
+        boolean canRefresh = balanceTopAccessor.getLastUpdate().plusMillis(1000 * 30).isBefore(Instant.now());
+        if (canRefresh) {
+            balanceTopAccessor.refreshTopTenAsync();
+        }
+    }
+
+    private CompletableFuture<Void> showBalanceTotal(BukkitCommandSource source) {
+        String total = NumberFormatter.doubleToHumanReadable(balanceTopAccessor.getTotalBalance());
+        source.origin().sendMessage(Text.deserialize("<prefix> <p>Alle Spieler besitzen zusammen <hl><total></hl> Coins.",
+                Placeholder.unparsed("total", total)));
+        return CompletableFuture.completedFuture(null);
     }
 
     private void notifyPaymentReceive(UUID target, Component sender, int amount) {
