@@ -10,15 +10,18 @@ import it.einjojo.playerapi.PlayerApi;
 import it.einjojo.playerapi.PlayerApiProvider;
 import it.einjojo.playerapi.ServerConnectResult;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 /**
  * Expects the Player-API to be available.
@@ -91,6 +94,51 @@ public class DefaultPluginEnvironment implements PluginEnvironment {
                     EssentialsPlugin.instance().getSLF4JLogger().error("Failed to connect player {} to server {}", player, serverName, ex);
                     throw new RuntimeException(ex);
                 });
+    }
+
+    @Override
+    public CompletableFuture<Boolean> deletePlayerConnection(UUID player) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Object stub = playerApi.getClass().getSuperclass().getField("playerServiceStub").get(playerApi);
+                ClassLoader classLoader = playerApi.getClass().getClassLoader();
+                Class<?> logoutRequestClass = Class.forName("it.einjojo.protocol.player.LogoutRequest", true, classLoader);
+                Object builder = logoutRequestClass.getMethod("newBuilder").invoke(null);
+                Method setUniqueId = builder.getClass().getMethod("setUniqueId", String.class);
+                Method build = builder.getClass().getMethod("build");
+                Object request = build.invoke(setUniqueId.invoke(builder, player.toString()));
+                Object future = stub.getClass().getMethod("logout", logoutRequestClass).invoke(stub, request);
+                return ((Future<?>) future).get() != null;
+            } catch (Exception ex) {
+                EssentialsPlugin.instance().getSLF4JLogger().error("Failed to delete player connection {}", player, ex);
+                return false;
+            }
+        }, EssentialsPlugin.getExecutorService());
+    }
+
+    @Override
+    public CompletableFuture<ConnectionRefreshResult> refreshPlayerConnections() {
+        return getUsers().thenCompose(users -> {
+            String currentServer = getServerName();
+            List<CompletableFuture<Boolean>> deletes = users.stream()
+                    .filter(user -> currentServer.equals(user.getServerName()))
+                    .filter(user -> Bukkit.getPlayer(user.getUuid()) == null)
+                    .map(user -> deletePlayerConnection(user.getUuid()))
+                    .toList();
+            return CompletableFuture.allOf(deletes.toArray(CompletableFuture[]::new))
+                    .handle((unused, throwable) -> {
+                        int deleted = 0;
+                        int failed = 0;
+                        for (CompletableFuture<Boolean> delete : deletes) {
+                            if (delete.isCompletedExceptionally() || !delete.join()) {
+                                failed++;
+                            } else {
+                                deleted++;
+                            }
+                        }
+                        return new ConnectionRefreshResult(users.size(), deleted, failed);
+                    });
+        });
     }
 
 
