@@ -14,7 +14,7 @@ public class FlyCommand {
 
     @Execute
     public void fly(Player source) {
-        if (source.isFlying()) {
+        if (source.getAllowFlight()) {
             source.setFlying(false);
             source.setAllowFlight(false);
             source.sendMessage(Component.translatable("essentials.fly.disabled"));
