@@ -1,6 +1,8 @@
 package de.kalypzo.essentials.command;
 
 import de.kalypzo.essentials.EssentialsPlugin;
+import de.kalypzo.essentials.chat.emoji.EmojiGui;
+import de.kalypzo.essentials.chat.emoji.EmojiRegistry;
 import de.kalypzo.essentials.command.admin.BroadcastCommand;
 import de.kalypzo.essentials.command.admin.DebugCommand;
 import de.kalypzo.essentials.command.admin.LabyModDebugCommand;
@@ -20,10 +22,12 @@ import de.kalypzo.essentials.user.home.Home;
 import de.kalypzo.essentials.util.Text;
 import de.kalypzo.essentials.util.servername.InternalServerName;
 import de.kalypzo.essentials.world.warps.Warp;
+import io.lettuce.core.dynamic.annotation.Command;
 import it.einjojo.economy.TransactionStatus;
 import it.einjojo.economy.exception.EconomyException;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 import studio.mevera.imperat.BukkitImperat;
 import studio.mevera.imperat.command.suggestions.NativeAutoCompleterFactory;
 import studio.mevera.imperat.exception.InvalidSyntaxException;

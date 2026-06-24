@@ -4,6 +4,9 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import de.kalypzo.essentials.broadcast.BroadcastManager;
 import de.kalypzo.essentials.chat.ChatSystem;
+import de.kalypzo.essentials.chat.emoji.Emoji;
+import de.kalypzo.essentials.chat.emoji.EmojiGuiListener;
+import de.kalypzo.essentials.chat.emoji.EmojiRegistry;
 import de.kalypzo.essentials.command.ImperatCommandLoader;
 import de.kalypzo.essentials.command.chat.TeamChatCommand;
 import de.kalypzo.essentials.environment.DefaultPluginEnvironment;
@@ -23,13 +26,19 @@ import de.kalypzo.essentials.world.warps.WarpManager;
 import io.lettuce.core.RedisClient;
 import it.einjojo.economy.EconomyService;
 import lombok.Getter;
+import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.flywaydb.core.Flyway;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.InvUI;
+import xyz.xenondevs.invui.item.builder.ItemBuilder;
 
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.ObjectInputFilter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -55,6 +64,8 @@ public class EssentialsPlugin extends JavaPlugin {
     private HomeConfigurationImpl homesConfig;
     @Getter
     private WarpConfigurationImpl warpsConfig;
+    @Getter
+    private EmojiRegistry emojiRegistry;
 
 
     @Override
@@ -117,6 +128,13 @@ public class EssentialsPlugin extends JavaPlugin {
             getSLF4JLogger().error("Could not migrate Flyway", ex);
         }
 
+
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new EmojiGuiListener(), this);
+
+        emojiRegistry = new EmojiRegistry();
+        loadEmojis();
+
         // Init section
         homesConfig = HomeConfigurationImpl.load(this);
         warpsConfig = WarpConfigurationImpl.load(this);
@@ -129,7 +147,6 @@ public class EssentialsPlugin extends JavaPlugin {
         getSLF4JLogger().info("All pub sub components initialized. Client subscribed to: {}", pubSub.sync().pubsubChannels());
         new LocaleLoader(this, getClassLoader()).loadLocales();
         new ImperatCommandLoader(this).load();
-        PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new DeathListener(BackManager.getInstance()), this);
         pm.registerEvents(new JoinSpawnLocationListener(), this);
         WarpManager.getInstance().load().whenComplete(((unused, throwable) -> {
@@ -184,6 +201,33 @@ public class EssentialsPlugin extends JavaPlugin {
         if (!terminated) {
             getSLF4JLogger().warn("Executor service did not terminate in time, forcefully shutting down.");
             executorService.shutdownNow();
+        }
+    }
+
+    private void loadEmojis() {
+        File emojiFile = new File(getDataFolder(), "emojis.yml");
+        if (!emojiFile.exists()) {
+            saveResource("emojis.yml", false);
+        }
+        YamlConfiguration cfg = YamlConfiguration.loadConfiguration(emojiFile);
+        emojiRegistry.clear();
+
+        if (!cfg.contains("emojis")) return;
+
+        for (String key : cfg.getConfigurationSection("emojis").getKeys(false)) {
+            String path = "emojis." + key;
+            String shortcut = key;
+            String character = cfg.getString(path + ".character");
+            String permission = cfg.getString(path + ".permission", "");
+            String matName = cfg.getString(path + ".material", "PAPER");
+            Material material = Material.getMaterial(matName.toUpperCase());
+            if (material == null) material = Material.PAPER;
+
+            ItemStack displayItem = new ItemBuilder(material)
+                    .setDisplayName(character) // wird im GUI überschrieben
+                    .get();
+
+            emojiRegistry.register(new Emoji(shortcut, character, permission, displayItem));
         }
     }
 

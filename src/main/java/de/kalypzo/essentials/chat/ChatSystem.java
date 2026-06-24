@@ -1,6 +1,10 @@
 package de.kalypzo.essentials.chat;
 
 import com.google.gson.Gson;
+import de.kalypzo.essentials.EssentialsPlugin;
+import de.kalypzo.essentials.chat.emoji.Emoji;
+import de.kalypzo.essentials.chat.emoji.EmojiGui;
+import de.kalypzo.essentials.chat.emoji.EmojiRegistry;
 import de.kalypzo.essentials.command.chat.TeamChatCommand;
 import de.kalypzo.essentials.user.EssentialsUser;
 import de.kalypzo.essentials.user.UserSettings;
@@ -104,15 +108,18 @@ public class ChatSystem implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncChatEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
         Player player = event.getPlayer();
         try {
             boolean isTeamChat = teamChatService.isToggled(player.getUniqueId());
             String chatFormat = isTeamChat ? chatConfiguration.getTeamChatFormat() : chatConfiguration.getChatFormat();
-
             chatFormat = PlaceholderAPI.setPlaceholders(player, chatFormat);
+
+            // Emoji-Shortcuts ersetzen
+            String plainMsg = plain.serialize(event.message());
+            plainMsg = replaceEmojiShortcuts(player, plainMsg);
+            event.message(Component.text(plainMsg));
+
             if (player.hasPermission(COLORED_CHAT_PERMISSION)) {
                 event.message(COLOR_ONLY.deserialize(Text.replaceLegacyColorCodesWithMiniMessage(plain.serialize(event.message()))));
             }
@@ -121,7 +128,6 @@ public class ChatSystem implements Listener {
                     Placeholder.unparsed("server", serverName),
                     Placeholder.unparsed("time", LocalTime.now().format(TIME_FORMATTER))
             );
-
             String scope = isTeamChat ? TeamChatCommand.SCOPE : null;
             publishNetworkChatMessage(
                     ChatMessage.create(formattedMessage, player.getUniqueId(), serverName, scope)
@@ -133,6 +139,23 @@ public class ChatSystem implements Listener {
             handleChatException(event, ex);
         }
         event.setCancelled(true);
+    }
+
+    public void sendEmojiChat(Player player, String emojiCharacter) {
+        Component emojiComponent = Component.text(emojiCharacter);
+        ChatMessage message = ChatMessage.create(emojiComponent, player.getUniqueId(), serverName);
+        publishNetworkChatMessage(message);
+    }
+
+    private String replaceEmojiShortcuts(Player player, String message) {
+        EmojiRegistry registry = EssentialsPlugin.instance().getEmojiRegistry();
+        if (registry == null) return message;
+        for (Emoji emoji : registry.getAll()) {
+            if (emoji.hasPermission(player)) {
+                message = message.replace(":" + emoji.shortcut() + ":", emoji.character());
+            }
+        }
+        return message;
     }
 
     public CompletableFuture<Long> publishNetworkChatMessage(@NotNull ChatMessage message) {

@@ -1,0 +1,13 @@
+emojis:
+  lachen:
+    character: "😂"
+    permission: "essentials.emoji.lachen"
+    material: YELLOW_DYE
+  herz:
+    character: "❤️"
+    permission: "essentials.emoji.herz"
+    material: RED_DYE
+  daumen:
+    character: "👍"
+    permission: ""
+    material: STICK
