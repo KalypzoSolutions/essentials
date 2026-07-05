@@ -64,7 +64,7 @@ dependencies {
     compileOnly("it.einjojo:playerapi:1.8.0")
     compileOnly("it.einjojo:economy:2.2.0")
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.12.2")
+    compileOnly("me.clip:placeholderapi:2.12.3")
     compileOnly("net.luckperms:api:5.5")
 
     paperLibrary("xyz.xenondevs.invui:inventory-access-r22:1.49")
