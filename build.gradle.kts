@@ -73,7 +73,7 @@ dependencies {
     paperLibrary("net.totorix:imperat-core:3.8.0")
     paperLibrary("net.totorix:imperat-bukkit:3.8.0")
 
-    paperLibrary("com.zaxxer:HikariCP:7.0.2")
+    paperLibrary("com.zaxxer:HikariCP:7.1.0")
     paperLibrary("org.postgresql:postgresql:42.7.11")
     paperLibrary("org.flywaydb:flyway-database-postgresql:12.6.0")
     compileOnly("org.projectlombok:lombok:1.18.46")
