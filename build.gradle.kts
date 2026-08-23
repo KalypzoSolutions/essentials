@@ -90,7 +90,7 @@ dependencies {
     compileOnly("eu.cloudnetservice.cloudnet:bridge-api")
 
     // sucks when provided
-    implementation("io.lettuce:lettuce-core:7.5.1.RELEASE")
+    implementation("io.lettuce:lettuce-core:7.7.0.RELEASE")
 
 
 }
